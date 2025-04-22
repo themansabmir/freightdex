@@ -1,0 +1,55 @@
+@use '../variables' as *;
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 1em 0;
+    font-size: 14px;
+    color: $neutral-50;
+    font-weight: 500;
+
+    .breadcrumb-item {
+        display: flex;
+        align-items: center;
+
+        .breadcrumb-link {
+            text-decoration: none;
+            color: $neutral-50;
+            transition: color 0.1s ease;
+
+            &:hover {
+                color: $primary-60;
+                text-decoration: none;
+            }
+        }
+
+        .breadcrumb-current {
+            font-weight: medium;
+            color: $primary-50;
+        }
+
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: $neutral-40;
+        }
+    }
+}
+
+.page__header__wrapper {
+    text-align: left;
+
+    .page__header__title {
+        font-size: 32px;
+        font-weight: bold;
+        color: $neutral-80;
+        margin: 0;
+    }
+
+    .page__header__subtitle {
+        font-size: 14px;
+        color: $neutral-50;
+        margin: 4px 0 0;
+    }
+}

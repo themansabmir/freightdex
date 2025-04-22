@@ -1,0 +1,40 @@
+@use '../scss/variables' as *;
+
+.body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    // overflow-x: hidden;
+    height: 100vh;
+}
+
+/* Main Content */
+.main-content {
+    // display: grid;
+    // grid-template-rows: auto 1fr;
+    display: flex;
+        flex-direction: column;
+    width: 100%;
+}
+
+.header {
+    height: 40px;
+    margin-bottom: 1em;
+    flex-shrink: 0; // Ensures header doesn’t shrink
+    z-index: 1000;
+    background-color: white;
+    width: 100%;
+    border-bottom: 1px solid $neutral-30;
+    position: sticky;
+        top: 0;
+    display: flex;
+    align-items: center;
+}
+
+.page-content {
+    padding-left: 1em;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    background: white;
+
+}

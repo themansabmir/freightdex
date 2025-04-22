@@ -1,0 +1,31 @@
+@use '../variables' as *;
+
+
+// .multiselect__wrapper {
+//     width: fit-content;
+//     position: relative;
+// }
+
+
+.multiselect__options {
+    background-color: white;
+    max-height: 200px;
+    width: 350px;
+    border-radius: 4px;
+    margin-top: 2px;
+    border: 1px solid $primary-30;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.multiselect__option-item {
+    cursor: pointer;
+    padding: 2px 0;
+    display: flex;
+    margin: 4px 0;
+    gap: 2px;
+
+    &:hover {
+        background-color: $primary-10;
+    }
+}

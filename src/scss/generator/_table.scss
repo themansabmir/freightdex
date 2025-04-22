@@ -1,0 +1,123 @@
+@use '../variables' as *;
+
+.table__container {
+
+    text-align: left;
+    width: fit-content;
+    max-width: 100%;
+    border: 1px solid $neutral-40;
+    // height: 80vh;
+    border-radius: 0.5em;
+    margin-top: 1em;
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        // border: 1px solid $neutral-30;
+    }
+
+    thead {
+        tr {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr>th {
+            padding: 0.5em 0;
+            border-right: 1px solid $neutral-30;
+            padding: 0.25em 0.75em;
+
+            button {
+                padding: 0.25em 0.5em;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+                border-radius: 4px;
+                background-color: $neutral-10;
+
+                &:hover {
+                    background-color: $neutral-30;
+                }
+            }
+        }
+    }
+
+    tbody {
+        overflow: scroll;
+
+        tr {
+            cursor: pointer;
+
+            td {
+                border-bottom: 1px solid $neutral-20;
+                padding: 0.25em 0.75em;
+                text-align: left;
+                color: $neutral-70;
+            }
+        }
+
+        tr:hover {
+            background-color: $primary-10;
+        }
+    }
+}
+
+.table__row--selected {
+    background-color: $primary-20;
+}
+
+.table__column-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding-top: 4px;
+}
+
+.table-footer {
+    background-color: #f9f9f9;
+    text-align: right;
+
+    .pagination-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .rows-per-page {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        select {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+    }
+
+    .pagination-info {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .pagination-buttons {
+        display: flex;
+        gap: 0.5rem;
+
+        button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+
+            &[aria-disabled="true"] {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+        }
+    }
+}
