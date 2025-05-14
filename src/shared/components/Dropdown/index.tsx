@@ -20,6 +20,7 @@ interface MultiSelectInputProps {
   placeholder?: string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  label: string
 }
 
 const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
@@ -32,6 +33,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   isOpen,
   name,
   setIsOpen,
+  label,
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -62,7 +64,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
           <TextField
             type='text'
             inputRef={inputRef}
-            label='Select Extra Fields'
+            label={label}
             name={name}
             prefixIcon={
               selectedValues.length > 0 && (

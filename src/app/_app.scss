@@ -1,40 +1,89 @@
 @use '../scss/variables' as *;
 
+// .body {
+//     display: grid;
+//     grid-template-columns: auto 1fr;
+//     grid-template-rows: auto 1fr;
+//     // overflow-x: hidden;
+//     height: 100vh;
+// }
+
+// /* Main Content */
+// .main-content {
+//     // display: grid;
+//     // grid-template-rows: auto 1fr;
+//     display: flex;
+//     flex-direction: column;
+//     width: 100%;
+// }
+
+// .header {
+//     height: 40px;
+//     margin-bottom: 1em;
+//     flex-shrink: 0; // Ensures header doesn’t shrink
+//     z-index: 1000;
+//     background-color: white;
+//     width: 100%;
+//     border-bottom: 1px solid $neutral-30;
+//     position: sticky;
+//     top: 0;
+//     display: flex;
+//     align-items: center;
+// }
+
+// .page-content {
+//     padding-left: 1em;
+//     overflow-y: auto;
+//     scroll-behavior: smooth;
+//     background: white;
+
+// }
+
+
 .body {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto 1fr;
-    // overflow-x: hidden;
+    grid-template-columns: auto 1fr; // Set a fixed width for sidebar
     height: 100vh;
+    // overflow-y: hidden; // Prevent global scroll
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    background-color: white; // or any desired color
+    border-right: 1px solid $neutral-30;
 }
 
 /* Main Content */
 .main-content {
-    // display: grid;
-    // grid-template-rows: auto 1fr;
     display: flex;
-        flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
     width: 100%;
 }
 
 .header {
     height: 40px;
     margin-bottom: 1em;
-    flex-shrink: 0; // Ensures header doesn’t shrink
+    flex-shrink: 0;
     z-index: 1000;
     background-color: white;
     width: 100%;
     border-bottom: 1px solid $neutral-30;
     position: sticky;
-        top: 0;
+    top: 0;
     display: flex;
     align-items: center;
 }
 
 .page-content {
-    padding-left: 1em;
+    flex: 1;
     overflow-y: auto;
     scroll-behavior: smooth;
+    padding-left: 1em;
     background: white;
-
 }
