@@ -12,6 +12,7 @@ export default defineConfig({
       "@scss": path.resolve(__dirname, "src/scss"),
       "@context": path.resolve(__dirname, "src/context"),
       "@modules": path.resolve(__dirname, "src/modules"),
+      "@generator": path.resolve(__dirname, "src/generator"),
     },
   },
   css: {

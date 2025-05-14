@@ -15,7 +15,7 @@ interface HeadlessInputFieldProps
   isError?: boolean;
   value?: string;
   onChange?: (
-    event: ChangeEvent<HTMLInputElement> | { target: { name: string } }
+    event: ChangeEvent<HTMLInputElement> 
   ) => void;
   prefixIcon?: ReactNode;
   suffixIcon?: ReactNode;

@@ -1,0 +1,13 @@
+@use '../variables' as *;
+
+.field__wrapper {
+    margin: 1em 0;
+}
+
+
+.field__group {
+    border: 1px solid $neutral-30;
+    border-radius: 1em;
+    padding: 1em;
+    margin: 1em 0;
+}

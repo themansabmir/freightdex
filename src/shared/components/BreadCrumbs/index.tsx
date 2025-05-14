@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom"; // Remove this if not using React Router
 import { BreadcrumbProps } from "./BreadCrumb.types";
+import { InfoIcon} from 'lucide-react'
 
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, separator = "/" }) => {
@@ -36,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({ pageName, label }) => {
   return (
     <header className={"page__header__wrapper"}>
       <h1 className={"page__header__title"}>{pageName}</h1>
-      {label && <p className={"page__header__subtitle"}>{label}</p>}
+      {label && <p className={"page__header__subtitle"}><InfoIcon size={14}/>{label}</p>}
     </header>
   );
 };

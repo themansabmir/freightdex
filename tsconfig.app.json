@@ -25,10 +25,11 @@
     "paths": {
       "@app/*": ["app/*"],
       "@shared/*": ["shared/*"],
-      "@sharedComponents/*" :["shared"],
+      "@sharedComponents/*": ["shared"],
       "@scss/*": ["scss/*"],
       "@context/*": ["context/*"],
       "@modules/*": ["modules/*"],
+      "@generator/*":["generator/*"]
     }
   },
   "include": ["src"]
