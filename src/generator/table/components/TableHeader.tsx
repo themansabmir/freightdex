@@ -28,7 +28,7 @@ const Columns = <TData,>({ table }: ColumnsProps<TData>) => {
                     ? `Sort by ${header.column.columnDef.header}`
                     : undefined
                 }
-                style={{ width: header.getSize() }}
+                style={{ width: "auto", whiteSpace:'nowrap' }}
               >
                 {!header.isPlaceholder && (
                   <>

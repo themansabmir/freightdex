@@ -11,12 +11,12 @@ export interface PaginationObj {
 }
 export interface PaginationProps<TData> {
   pagination: PaginationObj;
-  setPagination: OnChangeFn<PaginationState>; // ✅ Corrected Type
+  setPagination: OnChangeFn<PaginationState>; 
   table: Table<TData>;
 }
 
 
-export interface UseTableLogicProps<TData> {
+export interface UseTableLogicProps<TData extends object> {
   data: TData[];
   columns: ColumnDef<TData, any>[];
   sortColumnArr: SortingState;
@@ -29,4 +29,5 @@ export interface UseTableLogicProps<TData> {
   getRowId?: (row: TData, index: number) => string;
   enableManualSorting?: boolean;
   enableRowsSelection?: boolean;
+  isLoading?: boolean
 }

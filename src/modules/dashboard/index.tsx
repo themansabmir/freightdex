@@ -21,7 +21,7 @@ const DashboardPage = () => {
     setSelected((prev) =>
       prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
     );
-    
+
   };
 
   return (
@@ -29,6 +29,7 @@ const DashboardPage = () => {
       DashboardPage
       <h2>Tag Picker Example (No RSuite)</h2>
       <MultiSelectInput
+        label="Select Fruits"
         options={fruitOptions}
         name='Search'
         selectedValues={selected}

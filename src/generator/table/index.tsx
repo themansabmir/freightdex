@@ -4,7 +4,7 @@ import TableBody from "./components/TableBody";
 import TableFooter from "./components/TableFooter";
 import { UseTableLogicProps } from "./table.types";
 
-const Table = <TData,>({
+const Table = <TData extends object,>({
   data,
   columns,
   sortColumnArr,
@@ -40,7 +40,7 @@ const Table = <TData,>({
   return (
     <div>
       <div className='table__container'>
-        <table role='table' aria-label='Data Table' >
+        <table role='table' aria-label='Data Table'>
           <TableHeader table={table} />
           {/* TABLE HEAD */}
 
@@ -48,11 +48,11 @@ const Table = <TData,>({
           <TableBody table={table} />
 
           {/* PAGINATION COMPONENT */}
-        <TableFooter
-          pagination={pagination}
-          setPagination={setPagination}
-          table={table}
-        />
+          <TableFooter
+            pagination={pagination}
+            setPagination={setPagination}
+            table={table}
+          />
         </table>
       </div>
     </div>

@@ -51,5 +51,8 @@
         font-size: 14px;
         color: $neutral-50;
         margin: 4px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
     }
 }
