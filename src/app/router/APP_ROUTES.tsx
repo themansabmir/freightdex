@@ -1,6 +1,7 @@
 export const APP_ROUTES = {
   DASHBORD: "/",
   VENDOR: "/vendor",
+  AIRPORT: "/airport",
   Port: "/port",
 } as const;
 

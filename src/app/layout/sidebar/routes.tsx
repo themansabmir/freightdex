@@ -24,6 +24,11 @@ const internalSidebarRoutes: SidebarItem[] = [
         to: APP_ROUTES.Port,
         icon: <TextQuote fill="none" size={18} />,
       },
+      {
+        label: "Airport",
+        to: APP_ROUTES.AIRPORT,
+        icon: <TextQuote fill='none' size={18} />,
+      },
     ],
   },
 ];
