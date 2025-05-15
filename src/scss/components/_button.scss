@@ -211,6 +211,10 @@ button:disabled{
     &.DS__btn--destructive {
       border-color: $destructive-60;
       color: $destructive-60;
+      &:hover{
+        background-color: $destructive-60;
+        color: $white;
+      }
     }
   }
 

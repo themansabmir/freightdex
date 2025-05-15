@@ -1,6 +1,5 @@
 import MultiSelectInput from "@shared/components/Dropdown";
 import { useState } from "react";
-
 const DashboardPage = () => {
   const fruitOptions = [
     { label: "Apple", value: "apple" },

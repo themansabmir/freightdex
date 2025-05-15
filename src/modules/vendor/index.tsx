@@ -10,8 +10,8 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import useVendorPage, { User } from "./hooks/useVendor";
+import { Stack } from "@shared/components/Stack";
 const Vendor = () => {
-
   /*
   ###################
         STATES
@@ -20,7 +20,7 @@ const Vendor = () => {
   const {
     columns: vendorColumns,
     data: vendorData,
-    formSchema:vendorFormSchema,
+    formSchema: vendorFormSchema,
   } = useVendorPage();
   const [isForm, setIsForm] = useState<boolean>(false);
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
@@ -30,7 +30,6 @@ const Vendor = () => {
     pageSize: 50,
   });
   const [formData, setFormData] = useState<Data>({});
-
 
   const getRowId = (row: User) => row.id;
   return (
@@ -42,7 +41,7 @@ const Vendor = () => {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Vendor" }]} />
       {!isForm ? (
         <>
-          <div style={{ marginRight: "10px" }}>
+          <div>
             <div style={{ display: "flex", justifyContent: "end" }}>
               <Button onClick={() => setIsForm(true)}>+Add New</Button>
             </div>
@@ -67,6 +66,12 @@ const Vendor = () => {
             data={formData}
             setData={setFormData}
           />
+          <Stack gap='1em' direction='horizontal' justify='end' align='center'>
+            <Button type='outline' variant='destructive'>
+              Cancel
+            </Button>
+            <Button>Submit</Button>
+          </Stack>
         </>
       )}
     </>

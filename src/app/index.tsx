@@ -3,9 +3,9 @@ import "./_app.scss";
 import { browserRouterRoutes } from "./router/BROWSER_ROUTER";
 export function App() {
   return (
-    <RouterProvider
-      router={browserRouterRoutes}
-    />
+    <>
+      <RouterProvider router={browserRouterRoutes} />
+    </>
   );
 }
 
