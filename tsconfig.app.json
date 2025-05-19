@@ -29,7 +29,9 @@
       "@scss/*": ["scss/*"],
       "@context/*": ["context/*"],
       "@modules/*": ["modules/*"],
-      "@generator/*":["generator/*"]
+      "@generator/*": ["generator/*"],
+      "@api/*": ["api/*"],
+      "@lib/*": ["lib/*"],
     }
   },
   "include": ["src"]

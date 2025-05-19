@@ -3,31 +3,53 @@ import { Checkbox } from "@shared/components";
 import Column from "@shared/components/Column";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
-export interface User {
+
+export interface IVendor {
   id: string;
-  company_name: string;
-  vendor_type: string;
-  city: string;
-  pin_code: string;
-  country: string;
-  telephone: string;
-  mobile_number: string;
-  gst_number: string;
-  pan_number: string;
-  fax: number;
+  vendor_name: string;
+  vendor_type: string[];
+  locations: [
+    {
+      city: string;
+      pin_code: string;
+      country: string;
+      address: string;
+      state: string;
+      telephone: string;
+      mobile_number: string;
+      gst_number: string;
+      pan_number: string;
+      fax: number;
+    }
+  ];
+  [key: string]: unknown;
+}
+export enum EVendor {
+  vendor_name = "vendor_name",
+  vendor_type = "vendor_type",
+  city = "city",
+  state = "state",
+  address = "address",
+  pin_code = "pin_code",
+  country = "country",
+  telephone = "telephone",
+  mobile_number = "mobile_number",
+  gst_number = "gst_number",
+  pan_number = "pan_number",
+  fax = "fax",
 }
 
 export const useVendorPage = () => {
   const formSchema: FieldSchema[] = [
     {
-      name: "vendor_name",
+      name: EVendor.vendor_name,
       label: "Vendor Name",
       type: "text",
       required: true,
     },
 
     {
-      name: "vendor_type",
+      name: EVendor.vendor_type,
       label: "Vendor Type",
       type: "multiselect",
       options: [
@@ -47,61 +69,61 @@ export const useVendorPage = () => {
         type: "group",
         fields: [
           {
-            name: "city",
+            name: EVendor.city,
             label: "City",
             type: "text",
             required: true,
           },
           {
-            name: "address",
+            name: EVendor.address,
             label: "Address",
             type: "text",
             required: true,
           },
           {
-            name: "state",
+            name: EVendor.state,
             label: "State",
             type: "text",
             required: true,
           },
           {
-            name: "country",
+            name: EVendor.country,
             label: "Country",
             type: "text",
             required: true,
           },
           {
-            name: "pincode",
+            name: EVendor.pin_code,
             label: "Pin Code",
             type: "text",
             required: true,
           },
           {
-            name: "telephone",
+            name: EVendor.telephone,
             label: "Telephone",
             type: "text",
             required: true,
           },
           {
-            name: "mobile",
+            name: EVendor.mobile_number,
             label: "Mobile Number",
             type: "text",
             required: true,
           },
           {
-            name: "fax",
+            name: EVendor.fax,
             label: "FAX",
             type: "text",
             required: true,
           },
           {
-            name: "gst_number",
+            name: EVendor.gst_number,
             label: "GST Number",
             type: "text",
             required: true,
           },
           {
-            name: "pan_number",
+            name: EVendor.pan_number,
             label: "Pan Number",
             type: "text",
             required: true,
@@ -113,26 +135,35 @@ export const useVendorPage = () => {
 
   const generateDummyData = (count: number) => {
     const statuses = ["Single", "In Relationship", "Complicated", "Married"];
-    return Array.from({ length: count }, (_, i) => ({
-      company_name: `First${i + 1} long String Content to show in column`,
-      vendor_type: statuses[Math.floor(Math.random() * statuses.length)],
-      city: statuses[Math.floor(Math.random() * statuses.length)],
-      pin_code: statuses[Math.floor(Math.random() * statuses.length)],
-      country: statuses[Math.floor(Math.random() * statuses.length)],
-      telephone: statuses[Math.floor(Math.random() * statuses.length)],
-
-      mobile_number: statuses[Math.floor(Math.random() * statuses.length)], // Random status
-      gst_number: String(Math.floor(Math.random() * 100)), // Progress between 0-100
-      id: String(i + 10),
-      pan_number: String(Math.floor(Math.random() * 100)),
-      fax: Math.floor(Math.random() * 100),
-    }));
+    return Array.from(
+      { length: count },
+      (_, i): IVendor => ({
+        vendor_name: `First${i + 1} long String Content to show in column`,
+        vendor_type: ["shipper"],
+        id: String(i + 10),
+        locations: [
+          {
+            city: statuses[Math.floor(Math.random() * statuses.length)],
+            pin_code: statuses[Math.floor(Math.random() * statuses.length)],
+            country: statuses[Math.floor(Math.random() * statuses.length)],
+            telephone: statuses[Math.floor(Math.random() * statuses.length)],
+            mobile_number:
+              statuses[Math.floor(Math.random() * statuses.length)], // Random status
+            address: "my address",
+            state: "delhi",
+            gst_number: String(Math.floor(Math.random() * 100)), // Progress between 0-100
+            pan_number: String(Math.floor(Math.random() * 100)),
+            fax: Math.floor(Math.random() * 100),
+          },
+        ],
+      })
+    );
   };
   const data = useMemo(() => {
     return generateDummyData(50);
   }, []);
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<IVendor>[] = [
     {
       id: "id",
       size: 4,
@@ -157,59 +188,59 @@ export const useVendorPage = () => {
     },
 
     {
-      accessorKey: "company_name",
-      header: ({ header }) => <Column header={header} title={"Company Name"} />,
+      accessorKey: EVendor.vendor_name,
+      header: ({ header }) => <Column header={header} title={"Vendor Name"} />,
     },
     {
-      accessorKey: "vendor_type",
+      accessorKey: EVendor.vendor_type,
       header: ({ header }) => <Column header={header} title={"Vendor Type"} />,
     },
     {
-      accessorKey: "city",
+      accessorKey: EVendor.city,
       header: ({ header }) => <Column header={header} title={"City"} />,
+      cell: ({ row }) => <div>{row.original.locations[0]?.city}</div>,
     },
 
     {
-      accessorKey: "pin_code",
+      accessorKey: EVendor.pin_code,
       header: () => <button>Pin Code</button>,
 
-      cell: ({ row }) => <div>{row.original.pin_code}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0]?.pin_code}</div>,
     },
     {
-      accessorKey: "country",
+      accessorKey: EVendor.country,
       header: () => <button>Country</button>,
 
-      cell: ({ row }) => <div>{row.original.country}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0]?.country}</div>,
     },
     {
-      accessorKey: "telephone",
+      accessorKey: EVendor.telephone,
       header: () => <button>Telephone</button>,
 
-      cell: ({ row }) => <div>{row.original.telephone}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0]?.telephone}</div>,
     },
     {
-      accessorKey: "mobile_number",
+      accessorKey: EVendor.mobile_number,
       header: () => <button>Mobile</button>,
 
-      cell: ({ row }) => <div>{row.original.mobile_number}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0].mobile_number}</div>,
     },
     {
-      accessorKey: "fax",
+      accessorKey: EVendor.fax,
       header: () => <button>Fax</button>,
 
-      cell: ({ row }) => <div>{row.original.fax}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0].fax}</div>,
     },
     {
-      accessorKey: "gst_number",
+      accessorKey: EVendor.gst_number,
       header: () => <button>GST</button>,
 
-      cell: ({ row }) => <div>{row.original.gst_number}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0].gst_number}</div>,
     },
     {
-      accessorKey: "pan_number",
+      accessorKey: EVendor.pan_number,
       header: () => <button>PAN</button>,
-
-      cell: ({ row }) => <div>{row.original.pan_number}</div>,
+      cell: ({ row }) => <div>{row.original.locations[0].pan_number}</div>,
     },
   ];
 
@@ -217,6 +248,3 @@ export const useVendorPage = () => {
 };
 
 export default useVendorPage;
-
-
-

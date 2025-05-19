@@ -4,10 +4,11 @@ import Column from "@shared/components/Column";
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-export interface Port {
+export interface IPort {
   port_name: string;
   port_code: string;
   id: string;
+  [key: string] : unknown
 }
 
 export const usePortPage = () => {
@@ -26,7 +27,7 @@ export const usePortPage = () => {
     },
   ];
 
-  const generateDummyData = (count: number): Port[] => {
+  const generateDummyData = (count: number): IPort[] => {
     const statuses = ["24wL89", "9876p32", "20KG543", "J4N238"];
     return Array.from({ length: count }, (_, i) => ({
       port_name: `Ship${i + 1} Which is going to port everything`,
@@ -37,7 +38,7 @@ export const usePortPage = () => {
 
   const data = useMemo(() => generateDummyData(50), []);
 
-  const columns: ColumnDef<Port>[] = [
+  const columns: ColumnDef<IPort>[] = [
     {
       id: "id",
       size: 4,

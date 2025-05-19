@@ -45,7 +45,6 @@ const TableFooter = <TData,>({
               <Button
                 onClick={() => table.setPageIndex(0)}
                 aria-disabled={!table.getCanPreviousPage()}
-                btnType='button'
                 variant={table.getCanPreviousPage() ? "primary" : "neutral"}
                 shape='rounded'
                 type='ghost'
@@ -55,7 +54,6 @@ const TableFooter = <TData,>({
               <Button
                 onClick={() => table.previousPage()}
                 aria-disabled={!table.getCanPreviousPage()}
-                btnType='button'
                 variant={table.getCanPreviousPage() ? "primary" : "neutral"}
                 shape='rounded'
                 type='ghost'
@@ -66,7 +64,6 @@ const TableFooter = <TData,>({
                 onClick={() => table.getCanNextPage() && table.nextPage()}
                 aria-disabled={!table.getCanNextPage()}
                 disabled={!table.getCanNextPage()}
-                btnType='button'
                 variant='primary'
                 shape='rounded'
                 type='ghost'
@@ -76,7 +73,6 @@ const TableFooter = <TData,>({
               <Button
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 aria-disabled={!table.getCanNextPage()}
-                btnType='button'
                 variant='primary'
                 shape='rounded'
                 type='ghost'

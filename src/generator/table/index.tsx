@@ -17,6 +17,7 @@ const Table = <TData extends object,>({
   pagination,
   setPagination,
   rowCount,
+  isLoading
 }: UseTableLogicProps<TData>) => {
   const table = useReactTable({
     data,

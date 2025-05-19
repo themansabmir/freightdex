@@ -9,7 +9,7 @@ import {
   RowSelectionState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import usePortPage, { Port } from "./hooks/usePort";
+import usePortPage, { IPort, Port } from "./hooks/usePort";
 
 const PortForm = () => {
   const {
@@ -25,13 +25,17 @@ const PortForm = () => {
     pageIndex: 0,
     pageSize: 50,
   });
-  const [formData, setFormData] = useState<Data>({});
+  const [formData, setFormData] = useState<IPort>({
+    port_code: '',
+    port_name: '',
+    id:''
+  });
 
   const getRowId = (row: Port) => row.id;
 
   const handleCancel = () => {
     setIsForm(false);
-    setFormData({});
+    setFormData({port_code:'', port_name:'', id:''});
   };
 
   const handleSubmit = () => {

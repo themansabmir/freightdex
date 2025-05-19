@@ -160,8 +160,8 @@ function RenderArrayField({
   );
 }
 
-function DynamicForm({ schema, data, setData }: DynamicFormProps) {
-  const handleChange = (name: string, val: any) => {
+function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData }: DynamicFormProps<T>) {
+  const handleChange = (name: string, val: unknown) => {
     setData({ ...data, [name]: val });
   };
 
