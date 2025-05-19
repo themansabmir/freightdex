@@ -1,16 +1,15 @@
 import DynamicForm from "@generator/form";
-import { Data } from "@generator/form/index.types";
 import Table from "@generator/table";
-import { Button } from "@shared/components";
+import { Button, TextField } from "@shared/components";
 import Header, { Breadcrumb } from "@shared/components/BreadCrumbs";
+import { Stack } from "@shared/components/Stack";
 import {
   ColumnSort,
   PaginationState,
   RowSelectionState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import useVendorPage, { User } from "./hooks/useVendor";
-import { Stack } from "@shared/components/Stack";
+import useVendorPage, { IVendor } from "./hooks/useVendor";
 const Vendor = () => {
   /*
   ###################
@@ -29,9 +28,35 @@ const Vendor = () => {
     pageIndex: 0,
     pageSize: 50,
   });
-  const [formData, setFormData] = useState<Data>({});
 
-  const getRowId = (row: User) => row.id;
+
+  const  [query, setQuery] = useState<string>("")
+  const [formData, setFormData] = useState<Partial<IVendor>>({
+    vendor_name: "",
+    vendor_type: [],
+    id: "",
+    locations: [
+      {
+        city: "",
+        country: "",
+        state: "",
+        pan_number: "",
+        address: "",
+        gst_number: "",
+        fax: 0,
+        mobile_number: "",
+        pin_code: "",
+        telephone: "",
+      },
+    ],
+  });
+  const handleClick = () => {
+    setIsForm(true);
+    setFormData({})
+    setFormData(vendorData[0]);
+  };
+
+  const getRowId = (row: IVendor) => row.id;
   return (
     <>
       <Header
@@ -41,23 +66,27 @@ const Vendor = () => {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Vendor" }]} />
       {!isForm ? (
         <>
-          <div>
-            <div style={{ display: "flex", justifyContent: "end" }}>
-              <Button onClick={() => setIsForm(true)}>+Add New</Button>
-            </div>
-            <Table
-              columns={vendorColumns}
-              data={vendorData}
-              getRowId={getRowId}
-              sortColumnArr={sorting}
-              sortingHandler={setSorting}
-              selectedRowsArr={rows}
-              selectRowsHandler={setRows}
-              pagination={pagination}
-              setPagination={setPagination}
-              rowCount={vendorData.length}
+          <div className='flex justify-between'>
+            <TextField
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              placeholder='Search Vendor'
             />
+            <Button onClick={() => handleClick()}>+Add New</Button>
           </div>
+          <Table
+            columns={vendorColumns}
+            data={vendorData}
+            getRowId={getRowId}
+            sortColumnArr={sorting}
+            sortingHandler={setSorting}
+            selectedRowsArr={rows}
+            selectRowsHandler={setRows}
+            pagination={pagination}
+            setPagination={setPagination}
+            rowCount={vendorData.length}
+            isLoading={true}
+          />
         </>
       ) : (
         <>

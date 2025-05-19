@@ -76,13 +76,14 @@ export interface RenderGroupProps {
 export interface RenderArrayFieldProps {
   field: ArrayFieldSchema;
   value: Data[];
-  onChange: (val: any[]) => void;
+  onChange: (val: unknown[]) => void;
 }
 export type Data = {
   [key: string]: string | number | boolean | string[] | Data[];
 };
-export interface DynamicFormProps {
+
+export interface DynamicFormProps<T extends Record<string, any>> {
   schema: FieldSchema[];
-  data: Data;
-  setData: (item: Data) => void;
+  data: T;
+  setData: React.Dispatch<React.SetStateAction<T>>;
 }

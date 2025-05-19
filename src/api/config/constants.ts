@@ -20,7 +20,6 @@ type EnvKey = keyof typeof envEnum;
 function getBaseUrl(): string {
   console.log(env)
 
-  throw new Error("Testing")
   if (!env || !(env in envEnum)) {
     throw new Error(
       `[getBaseUrl] Invalid VITE_NODE_ENV: '${env}'. Must be one of: ${Object.keys(
