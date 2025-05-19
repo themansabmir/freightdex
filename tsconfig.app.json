@@ -30,7 +30,8 @@
       "@context/*": ["context/*"],
       "@modules/*": ["modules/*"],
       "@generator/*": ["generator/*"],
-      "@api/*": ["api/*"]
+      "@api/*": ["api/*"],
+      "@lib/*": ["lib/*"],
     }
   },
   "include": ["src"]

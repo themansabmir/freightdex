@@ -14,6 +14,7 @@ export default defineConfig({
       "@modules": path.resolve(__dirname, "src/modules"),
       "@generator": path.resolve(__dirname, "src/generator"),
       "@api": path.resolve(__dirname, "src/api"),
+      "@lib": path.resolve(__dirname, "src/lib"),
     },
   },
   css: {

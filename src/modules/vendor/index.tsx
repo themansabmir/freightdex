@@ -52,9 +52,11 @@ const Vendor = () => {
   });
   const handleClick = () => {
     setIsForm(true);
-    setFormData({})
-    setFormData(vendorData[0]);
   };
+  const handleCancel = () => {
+    setIsForm(false)
+    setFormData({})
+  }
 
   const getRowId = (row: IVendor) => row.id;
   return (
@@ -68,6 +70,7 @@ const Vendor = () => {
         <>
           <div className='flex justify-between'>
             <TextField
+              label="Search Vendor"
               onChange={(e) => setQuery(e.target.value)}
               value={query}
               placeholder='Search Vendor'
@@ -96,7 +99,7 @@ const Vendor = () => {
             setData={setFormData}
           />
           <Stack gap='1em' direction='horizontal' justify='end' align='center'>
-            <Button type='outline' variant='destructive'>
+            <Button type='outline' variant='destructive' onClick={handleCancel}>
               Cancel
             </Button>
             <Button>Submit</Button>
