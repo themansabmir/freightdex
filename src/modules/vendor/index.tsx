@@ -1,17 +1,16 @@
 import DynamicForm from "@generator/form";
-import { Data } from "@generator/form/index.types";
 import Table from "@generator/table";
-import { Button } from "@shared/components";
+import { Button, TextField } from "@shared/components";
 import Header, { Breadcrumb } from "@shared/components/BreadCrumbs";
+import { Stack } from "@shared/components/Stack";
 import {
   ColumnSort,
   PaginationState,
   RowSelectionState,
 } from "@tanstack/react-table";
 import { useState } from "react";
-import useVendorPage, { User } from "./hooks/useVendor";
+import useVendorPage, { IVendor } from "./hooks/useVendor";
 const Vendor = () => {
-
   /*
   ###################
         STATES
@@ -20,7 +19,7 @@ const Vendor = () => {
   const {
     columns: vendorColumns,
     data: vendorData,
-    formSchema:vendorFormSchema,
+    formSchema: vendorFormSchema,
   } = useVendorPage();
   const [isForm, setIsForm] = useState<boolean>(false);
   const [sorting, setSorting] = useState<ColumnSort[]>([]);
@@ -29,10 +28,37 @@ const Vendor = () => {
     pageIndex: 0,
     pageSize: 50,
   });
-  const [formData, setFormData] = useState<Data>({});
 
 
-  const getRowId = (row: User) => row.id;
+  const  [query, setQuery] = useState<string>("")
+  const [formData, setFormData] = useState<Partial<IVendor>>({
+    vendor_name: "",
+    vendor_type: [],
+    id: "",
+    locations: [
+      {
+        city: "",
+        country: "",
+        state: "",
+        pan_number: "",
+        address: "",
+        gst_number: "",
+        fax: 0,
+        mobile_number: "",
+        pin_code: "",
+        telephone: "",
+      },
+    ],
+  });
+  const handleClick = () => {
+    setIsForm(true);
+  };
+  const handleCancel = () => {
+    setIsForm(false)
+    setFormData({})
+  }
+
+  const getRowId = (row: IVendor) => row.id;
   return (
     <>
       <Header
@@ -42,23 +68,28 @@ const Vendor = () => {
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Vendor" }]} />
       {!isForm ? (
         <>
-          <div style={{ marginRight: "10px" }}>
-            <div style={{ display: "flex", justifyContent: "end" }}>
-              <Button onClick={() => setIsForm(true)}>+Add New</Button>
-            </div>
-            <Table
-              columns={vendorColumns}
-              data={vendorData}
-              getRowId={getRowId}
-              sortColumnArr={sorting}
-              sortingHandler={setSorting}
-              selectedRowsArr={rows}
-              selectRowsHandler={setRows}
-              pagination={pagination}
-              setPagination={setPagination}
-              rowCount={vendorData.length}
+          <div className='flex justify-between'>
+            <TextField
+              label="Search Vendor"
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              placeholder='Search Vendor'
             />
+            <Button onClick={() => handleClick()}>+Add New</Button>
           </div>
+          <Table
+            columns={vendorColumns}
+            data={vendorData}
+            getRowId={getRowId}
+            sortColumnArr={sorting}
+            sortingHandler={setSorting}
+            selectedRowsArr={rows}
+            selectRowsHandler={setRows}
+            pagination={pagination}
+            setPagination={setPagination}
+            rowCount={vendorData.length}
+            isLoading={true}
+          />
         </>
       ) : (
         <>
@@ -67,6 +98,12 @@ const Vendor = () => {
             data={formData}
             setData={setFormData}
           />
+          <Stack gap='1em' direction='horizontal' justify='end' align='center'>
+            <Button type='outline' variant='destructive' onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button>Submit</Button>
+          </Stack>
         </>
       )}
     </>

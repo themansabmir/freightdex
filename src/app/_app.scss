@@ -86,4 +86,12 @@
     scroll-behavior: smooth;
     padding-left: 1em;
     background: white;
+    margin-right: -1em;
+}
+
+.check_online {
+    background-color: $destructive-50;
+    color: $neutral-30;
+    padding: 0.5em;
+    text-align: center;
 }
