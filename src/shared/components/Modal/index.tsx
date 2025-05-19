@@ -1,42 +1,62 @@
-import React, { useEffect, useRef } from "react";
+import React, { ReactNode } from "react";
+import classNames from "classnames";
 
-const Modal = ({ isOpen, onClose, children, size = "md" }) => {
-  const modalRef = useRef(null);
+type ModalSize = "sm" | "md" | "lg";
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose?.();
-      }
-    };
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  allowDismiss?: boolean ,
+  size?: ModalSize;
+  children: ReactNode;
+  className?: string;
+}
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+interface ModalSubComponentProps {
+  children: ReactNode;
+  className?: string;
+}
 
+const ModalHeader: React.FC<ModalSubComponentProps> = ({
+  children,
+  className,
+}) => <div className={classNames("modal__header", className)}>{children}</div>;
+
+const ModalBody: React.FC<ModalSubComponentProps> = ({
+  children,
+  className,
+}) => <div className={classNames("modal__body", className)}>{children}</div>;
+
+const ModalFooter: React.FC<ModalSubComponentProps> = ({
+  children,
+  className,
+}) => <div className={classNames("modal__footer", className)}>{children}</div>;
+
+export const Modal: React.FC<ModalProps> & {
+  Header: typeof ModalHeader;
+  Body: typeof ModalBody;
+  Footer: typeof ModalFooter;
+} = ({ isOpen, onClose, size = "md", children, className , allowDismiss= true}) => {
   if (!isOpen) return null;
 
   return (
-    <div>
-      <div ref={modalRef}>{children}</div>
+    <div className='modal__overlay' onClick={() => {
+      if (allowDismiss===false) return
+      console.log(allowDismiss)
+      onClose()
+    }}>
+      <div
+        className={classNames("modal", `modal--${size}`, className)}
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
 
-Modal.Header = ({ children }) => (
-  <div >{children}</div>
-);
-
-Modal.Body = ({ children }) => (
-  <div>{children}</div>
-);
-
-Modal.Footer = ({ children }) => (
-  <div>{children}</div>
-);
-
-export default Modal;
+Modal.Header = ModalHeader;
+Modal.Body = ModalBody;
+Modal.Footer = ModalFooter;
