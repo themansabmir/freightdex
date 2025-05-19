@@ -1,0 +1,46 @@
+@use '../variables' as *;
+
+.modal__overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal {
+  background-color: $white;
+  border-radius: 8px;
+  max-height: 60vh;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 900vw;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+
+  &--sm {
+    max-width: 450px;
+  }
+
+  &--md {
+    max-width: 600px;
+  }
+
+  &--lg {
+    max-width: 900px;
+  }
+}
+
+.modal__header,
+.modal__footer {
+  padding: 0.5rem 0;
+  border: 1px solid $neutral-30;
+}
+
+.modal__body {
+  flex: 1;
+  overflow-y: auto;
+}
