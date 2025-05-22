@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import Sidebar from "./sidebar";
 import { BellRing } from "lucide-react";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className='body'>

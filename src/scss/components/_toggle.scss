@@ -1,5 +1,8 @@
 @use '../variables' as *;
 
+.toggle-button__label{
+  color:$neutral-30
+}
 .toggle-button {
   position: relative;
   display: inline-block;

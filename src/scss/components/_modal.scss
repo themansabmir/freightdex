@@ -43,4 +43,24 @@
 .modal__body {
   flex: 1;
   overflow-y: auto;
+  min-height: 10vh;
+}
+
+
+
+.action_dialog_box {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  padding: 0.5em 1em;
+  border: 1px solid $neutral-30; // light gray
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 12px;
+  z-index: 50;
+  align-items: center;
+
 }

@@ -41,14 +41,14 @@
     text-align: left;
 
     .page__header__title {
-        font-size: 32px;
+        font-size: $font-size-display-sm;
         font-weight: bold;
         color: $neutral-80;
         margin: 0;
     }
 
     .page__header__subtitle {
-        font-size: 14px;
+        font-size: $font-size-sm;
         color: $neutral-50;
         margin: 4px 0 0;
         display: flex;

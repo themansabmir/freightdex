@@ -68,12 +68,14 @@ interface RenderFieldProps {
 }
 
 export interface RenderGroupProps {
+  isViewMode?: boolean;
   fields: GroupFieldSchema["fields"];
   value: any;
   onChange: (val: any) => void;
   columns?: number;
 }
 export interface RenderArrayFieldProps {
+  isViewMode?: boolean;
   field: ArrayFieldSchema;
   value: Data[];
   onChange: (val: unknown[]) => void;
@@ -84,6 +86,7 @@ export type Data = {
 
 export interface DynamicFormProps<T extends Record<string, any>> {
   schema: FieldSchema[];
+  isViewMode: boolean;
   data: T;
   setData: React.Dispatch<React.SetStateAction<T>>;
 }

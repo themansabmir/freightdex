@@ -8,12 +8,12 @@ const TableFooter = <TData,>({
   setPagination,
 }: PaginationProps<TData>) => {
   return (
-    <tfoot className='table-footer'>
+    <tfoot className="table-footer">
       <tr>
         <td colSpan={table.getAllColumns().length}>
-          <div className='pagination-container'>
+          <div className="pagination-container">
             {/* Rows per page */}
-            <div className='rows-per-page'>
+            <div className="rows-per-page">
               <span>Rows per page:</span>
               <select
                 value={pagination.pageSize}
@@ -23,8 +23,8 @@ const TableFooter = <TData,>({
                     pageSize: Number(event.target.value),
                   })
                 }
-                aria-label='Rows per page'
-                aria-controls='table-pagination'
+                aria-label="Rows per page"
+                aria-controls="table-pagination"
               >
                 {[10, 20, 30, 40, 50, 100].map((size) => (
                   <option key={size} value={size}>
@@ -35,28 +35,27 @@ const TableFooter = <TData,>({
             </div>
 
             {/* Page x of total */}
-            <span className='pagination-info'>
-              Page <strong>{pagination.pageIndex + 1}</strong> of{" "}
-              <strong>{table.getPageCount()}</strong>
+            <span className="pagination-info">
+              Page <strong>{pagination.pageIndex + 1}</strong> of <strong>{table.getPageCount()}</strong>
             </span>
 
             {/* Pagination Buttons */}
-            <div className='pagination-buttons'>
+            <div className="pagination-buttons">
               <Button
                 onClick={() => table.setPageIndex(0)}
                 aria-disabled={!table.getCanPreviousPage()}
-                variant={table.getCanPreviousPage() ? "primary" : "neutral"}
-                shape='rounded'
-                type='ghost'
+                variant={table.getCanPreviousPage() ? 'primary' : 'neutral'}
+                shape="rounded"
+                type="ghost"
               >
                 <ChevronsLeft />
               </Button>
               <Button
                 onClick={() => table.previousPage()}
                 aria-disabled={!table.getCanPreviousPage()}
-                variant={table.getCanPreviousPage() ? "primary" : "neutral"}
-                shape='rounded'
-                type='ghost'
+                variant={table.getCanPreviousPage() ? 'primary' : 'neutral'}
+                shape="rounded"
+                type="ghost"
               >
                 <ChevronLeft />
               </Button>
@@ -64,18 +63,18 @@ const TableFooter = <TData,>({
                 onClick={() => table.getCanNextPage() && table.nextPage()}
                 aria-disabled={!table.getCanNextPage()}
                 disabled={!table.getCanNextPage()}
-                variant='primary'
-                shape='rounded'
-                type='ghost'
+                variant="primary"
+                shape="rounded"
+                type="ghost"
               >
                 <ChevronRight />
               </Button>
               <Button
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 aria-disabled={!table.getCanNextPage()}
-                variant='primary'
-                shape='rounded'
-                type='ghost'
+                variant="primary"
+                shape="rounded"
+                type="ghost"
               >
                 <ChevronsRight />
               </Button>

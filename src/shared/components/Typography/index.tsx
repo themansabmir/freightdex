@@ -22,7 +22,7 @@ const typographyClasses = classNames({
 });
 
 
-  return <Component className={typographyClasses}>{children}</Component>;
+  return <Component className={typographyClasses} >{children}</Component>;
 };
 
 export default Typography;

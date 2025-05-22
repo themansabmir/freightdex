@@ -15,7 +15,7 @@ interface HeadlessInputFieldProps
   isError?: boolean;
   value?: string;
   onChange?: (
-    event: ChangeEvent<HTMLInputElement> 
+    event: ChangeEvent<HTMLInputElement>
   ) => void;
   prefixIcon?: ReactNode;
   suffixIcon?: ReactNode;
@@ -48,6 +48,7 @@ const HeadlessInputField: React.FC<HeadlessInputFieldProps> = ({
   };
 
   const handleClear = () => {
+    if(rest.disabled) return 
     setInternalValue("");
     if (onChange && name) {
       onChange({ target: { name, value: '' } });

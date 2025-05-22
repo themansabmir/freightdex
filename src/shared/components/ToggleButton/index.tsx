@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useId, useState } from 'react';
 import classNames from 'classnames';
 
 
 export interface ToggleButtonProps {
+  label: string,
   id?: string;
-  disabled: boolean;
+  disabled?: boolean;
   variant?: 'primary' | 'success' | 'neutral' | 'warning' | 'destructive';
   size?: 'small' | 'medium' ;
   defaultChecked?: boolean;
@@ -13,6 +14,7 @@ export interface ToggleButtonProps {
 }
 
 export const ToggleButton: React.FC<ToggleButtonProps> = ({
+  label,
   variant = 'primary',
   size = 'medium',
   defaultChecked = false,
@@ -39,19 +41,30 @@ export const ToggleButton: React.FC<ToggleButtonProps> = ({
   const thumbClasses = classNames('toggle-button__thumb', {
     'toggle-button__thumb--checked': checked,
   });
+  const generatedId = useId();
 
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={ariaLabel}
-      className={buttonClasses}
-      disabled={disabled}
-      onClick={handleToggle}
-    >
-      <span className={thumbClasses} />
-    </button>
+    <div className='flex items-center gap-2 mb-4'>
+      {label && (
+        <label
+          htmlFor={generatedId} // Link the label to the button using its ID
+          className="sub_label"
+        >
+          {label}
+        </label>
+      )}
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={ariaLabel}
+        className={buttonClasses}
+        disabled={disabled}
+        onClick={handleToggle}
+      >
+        <span className={thumbClasses} />
+      </button>
+    </div>
   );
 };
 

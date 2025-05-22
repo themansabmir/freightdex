@@ -33,35 +33,46 @@ api.interceptors.request.use(
 // ✅ Response Interceptor
 api.interceptors.response.use(
   (response) => {
-    // Optionally log or transform responses here
+    // You can transform or log responses here
     return response;
   },
   (error) => {
-    // Centralized error handling
     const { response } = error;
 
+    const message =
+      response?.data?.message ||
+      response?.data?.error ||
+      error?.message ||
+      "Unknown error occurred";
+
     if (!response) {
+      // Network error (timeout, DNS fail, etc)
       console.error("Network error or timeout");
-    } else {
-      switch (response.status) {
-        case 401:
-          // Unauthorized - maybe redirect to login
-          console.warn("Unauthorized, logging out...");
-          localStorage.removeItem("token");
-          window.location.href = "/login";
-          break;
-        case 403:
-          console.warn("Forbidden");
-          break;
-        case 500:
-          console.error("Server error");
-          break;
-        default:
-          console.warn("Unhandled error:", response.status);
-          break;
-      }
+      return Promise.reject(new Error("Network error or timeout"));
     }
 
-    return Promise.reject(error);
+    // Optional: Log or handle specific status codes
+    switch (response.status) {
+      case 401:
+        console.warn("Unauthorized, logging out...");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        break;
+
+      case 403:
+        console.warn("Forbidden");
+        break;
+
+      case 500:
+        console.error("Server error");
+        break;
+
+      default:
+        console.warn("Unhandled error:", response.status);
+        break;
+    }
+
+    // Always return the standardized error
+    return Promise.reject(new Error(message));
   }
 );

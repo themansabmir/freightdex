@@ -1,0 +1,42 @@
+.loader-container {
+    // display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // justify-content: center;
+    padding: 1rem;
+}
+
+.spinner {
+    border-radius: 50%;
+    border: 4px solid #ccc;
+    border-top: 4px solid #3498db;
+    animation: spin 1s linear infinite;
+    margin-bottom: 0.5rem;
+
+    &.sm {
+        width: 16px;
+        height: 16px;
+        border-width: 2px;
+    }
+
+    &.md {
+        width: 32px;
+        height: 32px;
+    }
+
+    &.lg {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+.loader-message {
+    font-size: 0.875rem;
+    color: #555;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
