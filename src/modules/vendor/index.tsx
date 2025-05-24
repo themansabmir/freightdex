@@ -8,11 +8,12 @@ import { Stack } from '@shared/components/Stack';
 import { useModal } from '@shared/hooks/useModa';
 import { generatePageTitle } from '@shared/utils';
 import { ColumnSort, PaginationState, RowSelectionState } from '@tanstack/react-table';
-import { CircleAlert } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { CircleAlert, SearchIcon } from 'lucide-react';
+import { useState } from 'react';
 import useVendorPage from './hooks/useVendor';
 import { useVendorApi } from './hooks/useVendorApi';
 import { IVendor } from './index.types';
+import { useDebounce } from '@shared/hooks/useDebounce';
 
 const Vendor = () => {
   /*
@@ -20,8 +21,8 @@ const Vendor = () => {
       CUSTOM HOOKS
     ###################
     */
-  const { columns: vendorColumns, formSchema: vendorFormSchema , data:dummyVendorData} = useVendorPage();
-  const { createVendor, isCreating, useGetVendors, isCreated } = useVendorApi();
+  const { columns: vendorColumns, formSchema: vendorFormSchema, data: dummyVendorData } = useVendorPage();
+  const { createVendor, deleteVendor, isDeleted, isDeleting, isCreating, useGetVendors, isCreated } = useVendorApi();
   const { isOpen: isDeleteModal, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
 
   /*
@@ -61,6 +62,9 @@ const Vendor = () => {
     ],
   });
 
+  const debounceSearch = useDebounce(query.trim(), 1000);
+
+
   // IDS
   const getRowId = (row: IVendor) => row._id;
   const selectedVendorIds = Object.keys(rows).map((id) => id);
@@ -86,7 +90,15 @@ const Vendor = () => {
     setViewMode(false);
   };
 
-  const handleSubmit =  (e: React.MouseEvent) => {
+  const handleDeleteConfirm = () => {
+    deleteVendor(selectedVendorIds[0]);
+    if (isDeleted || !isDeleting) {
+      setRows({});
+      closeDeleteModal();
+    }
+  };
+
+  const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     createVendor(formData);
     if (!isCreated) return;
@@ -97,10 +109,9 @@ const Vendor = () => {
     }
   };
 
-  console.log(selectedVendorIds)
-
   const handleEdit = () => {
-    const record = data?.response.filter((row) => row._id === selectedVendorIds[0])[0]?? dummyVendorData.filter(row => row._id === selectedVendorIds[0])[0];
+    const record =
+      data?.response.filter((row) => row._id === selectedVendorIds[0])[0] ?? dummyVendorData.filter((row) => row._id === selectedVendorIds[0])[0];
     if (record) {
       setIsEdit(true);
       setFormData(record);
@@ -112,41 +123,27 @@ const Vendor = () => {
       DATA FETCHING
     ###################
   */
-  const  [queryBuilder, setQueryBuilder ] = useState("")
+  // const [queryBuilder, setQueryBuilder] = useState('');
+  interface VendorGetAllParams {
+    skip: string;
+    limit: string;
+    search: string;
+    sortBy: string;
+    sortOrder: string;
+  }
+  console.log(query)
+  const queryBuilder: VendorGetAllParams = {
+    skip: String(pagination.pageIndex),
+    limit: String(pagination.pageSize),
+    sortBy: '',
+    sortOrder: '',
+    search: debounceSearch,
+  };
 
-  useEffect(() => {
-    const { pageIndex, pageSize } = pagination;
-    const sortingColumn = sorting[0];
-
-    const limit = pageSize;
-    const page = pageIndex + 1; // Assuming your backend uses 1-based page indexing
-    const search = query;
-
-    let sortBy = '';
-    let sortOrder = '';
-
-    if (sortingColumn) {
-      sortBy = sortingColumn.id;
-      sortOrder = sortingColumn.desc ? 'desc' : 'asc';
-    }
-
-    const params = new URLSearchParams({
-      limit: limit.toString(),
-      page: page.toString(),
-    });
-
-    if (search) {
-      params.append('search', search);
-    }
-
-    if (sortBy && sortOrder) {
-      params.append('sortBy', sortBy);
-      params.append('sortOrder', sortOrder);
-    }
-
-    setQueryBuilder(`?${params.toString()}`);
-  }, [pagination.pageSize, pagination.pageIndex, query, sorting, pagination]);
-
+  if (sorting?.[0]) {
+    queryBuilder.sortOrder = sorting[0]?.desc ? 'desc' : 'asc';
+    queryBuilder.sortBy = sorting[0]?.id;
+  }
   const { isLoading, data } = useGetVendors(queryBuilder);
 
   return (
@@ -159,7 +156,16 @@ const Vendor = () => {
       {!isForm ? (
         <>
           <div className="flex justify-between">
-            <TextField label="Search Vendor" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search Vendor" />
+            <TextField
+              prefixIcon={<SearchIcon />}
+              label="Search Vendor"
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              name='search'
+
+              placeholder="Search Vendor"
+            />
+
             <Button onClick={() => handleAddNew()}>+Add New</Button>
           </div>
           <VendorTable
@@ -250,7 +256,7 @@ const Vendor = () => {
             <Button variant="neutral" type="outline" onClick={closeDeleteModal}>
               Cancel
             </Button>
-            <Button variant="destructive" type="solid">
+            <Button variant="destructive" type="solid" onClick={() => handleDeleteConfirm()} isLoading={isDeleting}>
               Confirm
             </Button>
           </div>

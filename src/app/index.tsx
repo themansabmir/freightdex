@@ -1,7 +1,7 @@
 import { RouterProvider } from "react-router-dom";
 import "./_app.scss";
 import { browserRouterRoutes } from "./router/BROWSER_ROUTER";
-import { useOnline } from "@shared/hooks/isOnline";
+import { useOnline } from "@shared/hooks/useOnline";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,7 +12,7 @@ export function App() {
     <>
       <ToastContainer
         position='bottom-center'
-        autoClose={4000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop
         closeOnClick
@@ -20,7 +20,7 @@ export function App() {
         draggable
         style={{ zIndex: 100000 }}
         pauseOnHover
-        theme='colored' // or "dark"
+        theme='dark' // or "dark"
       />
       {!isOnline && (
         <div className='check_online font-sm'>

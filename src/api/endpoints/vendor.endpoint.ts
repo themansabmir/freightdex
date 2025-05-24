@@ -1,19 +1,39 @@
 import { api } from '@api/config';
 import { CreateVendorRequest, GetAllVendorResponse, IVendor, UpdateVendorRequest } from '@modules/vendor/index.types';
 
+interface VendorGetAllParams  {
+  skip: string,
+  limit: string,
+  search: string,
+  sortBy: string,
+  sortOrder: string,
+}
 export class VendorHttpService {
   static async create(payload: CreateVendorRequest): Promise<IVendor> {
-    const { data} = await api.post('/vendor', payload);
+    const { data } = await api.post('/vendor', payload);
     return data.response;
   }
 
-  static async getAll(queryString?: string): Promise<GetAllVendorResponse> {
-    let url = '/vendor';
-    if (queryString) {
-      url = url + queryString;
+  static async getAll(queryParams: VendorGetAllParams): Promise<GetAllVendorResponse> {
+    const {limit ,search,skip,sortBy,sortOrder }= queryParams
+    console.log("query params",queryParams)
+    const baseUrl = '/vendor';
+    const params = new URLSearchParams({})
+    if (limit ) {
+      params.append("limit", limit)
+      params.append("skip", skip)
     }
-    const { data } = await api.get(url);
-    console.log(data.response);
+    if (sortBy && sortOrder) {
+      params.append("sortBy", sortBy)
+      params.append("sortOrder",sortOrder)
+    }
+    if (search.trim()) {
+      params.append("search", search)
+    }
+
+    const fullUrl = `${baseUrl}?${params.toString()}`;
+    console.log(fullUrl, "Full url")
+    const { data } = await api.get(fullUrl);
     return {
       response: data.response.data,
       total: data?.response?.total,

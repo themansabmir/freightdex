@@ -4,13 +4,14 @@ import { toast } from 'react-toastify';
 import { CreateVendorRequest, GetAllVendorResponse, IVendor } from '../index.types';
 
 export const useVendorApi = () => {
+  const VENDOR_KEY = 'vendors';
   // CREATE
   const createVendorMutation = useMutation({
     mutationFn: (payload: CreateVendorRequest) => VendorHttpService.create(payload),
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
       if (data) {
-        queryClient.setQueryData(['vendors'], (old: IVendor[]) => {
+        queryClient.setQueryData([VENDOR_KEY], (old: IVendor[]) => {
           const withoutTemp = old?.filter((p) => !p.temp) ?? [];
           return [...withoutTemp, data];
         });
@@ -19,9 +20,9 @@ export const useVendorApi = () => {
     },
   });
 
-  const useGetVendors = (queryString?: string) =>
+  const useGetVendors = (queryString) =>
     useQuery<GetAllVendorResponse>({
-      queryKey: ['vendors', queryString],
+      queryKey: [VENDOR_KEY, queryString],
       queryFn: () => VendorHttpService.getAll(queryString),
     });
 
@@ -34,25 +35,29 @@ export const useVendorApi = () => {
   //     });
 
   //   // UPDATE
-  //   const updateVendorMutation = useMutation({
-  //     mutationFn: ({ id, payload }: { id: string; payload: Partial<IVendor> }) =>
-  //       updateVendor({ id, payload }),
-  //     onSuccess: (_, { id }) => {
-  //       queryClient.invalidateQueries({ queryKey: ["vendors"] });
-  //       queryClient.invalidateQueries({ queryKey: ["vendor", id] });
-  //     },
-  //   });
+  // const updateVendorMutation = useMutation({
+  //   mutationFn: ({ id, payload }: { id: string; payload: Partial<IVendor> }) =>
+  //     updateVendor({ id, payload }),
+  //   onSuccess: (_, { id }) => {
+  //     queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
+  //     queryClient.invalidateQueries({ queryKey: ["vendor", id] });
+  //   },
+  // });
 
   //   // DELETE
-  //   const deleteVendorMutation = useMutation({
-  //     mutationFn: (id: string) => deleteVendor(id),
-  //     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["vendors"] }),
-  //   });
+  const deleteVendorMutation = useMutation({
+    mutationFn: (id: string) => Promise.resolve(id),
+    onSuccess: () => {
+      toast.success(`Vendor deleted successfully`);
+      return queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
+    },
+  });
 
   return {
     // // Queries
     createVendor: createVendorMutation.mutate,
-    isCreated: createVendorMutation.isSuccess,
+    deleteVendor: deleteVendorMutation.mutate,
+
     useGetVendors,
     // useGetVendors,
     // useGetVendorById,
@@ -65,7 +70,11 @@ export const useVendorApi = () => {
     // deleteVendorAsync: deleteVendorMutation.mutateAsync,
 
     // Statuses (optional)
+    isCreated: createVendorMutation.isSuccess,
     isCreating: createVendorMutation.isPending,
+    isDeleting: deleteVendorMutation.isPending,
+    isDeleted: deleteVendorMutation.isSuccess,
+    queryKey: VENDOR_KEY
     // isUpdating: updateVendorMutation.isLoading,
     // isDeleting: deleteVendorMutation.isLoading,
   };
