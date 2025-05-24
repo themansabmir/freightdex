@@ -1,0 +1,53 @@
+@use '../variables' as *;
+
+.profile__container {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid $neutral-30;
+    padding: 0.25em 0.5em;
+    gap: 0.25em;
+    cursor: pointer;
+}
+
+.profile_avatar {
+    background-color: $neutral-30;
+    padding: 4px;
+    border-radius: 50%;
+}
+
+.profile_title {
+    color: $neutral-80;
+}
+
+.profile_subtitle {
+    color: $neutral-50;
+}
+
+.profile_container_options {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid $neutral-30;
+    width: 100%;
+    min-width: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.profile__container_btn {
+    color: $neutral-80;
+    padding: 8px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+    &:hover {
+
+        background-color: $neutral-30;
+        cursor: pointer;
+    }
+
+}
