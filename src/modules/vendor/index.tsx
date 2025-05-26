@@ -13,20 +13,22 @@ import FormActions from '../../blocks/form-actions';
 import PageHeader from '../../blocks/page-header';
 import useVendorPage from './hooks/useVendor';
 import { useVendorApi } from './hooks/useVendorApi';
-import { IVendor, VendorGetAllParams, vendorSchema, VendorType } from './index.types';
+import { IVendor, VendorGetAllParams, vendorSchema } from './index.types';
+import PageLoader from '@shared/components/Loader/PageLoader';
+import { Stack } from '@shared/components/Stack';
 
 const Vendor = () => {
   /*
     ###################
       CUSTOM HOOKS
     ###################
-    */
-  const { columns: vendorColumns, formSchema: vendorFormSchema, vendorPayload, setVendorPayload } = useVendorPage();
-  const [formData, setFormData] = useState<Partial<IVendor>>(vendorPayload);
+  */
+  const { columns: vendorColumns, formSchema: vendorFormSchema, payload } = useVendorPage();
+  const [formData, setFormData] = useState<IVendor>(payload);
 
-  const { updateVendor, createVendor, deleteVendor, isDeleted, isDeleting, isCreating, useGetVendors, isCreated } = useVendorApi();
+  const { updateVendor, createVendor, deleteVendor, isDeleting, isCreating, isUpdating, useGetVendors } = useVendorApi();
   const { isOpen: isDeleteModal, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
-  const { validate, handleChange, errors } = useFormValidation(vendorSchema, vendorPayload);
+  const { validate, handleChange, errors } = useFormValidation(vendorSchema, formData);
 
   /*
     ###################
@@ -76,35 +78,35 @@ const Vendor = () => {
   };
   const handleCancel = () => {
     setIsForm(false);
-    setFormData({});
+    setFormData(payload);
     setIsEdit(false);
     setViewMode(false);
   };
 
-  const handleDeleteConfirm = () => {
-    deleteVendor(selectedVendorIds[0]);
-    if (isDeleted || !isDeleting) {
-      setRows({});
-      closeDeleteModal();
-    }
+  const handleDeleteConfirm = async () => {
+    await deleteVendor(selectedVendorIds[0]);
+    setRows({});
+    closeDeleteModal();
   };
 
-  const handleSubmit = (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      if (!isEdit) {
-        createVendor(formData);
-        if (!isCreated) return;
-        if (isCreated && keepCreating) {
-          setFormData({});
-        } else {
-          handleCancel();
-        }
+
+    const isValid = validate();
+    if (!isValid) return;
+
+    if (!isEdit) {
+      const createdVendor = await createVendor(formData);
+      if (createdVendor && keepCreating) {
+        setFormData(payload);
       } else {
-        const record = returnSelectedRecord();
-        if (record) {
-          updateVendor({ id: record?._id, payload: formData });
-        }
+        handleCancel();
+      }
+    } else {
+      const record = returnSelectedRecord();
+      if (record) {
+        await updateVendor({ id: record._id, payload: formData });
+        handleCancel();
       }
     }
   };
@@ -118,7 +120,6 @@ const Vendor = () => {
     if (record) {
       setIsEdit(true);
       setFormData(record);
-      setVendorPayload(record);
       setIsForm(true);
     }
   };
@@ -135,7 +136,6 @@ const Vendor = () => {
       sortOrder: '',
       search: debounceSearch,
     };
-
   }, [pagination.pageIndex, pagination.pageSize, debounceSearch]);
 
   if (sorting?.[0]) {
@@ -148,6 +148,7 @@ const Vendor = () => {
 
   return (
     <>
+      <PageLoader isLoading={isCreating || isDeleting || isUpdating} />
       <PageHeader
         pageName="Vendor"
         pageDescription="Here you can manage your Shipper, Consignee, Shipping Line, Agent, CHA etc database."
@@ -159,18 +160,18 @@ const Vendor = () => {
 
       {!isForm ? (
         <>
-          <div className="flex justify-between">
-            <TextField
-              prefixIcon={<SearchIcon />}
-              label="Search Vendor"
-              onChange={(e) => setQuery(e.target.value)}
-              value={query}
-              name="search"
-              placeholder="Search Vendor"
-            />
+            <Stack direction='horizontal' align='end' justify='between'>
+              <TextField
+                prefixIcon={<SearchIcon />}
+                label="Search Vendor"
+                onChange={(e) => setQuery(e.target.value)}
+                value={query}
+                name="search"
+                placeholder="Search Vendor"
+              />
 
-            <Button onClick={() => handleAddNew()}>+Add New</Button>
-          </div>
+              <Button onClick={() => handleAddNew()}>+Add New</Button>
+            </Stack>
           <VendorTable
             columns={vendorColumns}
             data={data?.response ?? []}

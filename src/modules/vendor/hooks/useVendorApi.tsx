@@ -20,7 +20,7 @@ export const useVendorApi = () => {
     },
   });
 
-  const useGetVendors = (queryString:VendorGetAllParams) =>
+  const useGetVendors = (queryString: VendorGetAllParams) =>
     useQuery<GetAllVendorResponse>({
       queryKey: [VENDOR_KEY, queryString],
       queryFn: () => VendorHttpService.getAll(queryString),
@@ -39,13 +39,14 @@ export const useVendorApi = () => {
     mutationFn: ({ id, payload }: { id?: string; payload: Partial<IVendor> }) => VendorHttpService.update(id, payload),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
-      queryClient.invalidateQueries({ queryKey: ["vendor", id] });
+      queryClient.invalidateQueries({ queryKey: ['vendor', id] });
+      toast.success('Vendor updated successfully');
     },
   });
 
-    // DELETE
+  // DELETE
   const deleteVendorMutation = useMutation({
-    mutationFn: (id: string) => Promise.resolve(id),
+    mutationFn: (id: string) => VendorHttpService.delete(id),
     onSuccess: () => {
       toast.success(`Vendor deleted successfully`);
       return queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
@@ -54,28 +55,13 @@ export const useVendorApi = () => {
 
   return {
     // // Queries
-    createVendor: createVendorMutation.mutate,
-    deleteVendor: deleteVendorMutation.mutate,
-    updateVendor: updateVendorMutation.mutate,
-
+    createVendor: createVendorMutation.mutateAsync,
+    deleteVendor: deleteVendorMutation.mutateAsync,
+    updateVendor: updateVendorMutation.mutateAsync,
     useGetVendors,
-    // useGetVendors,
-    // useGetVendorById,
-
-    // Mutations
-
-    // updateVendor: updateVendorMutation.mutate,
-    // updateVendorAsync: updateVendorMutation.mutateAsync,
-    // deleteVendor: deleteVendorMutation.mutate,
-    // deleteVendorAsync: deleteVendorMutation.mutateAsync,
-
     // Statuses (optional)
-    isCreated: createVendorMutation.isSuccess,
     isCreating: createVendorMutation.isPending,
     isDeleting: deleteVendorMutation.isPending,
-    isDeleted: deleteVendorMutation.isSuccess,
-    queryKey: VENDOR_KEY,
     isUpdating: updateVendorMutation.isPending,
-    // isDeleting: deleteVendorMutation.isLoading,
   };
 };

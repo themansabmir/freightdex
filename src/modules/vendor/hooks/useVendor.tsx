@@ -2,32 +2,29 @@ import { FieldSchema } from '@generator/form/index.types';
 import { Checkbox } from '@shared/components';
 import Column from '@shared/components/Column';
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
 import { EVendor, IVendor, VendorType } from '../index.types';
 
 export const useVendorPage = () => {
-
-  const payload={
+  const payload: IVendor = {
     vendor_name: '',
-    _id:'',
-      vendor_type: [] as VendorType[],
-      locations: [
-        {
-          city: '',
-          country: '',
-          state: '',
-          pan_number: '',
-          address: '',
-          gst_number: '',
-          fax: "",
-          mobile_number: '',
-          pin_code: '',
-          telephone: '',
-        },
-      ],
-  }
+    _id: '',
+    vendor_type: [] as VendorType[],
+    locations: [
+      {
+        city: '',
+        country: '',
+        state: '',
+        pan_number: '',
+        address: '',
+        gst_number: '',
+        fax: '',
+        mobile_number: '',
+        pin_code: '',
+        telephone: '',
+      },
+    ],
+  };
 
-  const [vendorPayload, setVendorPayload] = useState<IVendor>(payload)
   const formSchema: FieldSchema[] = [
     {
       name: EVendor.vendor_name,
@@ -52,7 +49,7 @@ export const useVendorPage = () => {
       name: 'locations',
       label: 'Locations',
       type: 'array',
-      required:true,
+      required: true,
       item: {
         type: 'group',
         fields: [
@@ -204,7 +201,7 @@ export const useVendorPage = () => {
     },
   ];
 
-  return { formSchema, columns, vendorPayload, setVendorPayload};
+  return { formSchema, columns, payload };
 };
 
 export default useVendorPage;
