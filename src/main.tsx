@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@scss/root.scss";
 import { ErrorBoundary } from "@shared/components/Error";
 import { queryClient, QueryClientProvider} from '@lib/react-query'
+import {toast, ToastContainer} from "react-toastify"
 
 
 createRoot(document.getElementById("root")!).render(
@@ -12,6 +13,7 @@ createRoot(document.getElementById("root")!).render(
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <App />
+        <ToastContainer />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ErrorBoundary>
