@@ -18,7 +18,6 @@ const envEnum = {
 type EnvKey = keyof typeof envEnum;
 
 function getBaseUrl(): string {
-  console.log(env)
 
   if (!env || !(env in envEnum)) {
     throw new Error(

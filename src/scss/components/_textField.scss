@@ -23,6 +23,7 @@
     color: $destructive-50;
   }
 }
+
 .label__required {
   color: $destructive-50;
 }
@@ -32,11 +33,13 @@
   position: relative;
   display: flex;
   align-items: center;
+
   svg {
     stroke: $neutral-60;
     stroke-width: 1;
   }
 }
+
 .textField__input {
   padding-left: 4px;
   flex: 1;

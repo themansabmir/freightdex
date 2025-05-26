@@ -5,6 +5,7 @@ type CommonFieldProps = {
   required?: boolean;
   disabled?: boolean;
   colSpan?: number;
+  placeholder?:string
 };
 
 
@@ -27,6 +28,11 @@ type MultiSelectField = CommonFieldProps & {
   options: { label: string; value: string }[];
 };
 
+type Dropdown = CommonFieldProps & {
+  type: 'dropdown';
+  options: { label: string; value: string }[];
+  placeholder: string
+};
 
 type GroupField = {
   type: "group";
@@ -39,12 +45,7 @@ type ArrayField = CommonFieldProps & {
 };
 
 
-export type FieldSchema =
-  | TextField
-  | RadioField
-  | CheckboxField
-  | MultiSelectField
-  | ArrayField;
+export type FieldSchema = TextField | RadioField | CheckboxField | MultiSelectField | Dropdown | ArrayField;
 
 
   export interface GroupFieldSchema {
@@ -55,6 +56,7 @@ export type FieldSchema =
 export interface ArrayFieldSchema  {
   label: string;
   type: "array";
+  name?: string;
   item: {
     fields: FieldSchema[];
   };
@@ -68,8 +70,9 @@ interface RenderFieldProps {
 }
 
 export interface RenderGroupProps {
+  fieldPathPrefix?:string;
   isViewMode?: boolean;
-  fields: GroupFieldSchema["fields"];
+  fields: GroupFieldSchema['fields'];
   value: any;
   onChange: (val: any) => void;
   columns?: number;
@@ -88,5 +91,8 @@ export interface DynamicFormProps<T extends Record<string, any>> {
   schema: FieldSchema[];
   isViewMode: boolean;
   data: T;
+  onChange: (name: string, val: unknown) => void;
+  errors: Partial<Record<keyof T, string>>;
+
   setData: React.Dispatch<React.SetStateAction<T>>;
 }

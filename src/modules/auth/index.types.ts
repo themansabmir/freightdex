@@ -18,3 +18,11 @@ export type LoginPayload = {
   email: string;
   password: string;
 };
+
+
+export interface MenuOptions {
+  btnName: string,
+  onClick: () => void
+  icon: React.ReactNode
+
+}

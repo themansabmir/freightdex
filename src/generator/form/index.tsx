@@ -3,15 +3,17 @@ import MultiSelectInput from '@shared/components/Dropdown';
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import { DynamicFormProps, ArrayFieldSchema, RenderArrayFieldProps, RenderGroupProps, RenderFieldProps, Data } from './index.types';
+import Dropdown from '@shared/components/SingleDropdown';
+import { get } from 'lodash';
 
-function RenderField({ field, value, onChange }: RenderFieldProps) {
+function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
 
   if (['text', 'email', 'password'].includes(field.type)) {
-    return <TextField value={value || ''} onChange={handleChange} {...field} />;
+    return <TextField value={value || ''} onChange={handleChange} {...field} isError={!!error} errorText={error} />;
   }
 
   if (field.type === 'checkbox' && field.options) {
@@ -21,10 +23,8 @@ function RenderField({ field, value, onChange }: RenderFieldProps) {
       onChange(updated);
     };
     return (
-      <div className="">
-        <div className="" style={{ marginBottom: '8px' }}>
-          {field.label}
-        </div>
+      <div>
+        <div style={{ marginBottom: '8px' }}>{field.label}</div>
         <div style={{ display: 'flex' }}>
           {field.options.map((opt) => (
             <Checkbox
@@ -75,6 +75,8 @@ function RenderField({ field, value, onChange }: RenderFieldProps) {
     return (
       <MultiSelectInput
         label={field.label}
+        isError={!!error}
+        errorText={error}
         options={field.options || []}
         disabled={field.disabled}
         name={field.name}
@@ -88,20 +90,47 @@ function RenderField({ field, value, onChange }: RenderFieldProps) {
     );
   }
 
+  if (field.type === 'dropdown') {
+    return (
+      <Dropdown
+        label={field.label}
+        name={field.name}
+        options={field.options}
+        disabled={field.disabled}
+        required={field.required}
+        value={value}
+        onChange={(item) => onChange(item)}
+        placeholder={field.placeholder}
+        searchable
+      />
+    );
+  }
+
   return null;
 }
 
-function RenderGroup({ fields, value, onChange, isViewMode = false }: RenderGroupProps) {
+function RenderGroup({ fields, value, onChange, isViewMode = false, errors = {}, fieldPathPrefix = '' }: RenderGroupProps) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}>
-      {fields.map((f) => (
-        <RenderField field={{ ...f, disabled: isViewMode }} value={value?.[f.name]} onChange={(val) => onChange({ ...value, [f.name]: val })} />
-      ))}
+      {fields.map((f) => {
+        const fullPath = fieldPathPrefix ? `${fieldPathPrefix}.${f.name}` : f.name;
+        const fieldError = get(errors, fullPath);
+
+        return (
+          <RenderField
+            key={fullPath}
+            error={fieldError}
+            field={{ ...f, disabled: isViewMode }}
+            value={value?.[f.name]}
+            onChange={(val) => onChange({ ...value, [f.name]: val })}
+          />
+        );
+      })}
     </div>
   );
 }
 
-function RenderArrayField({ field, value = [], onChange, isViewMode }: RenderArrayFieldProps) {
+function RenderArrayField({ field, value = [], onChange, isViewMode, errors = {} }: RenderArrayFieldProps) {
   const addItem = () => onChange([...value, {}]);
   const removeItem = (idx: number) => {
     const updated = [...value];
@@ -114,23 +143,28 @@ function RenderArrayField({ field, value = [], onChange, isViewMode }: RenderArr
       <h4>
         {field.label} {value.length > 0 && value.length}
       </h4>
-      {value.map((itemVal, idx) => (
-        <div key={idx} className="field__group field__wrapper">
-          <RenderGroup
-            fields={field.item.fields}
-            value={itemVal}
-            isViewMode={isViewMode}
-            onChange={(val) => {
-              const updated = [...value];
-              updated[idx] = val;
-              onChange(updated);
-            }}
-          />
-          <button onClick={() => removeItem(idx)} className="field__wrapper">
-            <Trash2 color="red" size={18} />
-          </button>
-        </div>
-      ))}
+      {value.map((itemVal, idx) => {
+        const itemPathPrefix = `${field.name}.${idx}`;
+        return (
+          <div key={idx} className="field__group field__wrapper">
+            <RenderGroup
+              fields={field.item.fields}
+              value={itemVal}
+              isViewMode={isViewMode}
+              onChange={(val) => {
+                const updated = [...value];
+                updated[idx] = val;
+                onChange(updated);
+              }}
+              errors={errors}
+              fieldPathPrefix={itemPathPrefix}
+            />
+            <button onClick={() => removeItem(idx)} className="field__wrapper" disabled={isViewMode || (field.required && value.length < 2)}>
+              <Trash2 color="red" size={18} />
+            </button>
+          </div>
+        );
+      })}
       <div style={{ display: 'flex', justifyContent: 'end' }}>
         <Button disabled={isViewMode} onClick={addItem}>
           + Add {field.label}
@@ -140,8 +174,9 @@ function RenderArrayField({ field, value = [], onChange, isViewMode }: RenderArr
   );
 }
 
-function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData, isViewMode = false }: DynamicFormProps<T>) {
+function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData, isViewMode = false, onChange, errors = {} }: DynamicFormProps<T>) {
   const handleChange = (name: string, val: unknown) => {
+    onChange(name, val);
     setData({ ...data, [name]: val });
   };
 
@@ -150,17 +185,15 @@ function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData,
 
   return (
     <>
-      <div
-        className="form-grid"
-        style={{
-          display: 'grid',
-          gap: '16px',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-        }}
-      >
+      <div className="form-grid" style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(3, 1fr)' }}>
         {topLevelFields.map((field) => (
           <div key={field.name} style={{ gridColumn: `span ${field.colSpan || 1}` }}>
-            <RenderField field={{ ...field, disabled: isViewMode }} value={data[field.name]} onChange={(val) => handleChange(field.name, val)} />
+            <RenderField
+              error={get(errors, field.name)}
+              field={{ ...field, disabled: isViewMode }}
+              value={data[field.name]}
+              onChange={(val) => handleChange(field.name, val)}
+            />
           </div>
         ))}
       </div>
@@ -175,6 +208,7 @@ function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData,
             field={field as ArrayFieldSchema}
             value={safeValue}
             onChange={(val) => handleChange(field.name, val)}
+            errors={errors}
           />
         );
       })}

@@ -12,6 +12,7 @@ interface HeadlessInputFieldProps extends InputHTMLAttributes<HTMLInputElement> 
   suffixIcon?: ReactNode;
   showClear?: boolean;
   inputRef?: Ref<HTMLInputElement>; // Add the inputRef prop
+  placeholder?: string;
 }
 
 const HeadlessInputField: React.FC<HeadlessInputFieldProps> = ({
@@ -27,6 +28,7 @@ const HeadlessInputField: React.FC<HeadlessInputFieldProps> = ({
   required,
   name,
   inputRef,
+  placeholder,
   ...rest
 }) => {
   const [internalValue, setInternalValue] = useState(value || '');
@@ -86,6 +88,7 @@ const HeadlessInputField: React.FC<HeadlessInputFieldProps> = ({
               name={name}
               value={internalValue}
               onChange={handleChange}
+              placeholder={placeholder}
               aria-invalid={isError}
               aria-describedby={(helperText && `${rest.id}-helper`) || (errorText && `${rest.id}-error`)}
               className={textFieldInput}

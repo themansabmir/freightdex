@@ -16,7 +16,6 @@ export class VendorHttpService {
 
   static async getAll(queryParams: VendorGetAllParams): Promise<GetAllVendorResponse> {
     const {limit ,search,skip,sortBy,sortOrder }= queryParams
-    console.log("query params",queryParams)
     const baseUrl = '/vendor';
     const params = new URLSearchParams({})
     if (limit ) {
@@ -32,11 +31,10 @@ export class VendorHttpService {
     }
 
     const fullUrl = `${baseUrl}?${params.toString()}`;
-    console.log(fullUrl, "Full url")
     const { data } = await api.get(fullUrl);
     return {
-      response: data.response.data,
-      total: data?.response?.total,
+      response: data.response,
+      total: data?.total,
     };
   }
 
@@ -45,7 +43,7 @@ export class VendorHttpService {
     return data.response;
   }
 
-  static async update(id: string, payload: UpdateVendorRequest) {
+  static async update(id?: string, payload?: UpdateVendorRequest) {
     const { data } = await api.put(`/vendor/${id}`, payload);
     return data.response;
   }

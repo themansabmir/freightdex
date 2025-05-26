@@ -14,7 +14,6 @@ export function useAuthApi() {
     },
     onError: (e) => {
       toast.error(e.message);
-      console.log(e.message);
     },
   });
 

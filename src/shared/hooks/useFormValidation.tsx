@@ -1,6 +1,6 @@
 // hooks/useFormValidation.ts
-import { useReducer, ChangeEvent } from 'react';
-import { ZodSchema, ZodError } from 'zod';
+import { useEffect, useReducer } from 'react';
+import { ZodError, ZodSchema } from 'zod';
 
 type FormState<T> = {
   values: T;
@@ -8,6 +8,7 @@ type FormState<T> = {
 };
 
 type FormAction<T> =
+  | { type: 'SET_ALL_FIELDS'; values: T }
   | { type: 'UPDATE_FIELD'; field: keyof T; value: string }
   | { type: 'SET_ERRORS'; errors: Partial<Record<keyof T, string>> }
   | { type: 'RESET' };
@@ -18,6 +19,12 @@ function formReducer<T>(state: FormState<T>, action: FormAction<T>): FormState<T
       return {
         ...state,
         values: { ...state.values, [action.field]: action.value },
+        errors: {},
+      };
+    case 'SET_ALL_FIELDS':
+      return {
+        ...state,
+        values: action.values,
         errors: {},
       };
     case 'SET_ERRORS':
@@ -36,8 +43,13 @@ export function useFormValidation<T extends Record<string, any>>(schema: ZodSche
     errors: {},
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+
+
+  useEffect(() => {
+    dispatch({ type: 'SET_ALL_FIELDS', values: initialValues });
+  }, [initialValues]);
+
+  const handleChange = (name: string, value) => {
     dispatch({ type: 'UPDATE_FIELD', field: name as keyof T, value });
   };
 
@@ -48,7 +60,7 @@ export function useFormValidation<T extends Record<string, any>>(schema: ZodSche
     } catch (err) {
       if (err instanceof ZodError) {
         const errors = err.errors.reduce((acc, curr) => {
-          const key = curr.path[0] as keyof T;
+          const key = curr.path.join('.') as keyof T;
           acc[key] = curr.message;
           return acc;
         }, {} as Partial<Record<keyof T, string>>);

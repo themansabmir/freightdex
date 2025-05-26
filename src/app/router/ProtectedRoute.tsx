@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
       </div>
     );
 
-  if (!user && refresh === false) return <SignIn></SignIn>;
+  if (!user && refresh === false) return <SignIn />
 
   return <Layout>{children}</Layout>;
 };

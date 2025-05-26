@@ -21,6 +21,8 @@ interface MultiSelectInputProps {
   placeholder?: string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  isError?: boolean;
+  errorText?: string;
   label: string
 }
 
@@ -35,7 +37,9 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   name,
   setIsOpen,
   label,
-  disabled
+  disabled,
+  isError,
+  errorText
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -69,6 +73,8 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
             label={label}
             name={name}
             disabled={disabled}
+            isError={isError}
+            errorText={errorText}
             prefixIcon={
               selectedValues.length > 0 && (
                 <Badge

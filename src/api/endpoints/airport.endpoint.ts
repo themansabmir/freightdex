@@ -5,7 +5,6 @@ export const createAirport =async (airportBody) => {
     const { data } = await api.post("/airport", airportBody);
     return data.response;
   } catch (error) {
-    console.log(error);
     throw new Error("error");
   }
 };

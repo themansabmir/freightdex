@@ -1,7 +1,7 @@
 import { VendorHttpService } from '@api/endpoints/vendor.endpoint';
 import { queryClient, useMutation, useQuery } from '@lib/react-query';
 import { toast } from 'react-toastify';
-import { CreateVendorRequest, GetAllVendorResponse, IVendor } from '../index.types';
+import { CreateVendorRequest, GetAllVendorResponse, IVendor, VendorGetAllParams } from '../index.types';
 
 export const useVendorApi = () => {
   const VENDOR_KEY = 'vendors';
@@ -20,7 +20,7 @@ export const useVendorApi = () => {
     },
   });
 
-  const useGetVendors = (queryString) =>
+  const useGetVendors = (queryString:VendorGetAllParams) =>
     useQuery<GetAllVendorResponse>({
       queryKey: [VENDOR_KEY, queryString],
       queryFn: () => VendorHttpService.getAll(queryString),
@@ -35,16 +35,15 @@ export const useVendorApi = () => {
   //     });
 
   //   // UPDATE
-  // const updateVendorMutation = useMutation({
-  //   mutationFn: ({ id, payload }: { id: string; payload: Partial<IVendor> }) =>
-  //     updateVendor({ id, payload }),
-  //   onSuccess: (_, { id }) => {
-  //     queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
-  //     queryClient.invalidateQueries({ queryKey: ["vendor", id] });
-  //   },
-  // });
+  const updateVendorMutation = useMutation({
+    mutationFn: ({ id, payload }: { id?: string; payload: Partial<IVendor> }) => VendorHttpService.update(id, payload),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["vendor", id] });
+    },
+  });
 
-  //   // DELETE
+    // DELETE
   const deleteVendorMutation = useMutation({
     mutationFn: (id: string) => Promise.resolve(id),
     onSuccess: () => {
@@ -57,6 +56,7 @@ export const useVendorApi = () => {
     // // Queries
     createVendor: createVendorMutation.mutate,
     deleteVendor: deleteVendorMutation.mutate,
+    updateVendor: updateVendorMutation.mutate,
 
     useGetVendors,
     // useGetVendors,
@@ -74,8 +74,8 @@ export const useVendorApi = () => {
     isCreating: createVendorMutation.isPending,
     isDeleting: deleteVendorMutation.isPending,
     isDeleted: deleteVendorMutation.isSuccess,
-    queryKey: VENDOR_KEY
-    // isUpdating: updateVendorMutation.isLoading,
+    queryKey: VENDOR_KEY,
+    isUpdating: updateVendorMutation.isPending,
     // isDeleting: deleteVendorMutation.isLoading,
   };
 };

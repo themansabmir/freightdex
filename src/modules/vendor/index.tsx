@@ -2,18 +2,18 @@ import VendorForm from '@generator/form';
 import VendorTable from '@generator/table';
 import { Button, TextField, ToggleButton, Typography } from '@shared/components';
 import ActionButtonContainer from '@shared/components/ActionDialouge';
-import Header, { Breadcrumb } from '@shared/components/BreadCrumbs';
 import { Modal } from '@shared/components/Modal';
-import { Stack } from '@shared/components/Stack';
+import { useDebounce } from '@shared/hooks/useDebounce';
+import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { useModal } from '@shared/hooks/useModa';
-import { generatePageTitle } from '@shared/utils';
-import { ColumnSort, PaginationState, RowSelectionState } from '@tanstack/react-table';
+import usePageState from '@shared/hooks/usePageState';
 import { CircleAlert, SearchIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import FormActions from '../../blocks/form-actions';
+import PageHeader from '../../blocks/page-header';
 import useVendorPage from './hooks/useVendor';
 import { useVendorApi } from './hooks/useVendorApi';
-import { IVendor } from './index.types';
-import { useDebounce } from '@shared/hooks/useDebounce';
+import { IVendor, VendorGetAllParams, vendorSchema, VendorType } from './index.types';
 
 const Vendor = () => {
   /*
@@ -21,49 +21,40 @@ const Vendor = () => {
       CUSTOM HOOKS
     ###################
     */
-  const { columns: vendorColumns, formSchema: vendorFormSchema, data: dummyVendorData } = useVendorPage();
-  const { createVendor, deleteVendor, isDeleted, isDeleting, isCreating, useGetVendors, isCreated } = useVendorApi();
+  const { columns: vendorColumns, formSchema: vendorFormSchema, vendorPayload, setVendorPayload } = useVendorPage();
+  const [formData, setFormData] = useState<Partial<IVendor>>(vendorPayload);
+
+  const { updateVendor, createVendor, deleteVendor, isDeleted, isDeleting, isCreating, useGetVendors, isCreated } = useVendorApi();
   const { isOpen: isDeleteModal, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
+  const { validate, handleChange, errors } = useFormValidation(vendorSchema, vendorPayload);
 
   /*
     ###################
           STATES
     ###################
     */
-  const [isViewMode, setViewMode] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [isForm, setIsForm] = useState<boolean>(false);
-  const [sorting, setSorting] = useState<ColumnSort[]>([]);
-  const [rows, setRows] = useState<RowSelectionState>({});
-  const [keepCreating, setKeepCreating] = useState(false);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 50,
-  });
+  const {
+    rows,
+    sorting,
+    keepCreating,
+    pagination,
+    query,
+    isEdit,
+    isForm,
+    isView: isViewMode,
+    setIsEdit,
+    setIsForm,
+    setKeepCreating,
+    setPagination,
+    setQuery,
+    setRows,
+    setSorting,
+    setView: setViewMode,
+  } = usePageState();
+  // api payload
 
-  const [query, setQuery] = useState<string>('');
-  const [formData, setFormData] = useState<Partial<IVendor>>({
-    vendor_name: '',
-    vendor_type: [],
-    id: '',
-    locations: [
-      {
-        city: '',
-        country: '',
-        state: '',
-        pan_number: '',
-        address: '',
-        gst_number: '',
-        fax: 0,
-        mobile_number: '',
-        pin_code: '',
-        telephone: '',
-      },
-    ],
-  });
-
+  // debounce logic
   const debounceSearch = useDebounce(query.trim(), 1000);
-
 
   // IDS
   const getRowId = (row: IVendor) => row._id;
@@ -71,9 +62,9 @@ const Vendor = () => {
 
   /*
     ###################
-          HANDLER FUNCTIONS
+      HANDLER FUNCTIONS
     ###################
-    */
+  */
 
   const handleView = () => {
     setViewMode(true);
@@ -100,21 +91,34 @@ const Vendor = () => {
 
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
-    createVendor(formData);
-    if (!isCreated) return;
-    if (isCreated && keepCreating) {
-      setFormData({});
-    } else {
-      handleCancel();
+    if (validate()) {
+      if (!isEdit) {
+        createVendor(formData);
+        if (!isCreated) return;
+        if (isCreated && keepCreating) {
+          setFormData({});
+        } else {
+          handleCancel();
+        }
+      } else {
+        const record = returnSelectedRecord();
+        if (record) {
+          updateVendor({ id: record?._id, payload: formData });
+        }
+      }
     }
   };
 
+  const returnSelectedRecord = () => {
+    const record = data?.response.filter((row) => row._id === selectedVendorIds[0])[0];
+    return record;
+  };
   const handleEdit = () => {
-    const record =
-      data?.response.filter((row) => row._id === selectedVendorIds[0])[0] ?? dummyVendorData.filter((row) => row._id === selectedVendorIds[0])[0];
+    const record = returnSelectedRecord();
     if (record) {
       setIsEdit(true);
       setFormData(record);
+      setVendorPayload(record);
       setIsForm(true);
     }
   };
@@ -123,22 +127,16 @@ const Vendor = () => {
       DATA FETCHING
     ###################
   */
-  // const [queryBuilder, setQueryBuilder] = useState('');
-  interface VendorGetAllParams {
-    skip: string;
-    limit: string;
-    search: string;
-    sortBy: string;
-    sortOrder: string;
-  }
-  console.log(query)
-  const queryBuilder: VendorGetAllParams = {
-    skip: String(pagination.pageIndex),
-    limit: String(pagination.pageSize),
-    sortBy: '',
-    sortOrder: '',
-    search: debounceSearch,
-  };
+  const queryBuilder = useMemo((): VendorGetAllParams => {
+    return {
+      skip: String(pagination.pageIndex),
+      limit: String(pagination.pageSize),
+      sortBy: '',
+      sortOrder: '',
+      search: debounceSearch,
+    };
+
+  }, [pagination.pageIndex, pagination.pageSize, debounceSearch]);
 
   if (sorting?.[0]) {
     queryBuilder.sortOrder = sorting[0]?.desc ? 'desc' : 'asc';
@@ -146,13 +144,19 @@ const Vendor = () => {
   }
   const { isLoading, data } = useGetVendors(queryBuilder);
 
+  const breadcrumbArray = [{ label: 'Home', href: '/' }, { label: 'Vendor' }];
+
   return (
     <>
-      <Header
-        pageName={generatePageTitle(isForm, isEdit, isViewMode, 'Vendor')}
-        label="Here you can manage your Shipper, Consignee, Shipping Line, Agent, CHA etc database."
+      <PageHeader
+        pageName="Vendor"
+        pageDescription="Here you can manage your Shipper, Consignee, Shipping Line, Agent, CHA etc database."
+        isEdit={isEdit}
+        isViewMode={isViewMode}
+        isForm={isForm}
+        breadcrumnArray={breadcrumbArray}
       />
-      <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Vendor' }]} />
+
       {!isForm ? (
         <>
           <div className="flex justify-between">
@@ -161,8 +165,7 @@ const Vendor = () => {
               label="Search Vendor"
               onChange={(e) => setQuery(e.target.value)}
               value={query}
-              name='search'
-
+              name="search"
               placeholder="Search Vendor"
             />
 
@@ -170,7 +173,7 @@ const Vendor = () => {
           </div>
           <VendorTable
             columns={vendorColumns}
-            data={data?.response ?? dummyVendorData}
+            data={data?.response ?? []}
             getRowId={getRowId}
             sortColumnArr={sorting}
             sortingHandler={setSorting}
@@ -223,18 +226,19 @@ const Vendor = () => {
             </div>
             <ToggleButton label="Keep form open" variant="primary" defaultChecked={keepCreating} onChange={() => setKeepCreating(!keepCreating)} />
           </div>
-          <VendorForm schema={vendorFormSchema} data={formData} setData={setFormData} isViewMode={isViewMode} />
-          <Stack gap="1em" direction="horizontal" justify="end" align="center">
-            <Button type="outline" variant="destructive" onClick={handleCancel} disabled={isCreating}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit} disabled={isCreating || isViewMode}>
-              {!isEdit ? 'Submit' : 'Update'}
-            </Button>
-          </Stack>
+          <VendorForm
+            errors={errors}
+            schema={vendorFormSchema}
+            data={formData}
+            setData={setFormData}
+            onChange={handleChange}
+            isViewMode={isViewMode}
+          />
+          <FormActions isCreating={isCreating} isViewMode={isViewMode} isEdit={isEdit} onCancel={handleCancel} onSubmit={handleSubmit} />
         </>
       )}
 
+      {/* DELETE CONFIRMATION MODAL */}
       <Modal isOpen={isDeleteModal} onClose={closeDeleteModal} size="sm">
         <Modal.Header>
           <div className="flex item-center gap-1 px-3 ">

@@ -2,10 +2,32 @@ import { FieldSchema } from '@generator/form/index.types';
 import { Checkbox } from '@shared/components';
 import Column from '@shared/components/Column';
 import { ColumnDef } from '@tanstack/react-table';
-import { EVendor, IVendor } from '../index.types';
-import { useMemo } from 'react';
+import { useState } from 'react';
+import { EVendor, IVendor, VendorType } from '../index.types';
 
 export const useVendorPage = () => {
+
+  const payload={
+    vendor_name: '',
+    _id:'',
+      vendor_type: [] as VendorType[],
+      locations: [
+        {
+          city: '',
+          country: '',
+          state: '',
+          pan_number: '',
+          address: '',
+          gst_number: '',
+          fax: "",
+          mobile_number: '',
+          pin_code: '',
+          telephone: '',
+        },
+      ],
+  }
+
+  const [vendorPayload, setVendorPayload] = useState<IVendor>(payload)
   const formSchema: FieldSchema[] = [
     {
       name: EVendor.vendor_name,
@@ -13,7 +35,6 @@ export const useVendorPage = () => {
       type: 'text',
       required: true,
     },
-
     {
       name: EVendor.vendor_type,
       label: 'Vendor Type',
@@ -31,6 +52,7 @@ export const useVendorPage = () => {
       name: 'locations',
       label: 'Locations',
       type: 'array',
+      required:true,
       item: {
         type: 'group',
         fields: [
@@ -98,36 +120,6 @@ export const useVendorPage = () => {
       },
     },
   ];
-
-  const generateDummyData = (count: number) => {
-    const statuses = ['Single', 'In Relationship', 'Complicated', 'Married'];
-    return Array.from(
-      { length: count },
-      (_, i): IVendor => ({
-        vendor_name: `First${i + 1} long String Content to show in column`,
-        vendor_type: ['shipper'],
-        _id: String(i + 10),
-        id: String(i + 10),
-        locations: [
-          {
-            city: statuses[Math.floor(Math.random() * statuses.length)],
-            pin_code: statuses[Math.floor(Math.random() * statuses.length)],
-            country: statuses[Math.floor(Math.random() * statuses.length)],
-            telephone: statuses[Math.floor(Math.random() * statuses.length)],
-            mobile_number: statuses[Math.floor(Math.random() * statuses.length)], // Random status
-            address: 'my address',
-            state: 'delhi',
-            gst_number: String(Math.floor(Math.random() * 100)), // Progress between 0-100
-            pan_number: String(Math.floor(Math.random() * 100)),
-            fax: Math.floor(Math.random() * 100),
-          },
-        ],
-      })
-    );
-  };
-  const data = useMemo(() => {
-    return generateDummyData(50);
-  }, []);
 
   const columns: ColumnDef<IVendor>[] = [
     {
@@ -212,7 +204,7 @@ export const useVendorPage = () => {
     },
   ];
 
-  return { formSchema, columns, data };
+  return { formSchema, columns, vendorPayload, setVendorPayload};
 };
 
 export default useVendorPage;
