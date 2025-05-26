@@ -39,7 +39,6 @@ const PortForm = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Submitted form data:", formData);
     setIsForm(false);
   };
 

@@ -42,7 +42,6 @@ export const Modal: React.FC<ModalProps> & {
   return (
     <div className='modal__overlay' onClick={() => {
       if (allowDismiss===false) return
-      console.log(allowDismiss)
       onClose()
     }}>
       <div

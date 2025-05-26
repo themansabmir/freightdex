@@ -1,0 +1,11 @@
+@use '../variables' as *;
+.modal__icon_wrappper{
+
+    background-color: $destructive-50;
+
+    border-radius: 0.25rem;
+    svg{
+        color: white;
+        stroke:white
+    }
+}

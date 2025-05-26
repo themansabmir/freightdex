@@ -12,17 +12,16 @@ const Typography: React.FC<TypographyProps> = ({
   children,
   addClass,
 }) => {
-const typographyClasses = classNames({
+const typographyClasses = classNames(addClass, {
   [`font-${variant}`]: true,
   [`font-${weight}`]: !!weight,
   [`font-${align}`]: !!align,
   [`font-${transform}`]: !!transform,
-  addClass
 
 });
 
 
-  return <Component className={typographyClasses}>{children}</Component>;
+  return <Component className={typographyClasses} >{children}</Component>;
 };
 
 export default Typography;

@@ -12,6 +12,7 @@ interface Option {
 
 interface MultiSelectInputProps {
   options: Option[];
+  disabled?: boolean;
   selectedValues: string[];
   name: string;
   onSelect: (val: string) => void;
@@ -20,6 +21,8 @@ interface MultiSelectInputProps {
   placeholder?: string;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  isError?: boolean;
+  errorText?: string;
   label: string
 }
 
@@ -34,6 +37,9 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   name,
   setIsOpen,
   label,
+  disabled,
+  isError,
+  errorText
 }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,7 +64,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   }, [options, inputValue, selectedValues]);
 
   return (
-    <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+    <Popover.Root open={isOpen} onOpenChange={disabled ? () => { }  : setIsOpen}>
       <Popover.Trigger asChild>
         <div className='multiselect__wrapper'>
           <TextField
@@ -66,6 +72,9 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
             inputRef={inputRef}
             label={label}
             name={name}
+            disabled={disabled}
+            isError={isError}
+            errorText={errorText}
             prefixIcon={
               selectedValues.length > 0 && (
                 <Badge

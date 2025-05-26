@@ -10,20 +10,27 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@radix-ui/react-popover": "^1.1.6",
+    "@radix-ui/react-popover": "^1.1.14",
     "@tanstack/react-query": "^5.76.1",
     "@tanstack/react-query-devtools": "^5.76.1",
     "@tanstack/react-table": "^8.21.2",
     "axios": "^1.9.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.483.0",
     "path": "^0.12.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0",
+<<<<<<< HEAD
     "react-toastify": "^11.0.5"
+=======
+    "react-toastify": "^11.0.5",
+    "zod": "^3.25.28"
+>>>>>>> fbae4b695843fc2359647fb29b68d3d555e30d28
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/lodash": "^4.17.17",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",

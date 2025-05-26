@@ -3,16 +3,18 @@
 .table__container {
 
     text-align: left;
-    width: fit-content;
-    max-width: 100%;
+    width: min-content;
+    // max-width: 100%;
     border: 1px solid $neutral-40;
     // height: 80vh;
-    border-radius: 0.5em;
+    border-radius: 1em;
     margin-top: 1em;
+    padding: 0em 1em;
+
 
     table {
         border-collapse: collapse;
-        width: 100%;
+        width: fit-content;
         // border: 1px solid $neutral-30;
     }
 
