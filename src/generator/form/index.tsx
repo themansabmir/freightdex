@@ -13,7 +13,16 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
 
   if (['text', 'email', 'password'].includes(field.type)) {
-    return <TextField value={value || ''} onChange={handleChange} {...field} isError={!!error} errorText={error} />;
+    return (
+      <TextField
+        value={value || ''}
+        onChange={handleChange}
+        {...field}
+        isError={!!error}
+        errorText={error}
+        placeholder={field.placeholder ?? field.name?.toUpperCase()}
+      />
+    );
   }
 
   if (field.type === 'checkbox' && field.options) {
@@ -141,7 +150,7 @@ function RenderArrayField({ field, value = [], onChange, isViewMode, errors = {}
   return (
     <div className="field__group">
       <h4>
-        {field.label} {value.length > 0 && value.length}
+        {field.label} {field.required && <span className="label__required">*</span>} {value.length > 0 && value.length}
       </h4>
       {value.map((itemVal, idx) => {
         const itemPathPrefix = `${field.name}.${idx}`;

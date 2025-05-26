@@ -4,15 +4,25 @@ import { Stack } from '@shared/components/Stack';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { z } from 'zod';
 import { useAuthApi } from '../hooks/useAuthApi';
+import DynamicForm from '@generator/form';
+import { FieldSchema } from '@generator/form/index.types';
+import { useState } from 'react';
 
 const loginSchema = z.object({
   email: z.string().min(1, { message: 'Email is required' }).email({ message: 'Invalid email address' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long' }),
 });
 
+const payload = { email: '', password: '' };
+const formSchema: FieldSchema[] = [
+  { type: 'text', required: true, label: 'Email', name: 'email', placeholder: 'Placeholder', colSpan:3 },
+  { type: 'text', required: true, label: 'Password', name: 'password', placeholder: 'Password' ,colSpan:3},
+
+];
 const SignIn = () => {
-  const { handleChange, validate, values, errors } = useFormValidation(loginSchema, { email: '', password: '' });
+  const { handleChange, validate, values, errors } = useFormValidation(loginSchema, payload);
   const { login, isLoading } = useAuthApi();
+  const [formdata, setFormData] = useState<Partial<{ email: string; password: string }>>(payload);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,29 +48,7 @@ const SignIn = () => {
           </Typography>
 
           <Stack direction="vertical">
-            <TextField
-              label="Email"
-              placeholder="youremail@gcci.com"
-              name="email"
-              type="email"
-              className="mb-8"
-              value={values.email}
-              onChange={handleChange}
-              isError={!!errors.email}
-              errorText={errors.email}
-            />
-
-            <TextField
-              label="Password"
-              placeholder="password"
-              name="password"
-              type="password"
-              className="mb-8"
-              value={values.password}
-              onChange={handleChange}
-              isError={!!errors.password}
-              errorText={errors.password}
-            />
+            <DynamicForm schema={formSchema} data={formdata} setData={setFormData} errors={errors} isViewMode={false} onChange={handleChange} />
 
             <Button addClass="px-12" disabled={disableLoginButton} isLoading={isLoading}>
               Log In

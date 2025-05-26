@@ -57,6 +57,7 @@ export interface ArrayFieldSchema  {
   label: string;
   type: "array";
   name?: string;
+  required?: boolean;
   item: {
     fields: FieldSchema[];
   };
