@@ -1,5 +1,6 @@
 // hooks/useFormValidation.ts
-import { useEffect, useReducer } from 'react';
+import { isEqual } from 'lodash';
+import { useEffect, useReducer, useRef } from 'react';
 import { ZodError, ZodSchema } from 'zod';
 
 type FormState<T> = {
@@ -43,10 +44,13 @@ export function useFormValidation<T extends Record<string, any>>(schema: ZodSche
     errors: {},
   });
 
-
+  const previousValuesRef = useRef<T>(initialValues);
 
   useEffect(() => {
-    dispatch({ type: 'SET_ALL_FIELDS', values: initialValues });
+    if (!isEqual(previousValuesRef.current, initialValues)) {
+      previousValuesRef.current = initialValues;
+      dispatch({ type: 'SET_ALL_FIELDS', values: initialValues });
+    }
   }, [initialValues]);
 
   const handleChange = (name: string, value) => {

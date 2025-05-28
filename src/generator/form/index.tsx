@@ -111,6 +111,8 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
         onChange={(item) => onChange(item)}
         placeholder={field.placeholder}
         searchable
+        isError={!!error}
+        errorText={error}
       />
     );
   }

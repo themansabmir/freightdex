@@ -1,7 +1,7 @@
 import { api } from '@api/config';
 import { CreateVendorRequest, GetAllVendorResponse, IVendor, UpdateVendorRequest } from '@modules/vendor/index.types';
 
-interface VendorGetAllParams  {
+export interface GetAllParams  {
   skip: string,
   limit: string,
   search: string,
@@ -14,7 +14,7 @@ export class VendorHttpService {
     return data.response;
   }
 
-  static async getAll(queryParams: VendorGetAllParams): Promise<GetAllVendorResponse> {
+  static async getAll(queryParams: GetAllParams): Promise<GetAllVendorResponse> {
     const {limit ,search,skip,sortBy,sortOrder }= queryParams
     const baseUrl = '/vendor';
     const params = new URLSearchParams({})
