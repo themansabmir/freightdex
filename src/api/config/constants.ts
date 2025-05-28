@@ -33,7 +33,7 @@ function getBaseUrl(): string {
 const base_url = getBaseUrl();
 
 export const constants = {
-    TOKEN: "TOKEN",
+    TOKEN: "token",
     BASE_URL: base_url,
     ACTIVE_ENV: env
 };
