@@ -23,7 +23,6 @@ export const useTeamApi = () => {
     mutationFn: (payload: ITeam) => TeamHttpService.create(payload),
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
-      console.log(data)
       if (data) {
         toast.success(`New member added successfully`);
         queryClient.setQueryData([TEAM_KEY], (old: ITeam[]) => {
@@ -42,11 +41,8 @@ export const useTeamApi = () => {
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
       if (data) {
-        queryClient.setQueryData([TEAM_KEY], (old: ITeam[]) => {
-          const withoutTemp = old?.filter((p) => !p.temp) ?? [];
-          return [...withoutTemp, data];
-        });
-        toast.success(`${data.username} updated successfully`);
+        queryClient.invalidateQueries({ queryKey: [TEAM_KEY] });
+        toast.success(`Team updated successfully`);
       }
     },
   });
@@ -59,11 +55,8 @@ export const useTeamApi = () => {
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
       if (data) {
-        queryClient.setQueryData([TEAM_KEY], (old: ITeam[]) => {
-          const withoutTemp = old?.filter((p) => !p.temp) ?? [];
-          return [...withoutTemp, data];
-        });
-        toast.success(`${data.username} deleted successfully`);
+       queryClient.invalidateQueries({ queryKey: [TEAM_KEY] });
+        toast.success(`Team member deleted successfully`);
       }
     },
   });
