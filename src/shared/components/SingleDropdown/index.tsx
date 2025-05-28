@@ -19,6 +19,8 @@ interface DropdownProps {
   name?: string;
   searchable?: boolean;
   required?: boolean;
+  errorText?: string;
+  isError?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -29,6 +31,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   disabled = false,
   label,
   name,
+  isError,
+  errorText,
   required = true,
   searchable = false,
 }) => {
@@ -56,6 +60,11 @@ const Dropdown: React.FC<DropdownProps> = ({
             {selectedOption ? selectedOption.label : placeholder}
             <ChevronsUpDown size={18} />
           </button>
+          {isError && errorText && (
+            <div  className="textField__error-text">
+              {errorText}
+            </div>
+          )}
         </div>
       </Popover.Trigger>
 

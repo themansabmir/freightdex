@@ -16,6 +16,7 @@ import { useVendorApi } from './hooks/useVendorApi';
 import { IVendor, VendorGetAllParams, vendorSchema } from './index.types';
 import PageLoader from '@shared/components/Loader/PageLoader';
 import { Stack } from '@shared/components/Stack';
+import { returnSelectedRecord } from '@shared/utils';
 
 const Vendor = () => {
   /*
@@ -103,7 +104,7 @@ const Vendor = () => {
         handleCancel();
       }
     } else {
-      const record = returnSelectedRecord();
+      const record = returnSelectedRecord(data?.response, selectedVendorIds[0]);
       if (record) {
         await updateVendor({ id: record._id, payload: formData });
         handleCancel();
@@ -111,12 +112,8 @@ const Vendor = () => {
     }
   };
 
-  const returnSelectedRecord = () => {
-    const record = data?.response.filter((row) => row._id === selectedVendorIds[0])[0];
-    return record;
-  };
   const handleEdit = () => {
-    const record = returnSelectedRecord();
+    const record = returnSelectedRecord(data?.response, selectedVendorIds[0]);
     if (record) {
       setIsEdit(true);
       setFormData(record);
@@ -160,18 +157,18 @@ const Vendor = () => {
 
       {!isForm ? (
         <>
-            <Stack direction='horizontal' align='end' justify='between'>
-              <TextField
-                prefixIcon={<SearchIcon />}
-                label="Search Vendor"
-                onChange={(e) => setQuery(e.target.value)}
-                value={query}
-                name="search"
-                placeholder="Search Vendor"
-              />
+          <Stack direction="horizontal" align="end" justify="between">
+            <TextField
+              prefixIcon={<SearchIcon />}
+              label="Search Vendor"
+              onChange={(e) => setQuery(e.target.value)}
+              value={query}
+              name="search"
+              placeholder="Search Vendor"
+            />
 
-              <Button onClick={() => handleAddNew()}>+Add New</Button>
-            </Stack>
+            <Button onClick={() => handleAddNew()}>+Add New</Button>
+          </Stack>
           <VendorTable
             columns={vendorColumns}
             data={data?.response ?? []}

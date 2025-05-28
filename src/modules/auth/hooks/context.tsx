@@ -1,6 +1,7 @@
 // auth-context.tsx
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { IUser } from '../index.types';
+import { constants } from '@api/config/constants';
 
 type AuthContextType = {
   user: IUser | null;
@@ -28,11 +29,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('admin');
+    localStorage.removeItem(constants.TOKEN);
   };
 
   const addUserToStorage = (data: IUser) => {
     localStorage.setItem('admin', JSON.stringify(data));
-    localStorage.setItem('token', data.access_token);
+    localStorage.setItem(constants.TOKEN, data.access_token);
     setUser(data);
   };
 
