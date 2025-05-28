@@ -1,53 +1,39 @@
-import { FieldSchema } from "@generator/form/index.types";
-import { Checkbox } from "@shared/components";
-import Column from "@shared/components/Column";
-import { ColumnDef } from "@tanstack/react-table";
-import { useMemo } from "react";
-
-export interface IPort {
-  port_name: string;
-  port_code: string;
-  id: string;
-  [key: string] : unknown
-}
+import { FieldSchema } from '@generator/form/index.types';
+import { Checkbox } from '@shared/components';
+import Column from '@shared/components/Column';
+import { ColumnDef } from '@tanstack/react-table';
+import { EPort, IPort } from '../index.types';
 
 export const usePortPage = () => {
+  const payload: IPort = {
+    port_name: '',
+    _id: '',
+    port_code: '',
+  };
+
   const formSchema: FieldSchema[] = [
     {
-      name: "port_name",
-      label: "Port Name",
-      type: "text",
+      name: EPort.port_name,
+      label: 'Port Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "port_code",
-      label: "Port Code",
-      type: "text",
+      name: EPort.port_code,
+      label: 'Port Code',
+      type: 'text',
       required: true,
     },
   ];
 
-  const generateDummyData = (count: number): IPort[] => {
-    const statuses = ["24wL89", "9876p32", "20KG543", "J4N238"];
-    return Array.from({ length: count }, (_, i) => ({
-      port_name: `Ship${i + 1} Which is going to port everything`,
-      port_code: statuses[Math.floor(Math.random() * statuses.length)],
-      id: String(i + 1),
-    }));
-  };
-
-  const data = useMemo(() => generateDummyData(50), []);
-
   const columns: ColumnDef<IPort>[] = [
     {
-      id: "id",
+      id: '_id',
       size: 4,
-      header: ({ table }) => (
-        <Checkbox
-          checked={Boolean(table.getIsAllRowsSelected())}
-          onChange={table.getToggleAllRowsSelectedHandler()}
-        />
-      ),
+      header: ({ table }) => {
+        return <Checkbox checked={Boolean(table.getIsAllRowsSelected())} onChange={table.getToggleAllRowsSelectedHandler()} />;
+      },
+
       cell: ({ row }) => (
         <Checkbox
           checked={Boolean(row.getIsSelected())}
@@ -58,18 +44,18 @@ export const usePortPage = () => {
         />
       ),
     },
+
     {
-      accessorKey: "port_name",
-      header: ({ header }) => <Column header={header} title="Port Name" />,
+      accessorKey: EPort.port_name,
+      header: ({ header }) => <Column header={header} title={'Port Name'} />,
     },
     {
-      accessorKey: "port_code",
-      header: () => <button>Port Code</button>,
-      cell: ({ row }) => <div>{row.original.port_code}</div>,
+      accessorKey: EPort.port_code,
+      header: ({ header }) => <Column header={header} title={'Port Code'} />,
     },
   ];
 
-  return { formSchema, data, columns };
+  return { formSchema, columns, payload };
 };
 
 export default usePortPage;
