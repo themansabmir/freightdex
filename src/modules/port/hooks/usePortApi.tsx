@@ -11,10 +11,7 @@ export const usePortApi = () => {
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
       if (data) {
-        queryClient.setQueryData([PORT_KEY], (old: IPort[]) => {
-          const withoutTemp = old?.filter((p) => !p.temp) ?? [];
-          return [...withoutTemp, data];
-        });
+        queryClient.invalidateQueries({ queryKey: ['ports'] });
         toast.success(`${data.port_name} created successfully`);
       }
     },

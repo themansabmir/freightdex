@@ -4,6 +4,7 @@ export interface IPort {
   _id: string;
   port_name: string;
   port_code: string;
+  [key: string]:unknown
 }
 
 export interface PortGetAllParams {
