@@ -1,44 +1,34 @@
-import { FieldSchema } from "@generator/form/index.types";
-import { Checkbox } from "@shared/components";
-import Column from "@shared/components/Column";
-import { ColumnDef } from "@tanstack/react-table";
-import { useMemo } from "react";
-
-export interface Airport {
-  airport_code: string;
-  airport_name: string;
-  id: string;
-}
+import { FieldSchema } from '@generator/form/index.types';
+import { Checkbox } from '@shared/components';
+import Column from '@shared/components/Column';
+import { ColumnDef } from '@tanstack/react-table';
+import { EAirport, IAirport } from '../index.types';
 
 export const useAirportPage = () => {
+  const payload: IAirport = {
+    _id: '',
+    airport_name: '',
+    airport_code: '',
+  };
+
   const formSchema: FieldSchema[] = [
     {
-      name: "airport_name",
-      label: "Airport Name",
-      type: "text",
+      name: EAirport.airport_name,
+      label: 'Airport Name',
+      type: 'text',
       required: true,
     },
     {
-      name: "airport_code",
-      label: "Airport Code",
-      type: "text",
+      name: EAirport.airport_code,
+      label: 'Airport Code',
+      type: 'text',
       required: true,
     },
   ];
 
-  const generateDummyData = (count: number): Airport[] => {
-    return Array.from({ length: count }, (_, i) => ({
-      airport_code: `AP-${1000 + i}`,
-      airport_name: `Airport ${i + 1}`,
-      id: `Airport ${i + 1}`,
-    }));
-  };
-
-  const data = useMemo(() => generateDummyData(50), []);
-
-  const columns: ColumnDef<Airport>[] = [
+  const columns: ColumnDef<IAirport>[] = [
     {
-      id: "id",
+      id: '_id',
       size: 4,
       header: ({ table }) => (
         <Checkbox
@@ -54,21 +44,19 @@ export const useAirportPage = () => {
             row.toggleSelected();
           }}
         />
-      )
+      ),
     },
     {
-      accessorKey: "airport_name",
-      header: ({ header }) => <Column header={header} title={"Airport Name"} />,
+      accessorKey: EAirport.airport_name,
+      header: ({ header }) => <Column header={header} title="Airport Name" />,
     },
     {
-      accessorKey: "airport_code",
-      header: ({ header }) => <Column header={header} title={"Airport code"} />,
+      accessorKey: EAirport.airport_code,
+      header: ({ header }) => <Column header={header} title="Airport Code" />,
     },
   ];
 
-  return { formSchema, data, columns };
+  return { formSchema, columns, payload };
 };
 
 export default useAirportPage;
-
-
