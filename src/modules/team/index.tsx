@@ -1,28 +1,30 @@
-import PageHeader from '@blocks/page-header';
-import { Button, TextField, ToggleButton } from '@shared/components';
-import { Stack } from '@shared/components/Stack';
-import DynamicForm from '@generator/form';
-import { useFormValidation } from '@shared/hooks/useFormValidation';
-import { useMemo, useState } from 'react';
-import useTeam from './hooks/useTeam';
-import { ITeam, teamSchema } from './index.types';
+import DeleteModal from '@blocks/delete-modal';
 import FormActions from '@blocks/form-actions';
-import usePageState from '@shared/hooks/usePageState';
-import TeamTable from '@generator/table';
-import { generateDummyTeamData } from './hooks/dummyData';
-import { useTeamApi } from './hooks/useTeamApi';
 import { FormActionHeader } from '@blocks/form-header';
-import PageLoader from '@shared/components/Loader/PageLoader';
+import PageHeader from '@blocks/page-header';
+import DynamicForm from '@generator/form';
+import TeamTable from '@generator/table';
+import { Button, TextField } from '@shared/components';
 import ActionButtonContainer from '@shared/components/ActionDialouge';
-import { useModal } from '@shared/hooks/useModa';
-import { returnSelectedRecord } from '@shared/utils';
+import PageLoader from '@shared/components/Loader/PageLoader';
+import { Stack } from '@shared/components/Stack';
 import { useDebounce } from '@shared/hooks/useDebounce';
+import { useFormValidation } from '@shared/hooks/useFormValidation';
+import { useModal } from '@shared/hooks/useModa';
+import usePageState from '@shared/hooks/usePageState';
+import { returnSelectedRecord } from '@shared/utils';
+import { useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
+import { generateDummyTeamData } from './hooks/dummyData';
+import useTeam from './hooks/useTeam';
+import { useTeamApi } from './hooks/useTeamApi';
+import { ITeam, teamSchema } from './index.types';
 
 const Team = () => {
   const getRowId = (row: ITeam) => row._id;
   const { formSchema: teamForm, payload, columns: vendorColumns } = useTeam();
   const { isCreating, isDeleting, isUpdating, useGetTeam, createTeam, updateTeam, removeTeam } = useTeamApi();
-  const { openModal: openDeleteModal, closeModal: closeDeleteModal, isOpen } = useModal();
+  const { openModal: openDeleteModal, closeModal: closeDeleteModal, isOpen: isDeleteModalOpen } = useModal();
   const [data, setFormData] = useState(payload);
   const { handleChange, errors, validate, values } = useFormValidation(teamSchema, data);
   const {
@@ -60,7 +62,12 @@ const Team = () => {
 
   const handleEdit = () => {
     const record = returnSelectedRecord(teamData?.response, selectedVendorIds[0]);
-    console.error('record id mismatch', record, selectedVendorIds[0]);
+
+    if (!record) {
+      console.error('record id mismatch', record, selectedVendorIds[0]);
+      toast.error('Error Id Mismatch');
+      return;
+    }
     if (record) {
       setIsEdit(true);
       setFormData(record);
@@ -77,13 +84,32 @@ const Team = () => {
     setViewMode(false);
   };
 
-  const handleSubmit = async (e: React.MouseEvent) => {
+  const handleDeleteConfirm = async () => {
+    await removeTeam(selectedVendorIds[0]);
+    setRows({});
+    closeDeleteModal();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const isValid = validate();
     if (!isValid) return;
 
-    await createTeam(data);
-    handleCancel();
+    if (!isEdit) {
+      const createTeamResponse = await createTeam(data);
+      if (createTeamResponse && keepCreating) {
+        setFormData(payload);
+      } else {
+        handleCancel();
+      }
+    } else {
+      const record = returnSelectedRecord(teamData?.response, selectedVendorIds[0]);
+      if (record) {
+        await updateTeam({ id: record._id, payload: data });
+        handleCancel();
+      }
+    }
   };
 
   /*
@@ -102,8 +128,6 @@ const Team = () => {
     };
   }, [pagination.pageIndex, pagination.pageSize, debounceSearch]);
 
-
-  console.log(queryBuilder)
   if (sorting?.[0]) {
     queryBuilder.sortOrder = sorting[0]?.desc ? 'desc' : 'asc';
     queryBuilder.sortBy = sorting[0]?.id;
@@ -151,7 +175,7 @@ const Team = () => {
                 <Button onClick={() => handleView()}>View</Button>
                 <Button
                   onClick={() => {
-                    // handleEdit();
+                    handleEdit();
                   }}
                 >
                   Edit
@@ -175,12 +199,23 @@ const Team = () => {
               onToggleKeepCreating={setKeepCreating}
             />
             <div className="my-4">
-              <DynamicForm schema={teamForm} data={data} setData={setFormData} onChange={handleChange} isViewMode={false} errors={errors} />
+              <DynamicForm schema={teamForm} data={data} setData={setFormData} onChange={handleChange} isViewMode={isViewMode} errors={errors} />
             </div>
             <FormActions onCancel={handleCancel} onSubmit={handleSubmit} isCreating={false} isEdit={isEdit} isViewMode={isViewMode} />
           </div>{' '}
         </>
       )}
+      {/*  Delete Confirmation Modal */}
+      <DeleteModal
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+        title="Delete Team Member"
+        message="Are you sure you want to delete this team member? This action cannot be undone."
+        confirmText="Confirm"
+        cancelText="Cancel"
+      />
     </>
   );
 };
