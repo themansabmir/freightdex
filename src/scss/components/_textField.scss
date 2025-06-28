@@ -149,3 +149,31 @@
   font-size: 12px;
   color: $neutral-50;
 }
+
+
+
+.custom-date-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  width: 340px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  border: 1px solid $neutral-30;
+  border-radius: 6px;
+  background-color: white;
+  color: $neutral-80;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: $primary-60;
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(35%) sepia(47%) saturate(543%) hue-rotate(223deg) brightness(97%) contrast(94%);
+  }
+}

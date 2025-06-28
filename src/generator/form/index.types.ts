@@ -13,6 +13,10 @@ type TextField = CommonFieldProps & {
   type: "text" | "email" | "password";
 };
 
+type DateField = CommonFieldProps & {
+  type: "date";
+};
+
 type RadioField = CommonFieldProps & {
   type: "radio";
   options: { label: string; value: string }[];
@@ -45,7 +49,7 @@ type ArrayField = CommonFieldProps & {
 };
 
 
-export type FieldSchema = TextField | RadioField | CheckboxField | MultiSelectField | Dropdown | ArrayField;
+export type FieldSchema = TextField | RadioField | CheckboxField | MultiSelectField | Dropdown | ArrayField | DateField;
 
 
   export interface GroupFieldSchema {

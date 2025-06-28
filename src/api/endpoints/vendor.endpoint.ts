@@ -7,6 +7,7 @@ export interface GetAllParams  {
   search: string,
   sortBy: string,
   sortOrder: string,
+  [key: string]: unknown
 }
 export class VendorHttpService {
   static async create(payload: CreateVendorRequest): Promise<IVendor> {

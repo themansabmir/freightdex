@@ -1,7 +1,7 @@
 // src/lib/api.ts
 
 import axios, { AxiosInstance } from 'axios';
-import { constants, NODE_ENV } from './constants';
+import { constants } from './constants';
 
 export const api: AxiosInstance = axios.create({
   baseURL: constants.BASE_URL,

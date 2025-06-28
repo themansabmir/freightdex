@@ -64,7 +64,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   }, [options, inputValue, selectedValues]);
 
   return (
-    <Popover.Root open={isOpen} onOpenChange={disabled ? () => { }  : setIsOpen}>
+    <Popover.Root open={isOpen} onOpenChange={disabled ? () => { return; }  : setIsOpen}>
       <Popover.Trigger asChild>
         <div className='multiselect__wrapper'>
           <TextField
@@ -100,7 +100,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
       <Popover.Portal>
         <Popover.Content align='start' side='bottom'>
           <div className='multiselect__options'>
-            {filteredAndSortedOptions.length > 0 ? (
+            {filteredAndSortedOptions.length > 0 && !disabled  ? (
               filteredAndSortedOptions.map((item) => {
                 return (
                   <div

@@ -11,6 +11,7 @@ export const useVendorPage = () => {
     vendor_type: [] as VendorType[],
     locations: [
       {
+        _id: '',
         city: '',
         country: '',
         state: '',
@@ -43,6 +44,8 @@ export const useVendorPage = () => {
         { label: 'Freight Forwarder', value: 'freight_forwarder' },
         { label: 'Agent', value: 'agent' },
         { label: 'CHA', value: 'cha' },
+        { label: 'Notify', value: 'notify' },
+        { label: 'Second Notify', value: 'second_notify' },
       ],
     },
     {

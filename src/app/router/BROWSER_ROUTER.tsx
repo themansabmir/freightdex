@@ -6,6 +6,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import { APP_ROUTES } from './APP_ROUTES';
 import ProtectedRoute from './ProtectedRoute';
 import Team from '@modules/team';
+import Shipment from '@modules/shipment';
+import ShipmentFolderPage from '@modules/shipment/pages/ShipmentFolderPage';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -30,5 +32,13 @@ export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.MY_PROFILE,
     element: <ProtectedRoute children={<Port />} />,
+  },
+  {
+    path: APP_ROUTES.SHIPMENT,
+    element: <ProtectedRoute children={<Shipment />} />,
+  },
+  {
+    path: `${APP_ROUTES.SHIPMENT}/:id`,
+    element: <ProtectedRoute children={<ShipmentFolderPage />} />,
   },
 ]);

@@ -1,11 +1,12 @@
 import { z } from 'zod';
 
-export type VendorType = 'shipper' | 'consignee' | 'shipping_line' | 'freight_forwarder' | 'agent' | 'cha';
+export type VendorType = 'shipper' | 'consignee' | 'shipping_line' | 'freight_forwarder' | 'agent' | 'cha' |'notify' | 'second_notify';
 export interface IVendor {
   _id: string;
   vendor_name: string;
   vendor_type: VendorType[];
   locations: Array<{
+    _id: string;
     city: string;
     pin_code: string;
     country: string;
@@ -26,6 +27,7 @@ export interface VendorGetAllParams {
   search: string;
   sortBy: string;
   sortOrder: string;
+  [key: string]: unknown;
 }
 export enum EVendor {
   vendor_name = 'vendor_name',
@@ -51,7 +53,7 @@ export type GetAllVendorResponse = {
 
 // Enum definition
 
-export const VendorTypeEnum = ['cha', 'agent', 'shipper', 'consignee', 'shipping_line', 'freight_forwarder'] as const;
+export const VendorTypeEnum = ['cha', 'agent', 'shipper', 'consignee', 'shipping_line', 'freight_forwarder', 'notify', 'second_notify'] as const;
 
 export const VendorType = z.enum(VendorTypeEnum);
 

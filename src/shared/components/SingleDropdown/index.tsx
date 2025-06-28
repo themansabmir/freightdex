@@ -12,7 +12,7 @@ interface Option {
 interface DropdownProps {
   options: Option[];
   value: string | null;
-  onChange: (val: string) => void;
+  onChange: (val: string | null) => void;
   placeholder?: string;
   disabled?: boolean;
   label?: string;
@@ -30,7 +30,6 @@ const Dropdown: React.FC<DropdownProps> = ({
   placeholder = 'Select...',
   disabled = false,
   label,
-  name,
   isError,
   errorText,
   required = true,
@@ -39,9 +38,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const modifiedOptions = [{ label: 'None', value: '' }, ...options];
 
-  const selectedOption = options.find((o) => o.value === value);
-  const filteredOptions = searchable ? options.filter((opt) => opt.label.toLowerCase().includes(inputValue.toLowerCase())) : options;
+  const selectedOption = modifiedOptions.find((o) => o.value === value);
+  const filteredOptions = searchable ? modifiedOptions.filter((opt) => opt.label.toLowerCase().includes(inputValue.toLowerCase())) : modifiedOptions;
 
   useEffect(() => {
     if (open && inputRef.current && searchable) {
@@ -49,6 +49,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   }, [open, searchable]);
 
+  console.log(selectedOption);
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
@@ -56,54 +57,62 @@ const Dropdown: React.FC<DropdownProps> = ({
           <label className="dropdown__trigger__label">
             {label} {required && <span className="label__required">*</span>}
           </label>
-          <button className="dropdown__trigger dropdown__trigger__container" disabled={disabled} type="button">
-            {selectedOption ? selectedOption.label : placeholder}
+          <button
+            className={`${disabled ? 'dropdown__trigger--disabled' : ''} dropdown__trigger dropdown__trigger__container `}
+            // style={{ background: disabled ? '#d5d7da' : '#fff' }}
+            disabled={disabled}
+            type="button"
+          >
+            {selectedOption?.label ? (
+              <span className="dropdown__selected">{selectedOption.label}</span>
+            ) : (
+              <span className="dropdown__placeholder"> {placeholder}</span>
+            )}
+            {/* {selectedOption ? selectedOption.label : placeholder} */}
             <ChevronsUpDown size={18} />
           </button>
-          {isError && errorText && (
-            <div  className="textField__error-text">
-              {errorText}
-            </div>
-          )}
+          {isError && errorText && <div className="textField__error-text">{errorText}</div>}
         </div>
       </Popover.Trigger>
 
       <Popover.Portal>
-        <Popover.Content align="start" side="bottom" className="dropdown__content">
-          {searchable && (
-            <TextField
-              inputRef={inputRef}
-              value={inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-              }}
-              name="search"
-              placeholder="Search..."
-              className="dropdown__search"
-            />
-          )}
-
-          <div className="dropdown__options">
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className={`dropdown__option ${value === option.value ? 'selected' : ''}`}
-                  onClick={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                    setInputValue(''); // reset search
-                  }}
-                >
-                  <span>{option.label}</span>
-                  {value === option.value && <Check size={18} />}
-                </div>
-              ))
-            ) : (
-              <div className="dropdown__option empty">No options found</div>
+        {!disabled && (
+          <Popover.Content align="start" side="bottom" className="dropdown__content">
+            {searchable && (
+              <TextField
+                inputRef={inputRef}
+                value={inputValue}
+                onChange={(e) => {
+                  setInputValue(e.target.value);
+                }}
+                name="search"
+                placeholder="Search..."
+                className="dropdown__search"
+              />
             )}
-          </div>
-        </Popover.Content>
+
+            <div className="dropdown__options">
+              {filteredOptions.length > 0 && !disabled ? (
+                filteredOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={`dropdown__option ${value === option.value ? 'selected' : ''}`}
+                    onClick={() => {
+                      onChange(option.value);
+                      setOpen(false);
+                      setInputValue(''); // reset search
+                    }}
+                  >
+                    <span>{option.label}</span>
+                    {value === option.value && <Check size={18} />}
+                  </div>
+                ))
+              ) : (
+                <div className="dropdown__option empty">No options found</div>
+              )}
+            </div>
+          </Popover.Content>
+        )}
       </Popover.Portal>
     </Popover.Root>
   );

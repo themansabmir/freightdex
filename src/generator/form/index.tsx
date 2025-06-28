@@ -117,6 +117,19 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
     );
   }
 
+  if (field.type === 'date') {
+    return (
+      <div>
+        <label className="dropdown__trigger__label">
+          {field.label} {field.required && <span className="label__required">*</span>}
+        </label>
+        <br />
+        <input className="custom-date-input" value={value} onChange={handleChange} {...field} />
+
+      </div>
+    );
+  }
+
   return null;
 }
 

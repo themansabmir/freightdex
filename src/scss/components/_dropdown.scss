@@ -14,11 +14,14 @@
         }
 
 }
+
+.dropdown__trigger--disabled {
+    background-color: $neutral-30;
+}
 .dropdown__trigger {
     border: 1px solid $neutral-30;
     padding: 8px 12px;
     border-radius: 6px;
-    background: $white;
     width: 360px;
     text-align: left;
     overflow-x: hidden;
@@ -56,7 +59,6 @@
     align-items: center;
     justify-content: space-between;
 
-    // background: #e6f4ff;
     &:hover {
         color: white;
     }
@@ -71,4 +73,12 @@
 
 .dropdown__trigger__label {
     color: $neutral-70;
+}
+.dropdown__selected{
+color: $primary-60;
+font-weight: 600;
+}
+
+.dropdown__placeholder{
+    color: $neutral-40
 }

@@ -25,8 +25,7 @@ export const useVendorApi = () => {
       queryKey: [VENDOR_KEY, queryString],
       queryFn: () => VendorHttpService.getAll(queryString),
     });
-
-  //   // READ ONE
+ // READ ONE
   //   const useGetVendorById = (id: string) =>
   //     useQuery({
   //       queryKey: ["vendor", id],

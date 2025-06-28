@@ -25,7 +25,7 @@ export function buildUrlWithSearchParams(
     sortBy: string;
     sortOrder: string;
     search: string;
-  }={ limit: '', skip: '', sortBy: '', sortOrder: '', search: '' },
+  } = { limit: '', skip: '', sortBy: '', sortOrder: '', search: '' }
 ): string {
   const params = new URLSearchParams();
 
@@ -49,9 +49,41 @@ export function buildUrlWithSearchParams(
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
 
-
-
 export const returnSelectedRecord = (data, selectedId) => {
   const record = data?.filter((row) => row._id === selectedId)[0];
   return record;
+};
+
+export const hydratePayload = <T extends Record<string, any>>(formData: T): T => {
+  const cleanPayload = Object.keys(formData).reduce((acc, key) => {
+    const value = formData[key];
+    acc[key] = value === '' ? null : value;
+    return acc;
+  }, {} as T);
+
+  return cleanPayload;
+};
+
+export const splitCompositeFields = (userPayload, keys) => {
+  const payload = { ...userPayload };
+  for (const key of keys) {
+    if (payload[key]) {
+      const [name, address] = payload[key].split('|');
+      payload[key] = name;
+      payload[`${key}_address`] = address;
+    }
+  }
+
+  return payload;
+};
+
+export const joinCompositeFields = (userPayload, keys) => {
+  const payload = { ...userPayload };
+  for (const key of keys) {
+    if (payload[key] && payload[`${key}_address`]) {
+      payload[key] = `${payload[key]}|${payload[`${key}_address`]}`;
+    }
+  }
+
+  return payload;
 };

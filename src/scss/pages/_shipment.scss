@@ -1,0 +1,53 @@
+@use '../variables' as*;
+
+.shipment_folder_component {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 4px 0;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: $primary-30;
+        border-radius: 0.5em;
+    }
+
+}
+
+.shipment__folders_container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 1em;
+}
+
+.flex-wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.shipment_info_card {
+
+    p {
+        color: $primary-60;
+        font-weight: 600;
+    }
+    width: 30%;
+    margin-left: auto;
+    flex-direction: column;
+    padding: 4px 16px;
+    list-style-type: none;
+    border-radius: 8px;
+    border: 1px solid $neutral-30;
+    display: flex;
+    gap: 8px;
+    background-color: $primary-10;
+}
+
+.shipment_info_card--text{
+    color: $primary-70;
+    font-weight: 500;
+    font-size: 12px;
+}
