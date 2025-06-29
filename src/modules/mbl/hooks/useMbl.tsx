@@ -1,59 +1,11 @@
 import { FieldSchema } from '@generator/form/index.types';
-import { usePortApi } from '@modules/port/hooks/usePortApi';
-import { formatShippingLines, formatVendors } from '@modules/vendor/helper';
-import { useVendorApi } from '@modules/vendor/hooks/useVendorApi';
-import { useEffect, useState } from 'react';
-import { EContainerField, EMblField, IMbl } from '../index.types';
 import { hydratePayload } from '@shared/utils';
+import { EContainerField, EMblField, IMbl } from '../index.types';
+import { useDropDownData } from './useDropdownData';
 
-interface options {
-  label: string;
-  value: string;
-}
-type DropdownOptions = options[] | undefined | [];
-const searchQuery = {
-  search: '',
-  limit: '0',
-  skip: '0',
-  sortBy: '',
-  sortOrder: '',
-};
 const useMbl = () => {
-  const [shipper, setShipper] = useState<DropdownOptions>([]);
-  const [consignee, setConsignee] = useState<DropdownOptions>([]);
-  const [notify, setNotify] = useState<DropdownOptions>([]);
-  const [agent, setAgent] = useState<DropdownOptions>([]);
-  const [shippingLine, setShippingLine] = useState<DropdownOptions>([]);
-  const [portData, setPortData] = useState<DropdownOptions>([]);
+  const { shipper, shippingLine, portData, agent,consignee, notify} = useDropDownData()
 
-  //DYNAMIC DATA FOR DROPDOWNS
-  const { useGetVendors } = useVendorApi();
-  const { useGetPort } = usePortApi();
-  const { data: ports } = useGetPort(searchQuery);
-  const { data: vendors, isLoading } = useGetVendors(searchQuery);
-
-  useEffect(() => {
-    if (vendors?.response) {
-      const shippers = formatVendors(vendors?.response, 'shipper');
-      const consignees = formatVendors(vendors?.response, 'consignee');
-      const agents = formatVendors(vendors?.response, 'agent');
-      const notify = formatVendors(vendors?.response, 'notify');
-      const shippingLines = formatShippingLines(vendors?.response);
-      const portOptions = ports?.response?.map((item) => {
-        return {
-          label: `${item.port_name}-(${item.port_code?.toUpperCase()})`,
-          value: item._id,
-        };
-      });
-
-      setShipper(shippers);
-      setConsignee(consignees);
-      setAgent(agents);
-      setNotify(notify);
-      setShippingLine(shippingLines);
-      setPortData(portOptions);
-    }
-  }, [isLoading]);
 
   //payload and form schema
   const mbl_payload: IMbl = {
@@ -110,6 +62,7 @@ const useMbl = () => {
     };
   });
 
+  //  common fields  : shipper, consignee, notify, second_notify,agent, shipping_line
   const mbl_form_schema: FieldSchema[] = [
     {
       type: 'dropdown',
