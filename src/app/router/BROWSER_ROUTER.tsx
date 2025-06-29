@@ -8,6 +8,7 @@ import ProtectedRoute from './ProtectedRoute';
 import Team from '@modules/team';
 import Shipment from '@modules/shipment';
 import ShipmentFolderPage from '@modules/shipment/pages/ShipmentFolderPage';
+import MBL from '@modules/mbl';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -40,5 +41,9 @@ export const browserRouterRoutes = createBrowserRouter([
   {
     path: `${APP_ROUTES.SHIPMENT}/:id`,
     element: <ProtectedRoute children={<ShipmentFolderPage />} />,
+  },
+  {
+    path: `MBL`,
+    element: <ProtectedRoute children={<MBL />} />,
   },
 ]);

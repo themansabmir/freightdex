@@ -100,6 +100,9 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   }
 
   if (field.type === 'dropdown') {
+    if (field.name === 'trade_type') {
+      console.log('IS DISABLED', field);
+    }
     return (
       <Dropdown
         label={field.label}
@@ -124,8 +127,13 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
           {field.label} {field.required && <span className="label__required">*</span>}
         </label>
         <br />
-        <input className="custom-date-input" value={value} onChange={handleChange} {...field} />
-
+        <input
+          className="custom-date-input"
+          value={value}
+          style={{ backgroundColor: field.disabled ? '#dddee1' : 'white' }}
+          onChange={handleChange}
+          {...field}
+        />
       </div>
     );
   }
@@ -144,7 +152,7 @@ function RenderGroup({ fields, value, onChange, isViewMode = false, errors = {},
           <RenderField
             key={fullPath}
             error={fieldError}
-            field={{ ...f, disabled: isViewMode }}
+            field={{ ...f, disabled: f.disabled || isViewMode }}
             value={value?.[f.name]}
             onChange={(val) => onChange({ ...value, [f.name]: val })}
           />
@@ -214,7 +222,7 @@ function DynamicForm<T extends Record<string, unknown>>({ schema, data, setData,
           <div key={field.name} style={{ gridColumn: `span ${field.colSpan || 1}` }}>
             <RenderField
               error={get(errors, field.name)}
-              field={{ ...field, disabled: isViewMode }}
+              field={{ ...field, disabled: field.disabled || isViewMode }}
               value={data[field.name]}
               onChange={(val) => handleChange(field.name, val)}
             />

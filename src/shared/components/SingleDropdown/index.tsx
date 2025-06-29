@@ -49,7 +49,6 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   }, [open, searchable]);
 
-  console.log(selectedOption);
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>

@@ -1,13 +1,14 @@
 import PageHeader from '@blocks/page-header';
-import { Badge, Tabs } from '@shared/components';
+import {  Tabs } from '@shared/components';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useShipmentApi } from '../hooks/useShipmentApi';
-import MBLFormPage from './MBLForm';
 import useTabTitle from '@shared/hooks/useTabTitle';
+import { IFolderCard } from '../index.types';
+import MBLFormPage from '@modules/mbl';
 
-const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }) => {
-  const obj = {
+const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }: IFolderCard) => {
+  const obj: Record<string, string> = {
     'Folder ID': folder_id,
     'Folder Name': folder_name,
     'Created By': created_by,
@@ -30,8 +31,9 @@ const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }) =>
 const ShipmentFolderPage = () => {
   const { id } = useParams() as { id: string };
   const { useGetShipmentById } = useShipmentApi();
-  const { data, isLoading } = useGetShipmentById(id);
+  const { data } = useGetShipmentById(id);
   useTabTitle(`GCCI - ${data?.shipment_name}`);
+  console.log(data);
 
   const [activeTab, setActiveTab] = useState('MBL');
   const tabs = [
@@ -43,7 +45,7 @@ const ShipmentFolderPage = () => {
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Shipment', href: '/shipment' },
-    { label: id ?? '', href: '' },
+    { label: data?.shipment_name ?? '', href: '' },
   ];
   return (
     <div>
@@ -74,7 +76,7 @@ const ShipmentFolderPage = () => {
         ></Tabs>
       </div>
 
-      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} />}
+      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} tradeType={data?.shipment_type === 'IMP' ? 'IMPORT' : 'EXPORT'} />}
     </div>
   );
 };

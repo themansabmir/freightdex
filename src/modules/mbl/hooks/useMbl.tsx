@@ -4,6 +4,7 @@ import { formatShippingLines, formatVendors } from '@modules/vendor/helper';
 import { useVendorApi } from '@modules/vendor/hooks/useVendorApi';
 import { useEffect, useState } from 'react';
 import { EContainerField, EMblField, IMbl } from '../index.types';
+import { hydratePayload } from '@shared/utils';
 
 interface options {
   label: string;
@@ -56,6 +57,7 @@ const useMbl = () => {
 
   //payload and form schema
   const mbl_payload: IMbl = {
+    movement_type: '',
     shipment_folder_id: '',
     shipment_mode: '', // ShipmentMode
     shipment_type: '', // ShipmentType
@@ -122,6 +124,17 @@ const useMbl = () => {
     },
     {
       type: 'dropdown',
+      label: 'Movement Type',
+      name: EMblField.movement_type,
+      options: [
+        { label: 'Rail', value: 'RAIL' },
+        { label: 'Road', value: 'ROAD' },
+      ],
+      placeholder: 'Movement Type Rail/Road',
+      required: false,
+    },
+    {
+      type: 'dropdown',
       label: 'Type Of Shipment',
       name: EMblField.shipment_type,
       options: [
@@ -141,6 +154,7 @@ const useMbl = () => {
       ],
       placeholder: 'Trade Type Import/Export',
       required: false,
+      disabled: true,
     },
     { type: 'text', name: EMblField.booking_number, label: 'Booking Number', placeholder: 'Booking Number', required: false },
     {
@@ -200,7 +214,7 @@ const useMbl = () => {
       type: 'dropdown',
       label: 'Agent',
       name: 'agent',
-      colSpan: 2,
+      colSpan: 1,
       placeholder: 'Agent',
       required: false,
       options: [...(agent ?? [])],
@@ -318,51 +332,43 @@ const useMbl = () => {
     },
     {
       type: 'text',
-      label: 'Shipping Bill Number',
-      name: EMblField.shipping_bill_number,
-      placeholder: 'Shipping Bill Number',
-      colSpan: 1,
-      required: false,
-    },
-    {
-      type: 'date',
-      label: 'Shipping Bill Date',
-      name: EMblField.shipping_bill_date,
-      placeholder: 'Shipping Bill Date',
-      colSpan: 2,
-      required: false,
-    },
-    {
-      type: 'text',
-      label: 'Bill Of Entry Number',
-      name: EMblField.bill_of_entry,
-      placeholder: 'Bill Of Entry Number',
-      colSpan: 1,
-      required: false,
-    },
-    {
-      type: 'date',
-      label: 'Bill Of Entry Date',
-      name: EMblField.bill_of_entry_date,
-      placeholder: 'Bill Of Entry Date',
-      colSpan: 2,
-      required: false,
-    },
-    {
-      type: 'text',
       label: 'Free Time At POL',
       name: EMblField.free_time_pol,
-      placeholder: 'Free Time At POL',
+      placeholder: 'Free Time At Origin',
       colSpan: 1,
       required: false,
     },
     {
       type: 'text',
-      label: 'Free Time At POD',
+      label: 'Free Time At Destination',
       name: EMblField.free_time_pod,
-      placeholder: 'Free Time At POD',
+      placeholder: 'Free Time At Destination',
       colSpan: 2,
       required: false,
+    },
+    {
+      type: 'array',
+      label: 'Shipping Bill',
+      name: 'shipping_bill',
+      item: {
+        type: 'group',
+        fields: [
+          {
+            type: 'text',
+            label: 'Shipping Bill Number',
+            name: EMblField.shipping_bill_number,
+            placeholder: 'Shipping Bill Number',
+            required: false,
+          },
+          {
+            type: 'date',
+            label: 'Shipping Bill Date',
+            name: EMblField.shipping_bill_date,
+            placeholder: 'Shipping Bill Number',
+            required: false,
+          },
+        ],
+      },
     },
 
     {
@@ -467,7 +473,82 @@ const useMbl = () => {
     },
   ];
 
-  return { mbl_payload, mbl_form_schema };
+  const export_rail_fields: FieldSchema[] = [
+    {
+      type: 'text',
+      label: 'ETD POL',
+      name: 'etd_pol',
+      placeholder: 'ETD POL',
+      colSpan: 1,
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'ETA FPOD',
+      name: 'etd_fpod',
+      placeholder: 'ETD FPOD',
+      colSpan: 2,
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'Free Time At Destination Extra Free Time (purchased)',
+      name: 'extra_free_time',
+      placeholder: 'Free Time At Origin',
+      colSpan: 1,
+      required: false,
+    },
+  ];
+
+  const export_rail_container_fields: FieldSchema[] = [
+    {
+      type: 'date',
+      label: 'Date Of Container Pickup',
+      name: 'pickup_date',
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Date Of Container Handover',
+      name: 'handover_date',
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Date Of Rail Out',
+      name: 'rail_out_date',
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Date Of Arrival at POL',
+      name: 'pol_date',
+      required: false,
+    },
+  ];
+
+  const export_road_container_fields: FieldSchema[] = [
+    {
+      type: 'date',
+      label: 'Date Of Container Pickup',
+      name: 'pickup_date',
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Date Of Container Gate In',
+      name: 'gate_in_date',
+      required: false,
+    },
+  ];
+
+  return {
+    mbl_payload: hydratePayload(mbl_payload),
+    mbl_form_schema,
+    export_rail_container_fields,
+    export_rail_fields,
+    export_road_container_fields,
+  };
 };
 
 export default useMbl;
