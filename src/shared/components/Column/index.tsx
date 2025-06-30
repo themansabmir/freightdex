@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 
-const Column = ({ header, title, enableSorting = true }) => {
+const Column = ({ header, title, enableSorting = true }:{header: any, title: string, enableSorting?: boolean}) => {
   return (
     <button className="table__column-cell">
       {title}

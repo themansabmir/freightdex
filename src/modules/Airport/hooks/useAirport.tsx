@@ -59,4 +59,3 @@ export const useAirportPage = () => {
   return { formSchema, columns, payload };
 };
 
-export default useAirportPage;

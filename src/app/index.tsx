@@ -2,7 +2,7 @@ import { RouterProvider } from 'react-router-dom';
 import './_app.scss';
 import { browserRouterRoutes } from './router/BROWSER_ROUTER';
 import { useOnline } from '@shared/hooks/useOnline';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export function App() {

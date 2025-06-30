@@ -15,7 +15,6 @@ import usePageState from '@shared/hooks/usePageState';
 import { returnSelectedRecord } from '@shared/utils';
 import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { generateDummyTeamData } from './hooks/dummyData';
 import useTeam from './hooks/useTeam';
 import { useTeamApi } from './hooks/useTeamApi';
 import { ITeam, teamSchema } from './index.types';
@@ -26,7 +25,7 @@ const Team = () => {
   const { isCreating, isDeleting, isUpdating, useGetTeam, createTeam, updateTeam, removeTeam } = useTeamApi();
   const { openModal: openDeleteModal, closeModal: closeDeleteModal, isOpen: isDeleteModalOpen } = useModal();
   const [data, setFormData] = useState(payload);
-  const { handleChange, errors, validate, values } = useFormValidation(teamSchema, data);
+  const { handleChange, errors, validate, } = useFormValidation(teamSchema, data);
   const {
     rows,
     sorting,
@@ -40,7 +39,6 @@ const Team = () => {
     setIsForm,
     setKeepCreating,
     setPagination,
-    setQuery,
     setRows,
     setSorting,
     setView: setViewMode,
@@ -142,7 +140,6 @@ const Team = () => {
     isEdit: isEdit,
   };
   const breadcrumbArray = [{ label: 'Home', href: '/' }, { label: 'Team' }];
-  const dymmuData = useMemo(() => generateDummyTeamData(50), []);
 
   return (
     <>

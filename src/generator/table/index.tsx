@@ -7,7 +7,7 @@ import Typography from '@shared/components/Typography';
 import Loader from '@shared/components/Loader';
 
 import { createPortal } from 'react-dom';
-const RenderTableBody = ({ isLoading, data, table }) => {
+const RenderTableBody = ({ isLoading, data, table }:{ isLoading?: boolean, data: any[], table: any}) => {
   if (isLoading) {
     return createPortal(
       <div className="" style={{ position: 'absolute', top: '50%', left: '50%' }}>

@@ -49,22 +49,34 @@ export function buildUrlWithSearchParams(
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
 
-export const returnSelectedRecord = (data, selectedId) => {
-  const record = data?.filter((row) => row._id === selectedId)[0];
+export const returnSelectedRecord = (data: any, selectedId: string) => {
+  const record = data?.filter((row: any) => row._id === selectedId)[0];
   return record;
 };
 
 export const hydratePayload = <T extends Record<string, any>>(formData: T): T => {
-  const cleanPayload = Object.keys(formData).reduce((acc, key) => {
+  const cleanPayload = (Object.keys(formData) as (keyof T)[]).reduce((acc, key) => {
     const value = formData[key];
-    acc[key] = value === '' ? null : value;
+    // Cast the accumulator to a mutable indexable type just for this write
+    (acc as Record<string, any>)[key as string] = value === '' ? null : value;
     return acc;
   }, {} as T);
 
   return cleanPayload;
 };
 
-export const splitCompositeFields = (userPayload, keys) => {
+
+// export const hydratePayload = <T extends Record<string, any>>(formData: T): T => {
+//   const cleanPayload = Object.keys(formData).reduce((acc, key) => {
+//     const value = formData[key];
+//     acc[key] = value === '' ? null : value;
+//     return acc;
+//   }, {} as T);
+
+//   return cleanPayload;
+// };
+
+export const splitCompositeFields = (userPayload: any, keys: any) => {
   const payload = { ...userPayload };
   for (const key of keys) {
     if (payload[key]) {
@@ -77,7 +89,7 @@ export const splitCompositeFields = (userPayload, keys) => {
   return payload;
 };
 
-export const joinCompositeFields = (userPayload, keys) => {
+export const joinCompositeFields = (userPayload: any, keys: any) => {
   const payload = { ...userPayload };
   for (const key of keys) {
     if (payload[key] && payload[`${key}_address`]) {

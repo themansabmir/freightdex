@@ -15,7 +15,7 @@ type FormActionsProps = {
 const TeamForm = (props: FormActionsProps) => {
   const { formSchema: teamForm, payload } = useTeam();
   const [data, setData] = useState({});
-  const { handleChange, errors, validate, values } = useFormValidation(teamSchema, payload);
+  const { handleChange, errors } = useFormValidation(teamSchema, payload);
   return (
     <div>
       <div className="my-4">

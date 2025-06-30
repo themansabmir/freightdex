@@ -42,8 +42,8 @@ const Routes: React.FC<RoutesProps> = ({
                 <li
                   key={childIndex}
                   onClick={() => {
-                    handleParentLink(item.id);
-                    handleChildLink(child.id);
+                    handleParentLink(item?.id);
+                    handleChildLink(child?.id);
                   }}
                   className={childLinkId === child.id ? 'active ' : ''}
                 >

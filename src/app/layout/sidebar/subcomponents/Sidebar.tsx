@@ -49,11 +49,13 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
       setChildLinkId("");
     }
   };
-  const handleParentLink = (parentId: string) => {
+  const handleParentLink = (parentId?: string) => {
+    if(parentId)
     setParentLinkId(parentId);
   };
 
-  const handleChildLink = (childId: string) => {
+  const handleChildLink = (childId?: string) => {
+    if(childId)
     setChildLinkId(childId);
   };
 

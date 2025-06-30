@@ -25,7 +25,7 @@ const DashboardPage = () => {
           { label: 'Germany', value: 'DE' },
         ]}
         value={selected}
-        onChange={(item)=>setSelected(item)}
+        onChange={(item)=>setSelected(String(item))}
         placeholder="Select a country"
         searchable
       />

@@ -47,7 +47,7 @@ const MBLFormPage = ({ id, tradeType }: { id: string; tradeType: string }) => {
 
     const container = schema.find((f) => f.name === 'containers');
     const extras = extraByMove[formData?.movement_type?.toUpperCase() as keyof typeof extraByMove];
-    if (container?.item?.fields && extras) {
+    if (container?.type === 'array' && container?.item?.fields && extras) {
       container.item.fields.push(...extras);
     }
     return schema;

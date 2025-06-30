@@ -11,11 +11,11 @@ import { CircleAlert, SearchIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import FormActions from '../../blocks/form-actions';
 import PageHeader from '../../blocks/page-header';
-import useAirportPage from './hooks/useAirport';
 import { useAirportApi } from './hooks/useAirportApi';
 import { IAirport, AirportGetAllParams, airportSchema } from './index.types';
 import PageLoader from '@shared/components/Loader/PageLoader';
 import { Stack } from '@shared/components/Stack';
+import { useAirportPage } from './hooks/useAirport';
 
 // Dummy airport generator
 const generateDummyAirport = (id: number): IAirport => ({

@@ -72,6 +72,7 @@ interface RenderFieldProps {
   field: FieldSchema;
   value: any;
   onChange: (val: any) => void;
+  error: any
 }
 
 export interface RenderGroupProps {
@@ -81,9 +82,11 @@ export interface RenderGroupProps {
   value: any;
   onChange: (val: any) => void;
   columns?: number;
+  errors?: any
 }
 export interface RenderArrayFieldProps {
   isViewMode?: boolean;
+  errors?: any
   field: ArrayFieldSchema;
   value: Data[];
   onChange: (val: unknown[]) => void;

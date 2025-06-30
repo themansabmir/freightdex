@@ -9,8 +9,8 @@ export interface RoutesProps {
   items: SidebarItem[];
   parentLinkId: string;
   childLinkId: string;
-  handleParentLink: (parentId: string) => void;
-  handleChildLink: (childId: string) => void;
+  handleParentLink: (parentId?: string) => void;
+  handleChildLink: (childId?: string) => void;
 }
 
 export interface SidebarItem {

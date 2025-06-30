@@ -6,7 +6,6 @@ import { useShipmentApi } from '../hooks/useShipmentApi';
 import useTabTitle from '@shared/hooks/useTabTitle';
 import { IFolderCard } from '../index.types';
 import MBLFormPage from '@modules/mbl';
-import HBLFormPage from '@modules/hbl';
 
 const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }: IFolderCard) => {
   const obj: Record<string, string> = {
@@ -78,7 +77,6 @@ const ShipmentFolderPage = () => {
       </div>
 
       {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} tradeType={data?.shipment_type === 'IMP' ? 'IMPORT' : 'EXPORT'} />}
-      {activeTab.toUpperCase() ==="HBL" && <HBLFormPage id={id} />}
     </div>
   );
 };

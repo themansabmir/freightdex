@@ -53,7 +53,7 @@ export function useFormValidation<T extends Record<string, any>>(schema: ZodSche
     }
   }, [initialValues]);
 
-  const handleChange = (name: string, value) => {
+  const handleChange = (name: string, value:any) => {
     dispatch({ type: 'UPDATE_FIELD', field: name as keyof T, value });
   };
 
