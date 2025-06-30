@@ -35,10 +35,9 @@ const MBLFormPage = ({ id, tradeType }: { id: string; tradeType: string }) => {
   const visibleSchema = useMemo(() => {
     const schema = cloneDeep(mbl_form_schema);
 
-    if (formData?.trade_type?.toUpperCase() !== 'IMPORT') {
+    if (formData?.trade_type?.toUpperCase() === 'IMPORT') {
       return schema;
     }
-    if (formData?.trade_type?.toUpperCase() !== 'EXPORT') return schema;
     schema.push(...export_rail_fields); // root fields
     const extraByMove = {
       RAIL: export_rail_container_fields,
