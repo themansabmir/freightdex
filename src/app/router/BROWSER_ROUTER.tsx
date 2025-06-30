@@ -1,4 +1,3 @@
-import AirportPage from '@modules/airport';
 import DashboardPage from '@modules/dashboard';
 import Port from '@modules/port';
 import Shipment from '@modules/shipment';
@@ -17,10 +16,7 @@ export const browserRouterRoutes = createBrowserRouter([
     path: APP_ROUTES.VENDOR,
     element: <ProtectedRoute children={<Vendor />} />,
   },
-  {
-    path: APP_ROUTES.AIRPORT,
-    element: <ProtectedRoute children={<AirportPage />} />,
-  },
+
   {
     path: APP_ROUTES.Port,
     element: <ProtectedRoute children={<Port />} />,
