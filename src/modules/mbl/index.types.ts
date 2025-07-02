@@ -45,7 +45,7 @@ export interface IContainer {
   container_number: string;
   line_seal: string;
   shipper_seal: string;
-  customer_seal: string;
+  custom_seal: string;
   container_size: CONTAINER_SIZE;
   container_type: CONTAINER_TYPE;
   package_count: string;
@@ -54,9 +54,13 @@ export interface IContainer {
   gross_weight: string;
   net_weight: string;
   volume: string;
+  arrival_pol_date: string;
+  container_pickup_date: string;
+  gate_in_date: string;
+  arrival_fpod_date: string;
+  delivery_order_date: string;
+  delivery_validity_date: string;
 }
-
-
 
 export interface IMbl {
   [key: string]: unknown;
@@ -110,6 +114,9 @@ export interface IMbl {
 export enum EMblField {
   exchange_rate = 'exchange_rate',
   movement_type = 'movement_type',
+  place_carriage = 'place_carriage',
+  vessel_number = 'vessel_number',
+  marks_numbers = 'marks_numbers',
 
   shipment_folder_id = 'shipment_folder_id',
   shipment_mode = 'shipment_mode',
@@ -144,9 +151,11 @@ export enum EMblField {
   shipping_bill_date = 'shipping_bill_date',
   bill_of_entry = 'bill_of_entry',
   bill_of_entry_date = 'bill_of_entry_date',
+  bill_of_entry_number = 'bill_of_entry_number',
 
-  free_time_pol = 'free_time_pol',
-  free_time_pod = 'free_time_pod',
+  free_time_origin = 'free_time_origin',
+  free_time_destination = 'free_time_destination',
+  extra_free_time = 'extra_free_time',
 
   containers = 'containers',
   created_by = 'created_by',
@@ -168,6 +177,15 @@ export enum EContainerField {
   gross_weight = 'gross_weight',
   net_weight = 'net_weight',
   volume = 'volume',
+
+  rail_out_date = 'rail_out_date',
+  arrival_pol_date = 'arrival_pol_date',
+  container_pickup_date = 'container_pickup_date',
+  container_handover_date = 'container_handover_date',
+  gate_in_date = 'gate_in_date',
+  arrival_fpod_date = 'arrival_fpod_date',
+  delivery_order_date = 'delivery_order_date',
+  delivery_validity_date = 'delivery_validity_date',
 }
 
 //ZOD SCHEMA

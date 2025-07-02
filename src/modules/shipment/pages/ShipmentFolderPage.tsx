@@ -1,5 +1,5 @@
 import PageHeader from '@blocks/page-header';
-import {  Tabs } from '@shared/components';
+import { Tabs } from '@shared/components';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useShipmentApi } from '../hooks/useShipmentApi';
@@ -33,7 +33,6 @@ const ShipmentFolderPage = () => {
   const { useGetShipmentById } = useShipmentApi();
   const { data } = useGetShipmentById(id);
   useTabTitle(`GCCI - ${data?.shipment_name}`);
-  console.log(data);
 
   const [activeTab, setActiveTab] = useState('MBL');
   const tabs = [
@@ -45,7 +44,7 @@ const ShipmentFolderPage = () => {
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Shipment', href: '/shipment' },
-    { label: data?.shipment_name ?? '', href: '' },
+    { label:id === 'new' ? 'New Shipment' : data?.shipment_name ?? '', href: '' },
   ];
   return (
     <div>
@@ -58,12 +57,14 @@ const ShipmentFolderPage = () => {
           isForm={false}
           breadcrumnArray={breadcrumbArray}
         />
-        <FolderDetailCard
-          folder_id={id}
-          folder_name={data?.shipment_name}
-          created_by={`${data?.created_by?.first_name} ${data?.created_by?.last_name}`}
-          created_at={new Date(data?.createdAt).toLocaleDateString()}
-        />
+        {id !== 'new' && (
+          <FolderDetailCard
+            folder_id={id}
+            folder_name={data?.shipment_name}
+            created_by={`${data?.created_by?.first_name} ${data?.created_by?.last_name}`}
+            created_at={new Date(data?.createdAt).toLocaleDateString()}
+          />
+        )}
       </div>
 
       <div className="my-4">
@@ -76,7 +77,7 @@ const ShipmentFolderPage = () => {
         ></Tabs>
       </div>
 
-      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} tradeType={data?.shipment_type === 'IMP' ? 'IMPORT' : 'EXPORT'} />}
+      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id}  />}
     </div>
   );
 };

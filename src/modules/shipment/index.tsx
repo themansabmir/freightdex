@@ -1,31 +1,15 @@
 import PageHeader from '@blocks/page-header';
 import { VendorGetAllParams } from '@modules/vendor/index.types';
-import { Tabs, Typography } from '@shared/components';
+import { Button } from '@shared/components';
+import PageLoader from '@shared/components/Loader/PageLoader';
+import { Stack } from '@shared/components/Stack';
 import { useDebounce } from '@shared/hooks/useDebounce';
 import usePageState from '@shared/hooks/usePageState';
 import useTabTitle from '@shared/hooks/useTabTitle';
-import { Folder, FolderPlus } from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { useShipmentApi } from './hooks/useShipmentApi';
-import PageLoader from '@shared/components/Loader/PageLoader';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useShipmentApi } from './hooks/useShipmentApi';
 
-interface IShipmentFolder {
-  folderName: string;
-  onClick?: () => void;
-  onDoubleClick?: () => void;
-  isCreate?: boolean;
-}
-const ShipmentFolder = ({ folderName, onClick, onDoubleClick, isCreate = false }: IShipmentFolder) => {
-  return (
-    <div key={folderName} className="shipment_folder_component" onClick={onClick} onDoubleClick={onDoubleClick}>
-      <div>{isCreate ? <FolderPlus size={42} color="#6941c6" /> : <Folder size={42} color="#6941c6" fill="#6941c6" />}</div>
-      <Typography align="center" variant="md" weight="regular" as="p">
-        {folderName}
-      </Typography>
-    </div>
-  );
-};
 
 const Shipment = () => {
   const navigate = useNavigate();
@@ -38,9 +22,7 @@ const Shipment = () => {
   const { sorting, pagination, query } = usePageState();
   const debounceSearch = useDebounce(query.trim(), 1000);
 
-  const { useGetShipments, createShipmentFolder, isCreating } = useShipmentApi();
-
-  const [activeTab, setActiveTab] = useState<string>('IMP');
+  const { useGetShipments } = useShipmentApi();
 
   const queryBuilder = useMemo((): VendorGetAllParams => {
     const query = {
@@ -49,10 +31,10 @@ const Shipment = () => {
       sortBy: '',
       sortOrder: '',
       search: debounceSearch,
-      shipment_type: activeTab,
+      // shipment_type: activeTab,
     };
     return query;
-  }, [pagination.pageIndex, pagination.pageSize, debounceSearch, activeTab]);
+  }, [pagination.pageIndex, pagination.pageSize, debounceSearch]);
 
   if (sorting?.[0]) {
     queryBuilder.sortOrder = sorting[0]?.desc ? 'desc' : 'asc';
@@ -61,15 +43,9 @@ const Shipment = () => {
 
   const { data, isLoading } = useGetShipments(queryBuilder);
 
-  const tabs = [
-    { tabId: 'IMP', tabName: 'Import' },
-    { tabId: 'EXP', tabName: 'Export' },
-  ];
-
   return (
     <>
-      <PageLoader isLoading={isCreating || isLoading} />
-
+      <PageLoader isLoading={isLoading} />
       <PageHeader
         pageName="Shipment"
         pageDescription="Here you can manage your shipments"
@@ -78,27 +54,12 @@ const Shipment = () => {
         isForm={false}
         breadcrumnArray={breadcrumbArray}
       />
-
-      <Tabs
-        tabs={tabs}
-        activeTab={activeTab}
-        setActiveTab={(tabId) => {
-          setActiveTab(tabId);
-        }}
-      ></Tabs>
-
+      <Stack direction="horizontal" justify="end">
+        <Button onClick={() => navigate('/shipment/new')}>New Shipment +</Button>
+      </Stack>
       <div className="shipment__folders_container ">
-        <ShipmentFolder
-          isCreate={true}
-          folderName="Create New"
-          onClick={() => {
-            createShipmentFolder({ shipment_type: activeTab });
-          }}
-        />
-        {data?.map(({ shipment_name, _id }: { shipment_name: string; _id: string }) => {
-          return (
-            <ShipmentFolder key={_id} folderName={shipment_name} onClick={() => {}} onDoubleClick={() => navigate(`/shipment/${_id}`)} />
-          );
+        {data?.map(({ shipment_name,  }: { shipment_name: string; _id: string }) => {
+          return <div>{shipment_name}</div>;
         })}
       </div>
     </>

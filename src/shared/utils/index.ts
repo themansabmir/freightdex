@@ -65,6 +65,24 @@ export const hydratePayload = <T extends Record<string, any>>(formData: T): T =>
   return cleanPayload;
 };
 
+export function removeNulls(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(removeNulls).filter((item) => item != null && (typeof item !== 'object' || Object.keys(item).length > 0));
+  }
+
+  if (typeof obj === 'object' && obj !== null) {
+    const cleaned: Record<string, any> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      const cleanedValue = removeNulls(value);
+      if (cleanedValue !== null && cleanedValue !== undefined && !(typeof cleanedValue === 'object' && Object.keys(cleanedValue).length === 0)) {
+        cleaned[key] = cleanedValue;
+      }
+    }
+    return cleaned;
+  }
+
+  return obj;
+}
 
 // export const hydratePayload = <T extends Record<string, any>>(formData: T): T => {
 //   const cleanPayload = Object.keys(formData).reduce((acc, key) => {

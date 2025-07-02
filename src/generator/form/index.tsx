@@ -5,6 +5,7 @@ import { Trash2 } from 'lucide-react';
 import { DynamicFormProps, ArrayFieldSchema, RenderArrayFieldProps, RenderGroupProps, RenderFieldProps, Data } from './index.types';
 import Dropdown from '@shared/components/SingleDropdown';
 import { get } from 'lodash';
+import {  dayjs } from '@lib/dayjs';
 
 function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -129,10 +130,11 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
         <br />
         <input
           className="custom-date-input"
-          value={value}
+          value={dayjs.utc(value).tz('Asia/Kolkata').format('YYYY-MM-DD')}
           style={{ backgroundColor: field.disabled ? '#dddee1' : 'white' }}
           onChange={handleChange}
           {...field}
+          type="date"
         />
       </div>
     );

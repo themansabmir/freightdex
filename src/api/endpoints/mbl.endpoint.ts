@@ -9,6 +9,7 @@ export class MblHttpService {
   }
 
   static async getMblByFolderId(id: string) {
+    if(id === 'new') return null;
     const { data } = await api.get(`${MBL_ENDPOINT}/${id}`);
     return data.response;
   }

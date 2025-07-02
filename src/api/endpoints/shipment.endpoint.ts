@@ -9,6 +9,7 @@ export class ShipmentHttpService {
   }
 
   static async getFolderById(id: string) {
+    if (id === 'new') return null;
     const { data } = await api.get(`${SHIPMENT_BASE_URL}/${id}`);
     return data.response;
   }
@@ -16,7 +17,9 @@ export class ShipmentHttpService {
   static async getShipmentFolder(queryParams: GetAllParams) {
     const { limit, search, skip, sortBy, sortOrder, shipment_type } = queryParams;
     const params = new URLSearchParams({});
-    params.append('shipment_type', String(shipment_type));
+    if (shipment_type) {
+      params.append('shipment_type', String(shipment_type));
+    }
     if (limit) {
       params.append('limit', limit);
       params.append('skip', skip);

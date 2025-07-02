@@ -4,8 +4,7 @@ import { EContainerField, EMblField, IMbl } from '../index.types';
 import { useDropDownData } from './useDropdownData';
 
 const useMbl = () => {
-  const { shipper, shippingLine, portData, agent,consignee, notify} = useDropDownData()
-
+  const { shipper, shippingLine, portData, agent, consignee, notify } = useDropDownData();
 
   //payload and form schema
   const mbl_payload: IMbl = {
@@ -107,7 +106,7 @@ const useMbl = () => {
       ],
       placeholder: 'Trade Type Import/Export',
       required: false,
-      disabled: true,
+      disabled: false,
     },
     { type: 'text', name: EMblField.booking_number, label: 'Booking Number', placeholder: 'Booking Number', required: false },
     {
@@ -115,6 +114,7 @@ const useMbl = () => {
       label: 'MBL Type',
       name: EMblField.mbl_type,
       options: [
+        { label: 'Draft', value: 'DRAFT' },
         { label: 'Obl', value: 'OBL' },
         { label: 'Seaway', value: 'SEAWAY' },
         { label: 'TLX', value: 'TLX' },
@@ -165,8 +165,17 @@ const useMbl = () => {
     },
     {
       type: 'dropdown',
-      label: 'Agent',
-      name: 'agent',
+      label: 'Origin Agent',
+      name: 'agent_origin',
+      colSpan: 1,
+      placeholder: 'Agent',
+      required: false,
+      options: [...(agent ?? [])],
+    },
+    {
+      type: 'dropdown',
+      label: 'Destination Agent',
+      name: 'agent_destination',
       colSpan: 1,
       placeholder: 'Agent',
       required: false,
@@ -185,6 +194,13 @@ const useMbl = () => {
       name: EMblField.mbl_date,
       placeholder: 'MBL Date',
       colSpan: 2,
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'Pre Carriage By',
+      name: EMblField.place_carriage,
+      placeholder: 'Place of Pre Carriage By',
       required: false,
     },
     {
@@ -221,7 +237,14 @@ const useMbl = () => {
     },
     {
       type: 'text',
-      label: 'Vessel/Voyage Number',
+      label: 'Vessel Number',
+      name: EMblField.vessel_number,
+      placeholder: 'Vessel Number',
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'Voyage Number',
       name: EMblField.voyage_number,
       placeholder: 'Vessel Number',
       required: false,
@@ -233,6 +256,13 @@ const useMbl = () => {
       name: EMblField.transhipment_port,
       placeholder: 'Transhipment Port',
       colSpan: 2,
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'Marks & Numbers',
+      name: EMblField.marks_numbers,
+      placeholder: 'Marks & Numbers',
       required: false,
     },
     {
@@ -285,8 +315,8 @@ const useMbl = () => {
     },
     {
       type: 'text',
-      label: 'Free Time At POL',
-      name: EMblField.free_time_pol,
+      label: 'Free Time At Origin',
+      name: EMblField.free_time_origin,
       placeholder: 'Free Time At Origin',
       colSpan: 1,
       required: false,
@@ -294,34 +324,26 @@ const useMbl = () => {
     {
       type: 'text',
       label: 'Free Time At Destination',
-      name: EMblField.free_time_pod,
+      name: EMblField.free_time_destination,
       placeholder: 'Free Time At Destination',
       colSpan: 2,
       required: false,
     },
     {
-      type: 'array',
-      label: 'Shipping Bill',
-      name: 'shipping_bill',
-      item: {
-        type: 'group',
-        fields: [
-          {
-            type: 'text',
-            label: 'Shipping Bill Number',
-            name: EMblField.shipping_bill_number,
-            placeholder: 'Shipping Bill Number',
-            required: false,
-          },
-          {
-            type: 'date',
-            label: 'Shipping Bill Date',
-            name: EMblField.shipping_bill_date,
-            placeholder: 'Shipping Bill Number',
-            required: false,
-          },
-        ],
-      },
+      type: 'text',
+      label: 'Extra Free Time at Destination (Purchased)',
+      name: EMblField.extra_free_time,
+      placeholder: 'Extra Free Time at Destination (Purchased)',
+      colSpan: 1,
+      required: false,
+    },
+    {
+      type: 'text',
+      label: 'ETD POL',
+      name: 'etd_pol',
+      placeholder: 'ETD POL',
+      colSpan: 1,
+      required: false,
     },
 
     {
@@ -426,15 +448,9 @@ const useMbl = () => {
     },
   ];
 
+  // show these fields if movement_type = rail/road and trade_type = export
+
   const export_rail_fields: FieldSchema[] = [
-    {
-      type: 'text',
-      label: 'ETD POL',
-      name: 'etd_pol',
-      placeholder: 'ETD POL',
-      colSpan: 1,
-      required: false,
-    },
     {
       type: 'text',
       label: 'ETA FPOD',
@@ -444,12 +460,28 @@ const useMbl = () => {
       required: false,
     },
     {
-      type: 'text',
-      label: 'Free Time At Destination Extra Free Time (purchased)',
-      name: 'extra_free_time',
-      placeholder: 'Free Time At Origin',
-      colSpan: 1,
-      required: false,
+      type: 'array',
+      label: 'Shipping Bill',
+      name: 'shipping_bill',
+      item: {
+        type: 'group',
+        fields: [
+          {
+            type: 'text',
+            label: 'Shipping Bill Number',
+            name: EMblField.shipping_bill_number,
+            placeholder: 'Shipping Bill Number',
+            required: false,
+          },
+          {
+            type: 'date',
+            label: 'Shipping Bill Date',
+            name: EMblField.shipping_bill_date,
+            placeholder: 'Shipping Bill Number',
+            required: false,
+          },
+        ],
+      },
     },
   ];
 
@@ -457,25 +489,25 @@ const useMbl = () => {
     {
       type: 'date',
       label: 'Date Of Container Pickup',
-      name: 'pickup_date',
+      name: EContainerField.container_pickup_date,
       required: false,
     },
     {
       type: 'date',
       label: 'Date Of Container Handover',
-      name: 'handover_date',
+      name: EContainerField.container_handover_date,
       required: false,
     },
     {
       type: 'date',
       label: 'Date Of Rail Out',
-      name: 'rail_out_date',
+      name: EContainerField.rail_out_date,
       required: false,
     },
     {
       type: 'date',
       label: 'Date Of Arrival at POL',
-      name: 'pol_date',
+      name: 'arrival_pol_date',
       required: false,
     },
   ];
@@ -484,7 +516,7 @@ const useMbl = () => {
     {
       type: 'date',
       label: 'Date Of Container Pickup',
-      name: 'pickup_date',
+      name: EContainerField.container_pickup_date,
       required: false,
     },
     {
@@ -495,12 +527,84 @@ const useMbl = () => {
     },
   ];
 
+  // show these fields if movement_type = rail and trade_type = import
+  const import_rail_fields: FieldSchema[] = [
+    {
+      type: 'text',
+      label: 'ATA POD',
+      placeholder: 'ATA POD',
+      name: 'ata_pod',
+      required: false,
+    },
+    {
+      type: 'array',
+      name: 'bill_of_entry',
+      label: 'Bill of Entry',
+      item: {
+        type: 'group',
+        fields: [
+          {
+            type: 'text',
+            label: 'Bill of Entry Number',
+            name: EMblField.bill_of_entry_number,
+            placeholder: 'Bill of Entry Number',
+            required: false,
+          },
+          {
+            type: 'date',
+            label: 'Bill of Entry Date',
+            name: EMblField.bill_of_entry_date,
+            placeholder: 'Bill of Entry Date',
+            required: false,
+          },
+        ],
+      },
+    },
+  ];
+
+  const import_rail_container_fields: FieldSchema[] = [
+    {
+      type: 'date',
+      label: 'Date of Rail Out',
+      name: EContainerField.rail_out_date,
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Date Of Arrival at FPOD',
+      name: EContainerField.arrival_fpod_date,
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Delivery Order Date',
+      name: EContainerField.delivery_order_date,
+      required: false,
+    },
+    {
+      type: 'date',
+      label: 'Validity of Delivery Order',
+      name: EContainerField.delivery_validity_date,
+      required: false,
+    },
+  ];
+
+  const conditionalFieldsMap = {
+    EXPORT_RAIL: export_rail_fields,
+    EXPORT_ROAD: export_rail_fields,
+    IMPORT_RAIL: import_rail_fields,
+    EXPORT_RAIL_CONTAINER: export_rail_container_fields,
+    EXPORT_ROAD_CONTAINER: export_road_container_fields,
+    IMPORT_RAIL_CONTAINER: import_rail_container_fields,
+  };
   return {
     mbl_payload: hydratePayload(mbl_payload),
     mbl_form_schema,
     export_rail_container_fields,
     export_rail_fields,
     export_road_container_fields,
+    import_rail_fields,
+    conditionalFieldsMap,
   };
 };
 
