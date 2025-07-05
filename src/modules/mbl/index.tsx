@@ -49,11 +49,6 @@ const MBLFormPage = ({ id }: { id: string }) => {
 
   const handleCancel = () => {};
 
-  const testFormData = {
-    vessel_number: 'vessel number',
-    voyage_number: 'voyage number',
-  };
-
   const visibleSchema = useMemo(() => {
     const schema = cloneDeep(mbl_form_schema);
 
