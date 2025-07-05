@@ -5,61 +5,61 @@ type CommonFieldProps = {
   required?: boolean;
   disabled?: boolean;
   colSpan?: number;
-  placeholder?:string
+  placeholder?: string;
 };
 
-
 type TextField = CommonFieldProps & {
-  type: "text" | "email" | "password";
+  type: 'text' | 'email' | 'password';
 };
 
 type DateField = CommonFieldProps & {
-  type: "date";
+  type: 'date';
 };
 
+type TextAreaField = CommonFieldProps & {
+  type: 'textarea';
+};
 type RadioField = CommonFieldProps & {
-  type: "radio";
+  type: 'radio';
   options: { label: string; value: string }[];
 };
 
 type CheckboxField = CommonFieldProps & {
-  type: "checkbox";
+  type: 'checkbox';
   options?: { label: string; value: string }[]; // optional for single checkbox
 };
 
 type MultiSelectField = CommonFieldProps & {
-  type: "multiselect";
+  type: 'multiselect';
   options: { label: string; value: string }[];
 };
 
 type Dropdown = CommonFieldProps & {
   type: 'dropdown';
   options: { label: string; value: string }[];
-  placeholder: string
+  placeholder: string;
 };
 
 type GroupField = {
-  type: "group";
+  type: 'group';
   fields: FieldSchema[];
 };
 
 type ArrayField = CommonFieldProps & {
-  type: "array";
+  type: 'array';
   item: GroupField;
 };
 
+export type FieldSchema = TextField | RadioField | CheckboxField | MultiSelectField | Dropdown | ArrayField | DateField | TextAreaField;
 
-export type FieldSchema = TextField | RadioField | CheckboxField | MultiSelectField | Dropdown | ArrayField | DateField;
-
-
-  export interface GroupFieldSchema {
-    type: "group";
-    fields: FieldSchema[];
+export interface GroupFieldSchema {
+  type: 'group';
+  fields: FieldSchema[];
 }
 
-export interface ArrayFieldSchema  {
+export interface ArrayFieldSchema {
   label: string;
-  type: "array";
+  type: 'array';
   name?: string;
   required?: boolean;
   item: {
@@ -67,26 +67,25 @@ export interface ArrayFieldSchema  {
   };
 }
 
-export
-interface RenderFieldProps {
+export interface RenderFieldProps {
   field: FieldSchema;
   value: any;
   onChange: (val: any) => void;
-  error: any
+  error: any;
 }
 
 export interface RenderGroupProps {
-  fieldPathPrefix?:string;
+  fieldPathPrefix?: string;
   isViewMode?: boolean;
   fields: GroupFieldSchema['fields'];
   value: any;
   onChange: (val: any) => void;
   columns?: number;
-  errors?: any
+  errors?: any;
 }
 export interface RenderArrayFieldProps {
   isViewMode?: boolean;
-  errors?: any
+  errors?: any;
   field: ArrayFieldSchema;
   value: Data[];
   onChange: (val: unknown[]) => void;

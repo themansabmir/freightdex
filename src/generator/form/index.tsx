@@ -5,7 +5,15 @@ import { Trash2 } from 'lucide-react';
 import { DynamicFormProps, ArrayFieldSchema, RenderArrayFieldProps, RenderGroupProps, RenderFieldProps, Data } from './index.types';
 import Dropdown from '@shared/components/SingleDropdown';
 import { get } from 'lodash';
-import {  dayjs } from '@lib/dayjs';
+import { dayjs } from '@lib/dayjs';
+
+const FieldLabel = ({ label, required }: { label: string; required?: boolean }) => {
+  return (
+    <label className="dropdown__trigger__label">
+      {label} {required && <span className="label__required">*</span>}
+    </label>
+  );
+};
 
 function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,11 +22,14 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
 
   if (['text', 'email', 'password'].includes(field.type)) {
+    if (field.name === 'booking_number') {
+      console.log('field', value);
+    }
     return (
       <TextField
-        value={value || ''}
-        onChange={handleChange}
         {...field}
+        value={value}
+        onChange={handleChange}
         isError={!!error}
         errorText={error}
         placeholder={field.placeholder ?? field.name?.toUpperCase()}
@@ -34,7 +45,7 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
     };
     return (
       <div>
-        <div style={{ marginBottom: '8px' }}>{field.label}</div>
+        <FieldLabel label={field.label} required={field.required} />
         <div style={{ display: 'flex' }}>
           {field.options.map((opt) => (
             <Checkbox
@@ -101,9 +112,6 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   }
 
   if (field.type === 'dropdown') {
-    if (field.name === 'trade_type') {
-      console.log('IS DISABLED', field);
-    }
     return (
       <Dropdown
         label={field.label}
@@ -124,18 +132,26 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   if (field.type === 'date') {
     return (
       <div>
-        <label className="dropdown__trigger__label">
-          {field.label} {field.required && <span className="label__required">*</span>}
-        </label>
+        <FieldLabel label={field.label} required={field.required} />
         <br />
         <input
           className="custom-date-input"
-          value={dayjs.utc(value).tz('Asia/Kolkata').format('YYYY-MM-DD')}
+          value={value ? dayjs.utc(value).tz('Asia/Kolkata').format('YYYY-MM-DD') : value}
           style={{ backgroundColor: field.disabled ? '#dddee1' : 'white' }}
           onChange={handleChange}
           {...field}
           type="date"
         />
+      </div>
+    );
+  }
+
+  if (field.type === 'textarea') {
+    return (
+      <div>
+        <FieldLabel label={field.label} required={field.required} />
+
+        <textarea {...field} rows={5} style={{ width: '100%' }}></textarea>
       </div>
     );
   }

@@ -6,6 +6,8 @@ import { useDropDownData } from './useDropdownData';
 const useMbl = () => {
   const { shipper, shippingLine, portData, agent, consignee, notify } = useDropDownData();
 
+  console.log('PORT DATA', portData);
+
   //payload and form schema
   const mbl_payload: IMbl = {
     movement_type: '',
@@ -204,7 +206,8 @@ const useMbl = () => {
       required: false,
     },
     {
-      type: 'text',
+      type: 'dropdown',
+      options: [...(portData ?? [])],
       label: 'Place Of Receipt',
       name: EMblField.place_of_receipt,
       placeholder: 'Place Of Receipt',
@@ -228,7 +231,8 @@ const useMbl = () => {
       required: false,
     },
     {
-      type: 'text',
+      type: 'dropdown',
+      options: [...(portData ?? [])],
       label: 'Place Of Delivery',
       name: EMblField.place_of_delivery,
       placeholder: 'Port Of Delivery',
@@ -237,9 +241,9 @@ const useMbl = () => {
     },
     {
       type: 'text',
-      label: 'Vessel Number',
+      label: 'Vessel Name',
       name: EMblField.vessel_number,
-      placeholder: 'Vessel Number',
+      placeholder: 'Vessel Number ',
       required: false,
     },
     {
@@ -306,7 +310,7 @@ const useMbl = () => {
       required: false,
     },
     {
-      type: 'text',
+      type: 'date',
       label: 'ETA POD',
       name: EMblField.eta_pod,
       placeholder: 'ETA POD',
@@ -338,7 +342,7 @@ const useMbl = () => {
       required: false,
     },
     {
-      type: 'text',
+      type: 'date',
       label: 'ETD POL',
       name: 'etd_pol',
       placeholder: 'ETD POL',
@@ -452,7 +456,7 @@ const useMbl = () => {
 
   const export_rail_fields: FieldSchema[] = [
     {
-      type: 'text',
+      type: 'date',
       label: 'ETA FPOD',
       name: 'etd_fpod',
       placeholder: 'ETD FPOD',
@@ -530,7 +534,7 @@ const useMbl = () => {
   // show these fields if movement_type = rail and trade_type = import
   const import_rail_fields: FieldSchema[] = [
     {
-      type: 'text',
+      type: 'date',
       label: 'ATA POD',
       placeholder: 'ATA POD',
       name: 'ata_pod',

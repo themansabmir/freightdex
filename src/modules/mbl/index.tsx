@@ -1,7 +1,7 @@
 import FormActions from '@blocks/form-actions';
 import MBLForm from '@generator/form';
 import { useShipmentApi } from '@modules/shipment/hooks/useShipmentApi';
-import { Button } from '@shared/components';
+import { Button, ToggleButton } from '@shared/components';
 import PageLoader from '@shared/components/Loader/PageLoader';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { hydratePayload, joinCompositeFields, removeNulls, splitCompositeFields } from '@shared/utils';
@@ -13,16 +13,13 @@ import useMbl from './hooks/useMbl';
 import { useMblApi } from './hooks/useMblApi';
 import { IMbl, MblSchema } from './index.types';
 
-const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify','agent_origin', 'agent_destination'] as const;
+const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination'] as const;
 
 const MBLFormPage = ({ id }: { id: string }) => {
   const [isView, setIsView] = useState(false);
+  const [mergeDescription, setMergeDescription] = useState(false);
 
-  const {
-    mbl_payload,
-    mbl_form_schema,
-    conditionalFieldsMap,
-  } = useMbl();
+  const { mbl_payload, mbl_form_schema, conditionalFieldsMap } = useMbl();
   const [formData, setFormData] = useState<IMbl>({ ...mbl_payload });
   const { handleChange, errors } = useFormValidation(MblSchema, formData);
 
@@ -52,8 +49,27 @@ const MBLFormPage = ({ id }: { id: string }) => {
 
   const handleCancel = () => {};
 
+  const testFormData = {
+    vessel_number: 'vessel number',
+    voyage_number: 'voyage number',
+  };
+
   const visibleSchema = useMemo(() => {
     const schema = cloneDeep(mbl_form_schema);
+
+    if (mergeDescription) {
+      schema.push({
+        type: 'textarea',
+        name: 'description_of_goods',
+        label: 'Description',
+        colSpan: 3,
+      });
+      schema.filter((f) => {
+        if (f.type === 'array' && f.name === 'containers') {
+          f.item.fields = f.item.fields.filter((f) => f.name !== 'description');
+        }
+      });
+    }
 
     if (formData?.trade_type?.toUpperCase() === 'IMPORT') {
       if (formData.movement_type?.toUpperCase() === 'RAIL') {
@@ -85,20 +101,23 @@ const MBLFormPage = ({ id }: { id: string }) => {
     } else {
       return schema;
     }
-  }, [formData]);
+  }, [formData, conditionalFieldsMap, mbl_form_schema, mergeDescription]);
 
   useEffect(() => {
     const filterNullify = hydratePayload(data ?? {});
     const dataWithAddress = joinCompositeFields(filterNullify, fields);
-    setFormData({ ...mbl_payload, ...dataWithAddress });
+
+    setFormData({ ...dataWithAddress });
   }, [data]);
+  console.log(formData, 'AFTER UPDATE');
 
   return (
     <>
       <PageLoader isLoading={isSaving || isLoading || isCreating} />
       <Button onClick={() => setIsView(!isView)}>{isView ? 'Edit' : 'Cancel'}</Button>
+      <div className="pt-4"></div>
+      <ToggleButton label="Merge Description" defaultChecked={mergeDescription} onChange={setMergeDescription} />
       <div className="shipment_info_card">Total Containers: {data?.containers?.length}</div>
-      <div className="mb-4"></div>
       <MBLForm errors={errors} onChange={handleChange} data={formData} isViewMode={isView} setData={setFormData} schema={visibleSchema} />
       <FormActions isCreating={false} isViewMode={isView} isEdit={true} onCancel={handleCancel} onSubmit={handleSubmit} />
     </>

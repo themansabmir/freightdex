@@ -50,15 +50,19 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, [open, searchable]);
 
   return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <div>
-          <label className="dropdown__trigger__label">
-            {label} {required && <span className="label__required">*</span>}
-          </label>
+    <div>
+      {label && (
+        <label className="dropdown__trigger__label">
+          {label} {required && <span className="label__required">*</span>}
+        </label>
+      )}
+      <Popover.Root open={open} onOpenChange={setOpen}>
+        <Popover.Trigger asChild>
+          {/* <label className="dropdown__trigger__label">
+              {label} {required && <span className="label__required">*</span>}
+            </label> */}
           <button
             className={`${disabled ? 'dropdown__trigger--disabled' : ''} dropdown__trigger dropdown__trigger__container `}
-            // style={{ background: disabled ? '#d5d7da' : '#fff' }}
             disabled={disabled}
             type="button"
           >
@@ -67,53 +71,64 @@ const Dropdown: React.FC<DropdownProps> = ({
             ) : (
               <span className="dropdown__placeholder"> {placeholder}</span>
             )}
-            {/* {selectedOption ? selectedOption.label : placeholder} */}
             <ChevronsUpDown size={18} />
           </button>
-          {isError && errorText && <div className="textField__error-text">{errorText}</div>}
-        </div>
-      </Popover.Trigger>
+        </Popover.Trigger>
 
-      <Popover.Portal>
-        {!disabled && (
-          <Popover.Content align="start" side="bottom" className="dropdown__content">
-            {searchable && (
-              <TextField
-                inputRef={inputRef}
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                }}
-                name="search"
-                placeholder="Search..."
-                className="dropdown__search"
-              />
-            )}
-
-            <div className="dropdown__options">
-              {filteredOptions.length > 0 && !disabled ? (
-                filteredOptions.map((option) => (
-                  <div
-                    key={option.value}
-                    className={`dropdown__option ${value === option.value ? 'selected' : ''}`}
-                    onClick={() => {
-                      onChange(option.value);
-                      setOpen(false);
-                      setInputValue(''); // reset search
-                    }}
-                  >
-                    <span>{option.label}</span>
-                    {value === option.value && <Check size={18} />}
-                  </div>
-                ))
-              ) : (
-                <div className="dropdown__option empty">No options found</div>
+        <Popover.Portal>
+          {!disabled && (
+            <Popover.Content align="start" side="bottom" className="dropdown__content">
+              {searchable && (
+                <TextField
+                  inputRef={inputRef}
+                  value={inputValue}
+                  showClear={false}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                  }}
+                  name="search"
+                  placeholder="Search..."
+                  className="dropdown__search"
+                />
               )}
-            </div>
-          </Popover.Content>
-        )}
-      </Popover.Portal>
-    </Popover.Root>
+
+              <div className="dropdown__options">
+                {filteredOptions.length > 0 && !disabled ? (
+                  filteredOptions.map((option) => (
+                    <div
+                      key={option.value}
+                      role="option"
+                      aria-selected={value === option.value}
+                      tabIndex={0}
+                      className={`dropdown__option ${value === option.value ? 'selected' : ''}`}
+                      onClick={() => {
+                        onChange(option.value);
+                        setOpen(false);
+                        setInputValue(''); // reset search
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          // keyboard activation
+                          onChange(option.value);
+                          setOpen(false);
+                          setInputValue('');
+                        }
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      {value === option.value && <Check size={18} />}
+                    </div>
+                  ))
+                ) : (
+                  <div className="dropdown__option empty">No options found</div>
+                )}
+              </div>
+            </Popover.Content>
+          )}
+        </Popover.Portal>
+      </Popover.Root>
+      {isError && errorText && <div className="textField__error-text">{errorText}</div>}
+    </div>
   );
 };
 
