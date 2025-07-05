@@ -24,7 +24,7 @@ const HeadlessInputField: React.FC<HeadlessInputFieldProps> = ({
   onChange,
   prefixIcon,
   suffixIcon,
-  showClear = true,
+  showClear = false,
   required,
   name,
   inputRef,
