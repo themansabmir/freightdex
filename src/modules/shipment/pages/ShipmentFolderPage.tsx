@@ -6,6 +6,7 @@ import { useShipmentApi } from '../hooks/useShipmentApi';
 import useTabTitle from '@shared/hooks/useTabTitle';
 import { IFolderCard } from '../index.types';
 import MBLFormPage from '@modules/mbl';
+import HBL from '@modules/hbl';
 
 const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }: IFolderCard) => {
   const obj: Record<string, string> = {
@@ -44,7 +45,7 @@ const ShipmentFolderPage = () => {
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Shipment', href: '/shipment' },
-    { label:id === 'new' ? 'New Shipment' : data?.shipment_name ?? '', href: '' },
+    { label: id === 'new' ? 'New Shipment' : data?.shipment_name ?? '', href: '' },
   ];
   return (
     <div>
@@ -77,7 +78,8 @@ const ShipmentFolderPage = () => {
         ></Tabs>
       </div>
 
-      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id}  />}
+      {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} />}
+      {activeTab.toUpperCase() === 'HBL' && <HBL id={id} />}
     </div>
   );
 };

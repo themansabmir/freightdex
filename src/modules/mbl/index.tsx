@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useMbl from './hooks/useMbl';
-import { useMblApi } from './hooks/useMblApi';
+import { useGetMblByShipmentId, useSaveMbl } from './hooks/useMblApi';
 import { IMbl, MblSchema } from './index.types';
 
 const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination'] as const;
@@ -23,7 +23,7 @@ const MBLFormPage = ({ id }: { id: string }) => {
   const [formData, setFormData] = useState<IMbl>({ ...mbl_payload });
   const { handleChange, errors } = useFormValidation(MblSchema, formData);
 
-  const { saveMbl, useGetMblByShipmentId, isSaving } = useMblApi();
+  const { isSaving, saveMbl } = useSaveMbl();
   const { data, isLoading } = useGetMblByShipmentId(id);
   const { createShipmentFolder, isCreating } = useShipmentApi();
 
@@ -43,6 +43,10 @@ const MBLFormPage = ({ id }: { id: string }) => {
       const cleanPayload = removeNulls(hydratePayload(withShipmentFolderId));
 
       const submitPayload = splitCompositeFields(cleanPayload, fields);
+      if (!submitPayload.shipping_bill) {
+        submitPayload.shipping_bill = [];
+      }
+      console.log(submitPayload)
       await saveMbl(submitPayload).then(() => setIsView(true));
     }
   };
@@ -104,7 +108,6 @@ const MBLFormPage = ({ id }: { id: string }) => {
 
     setFormData({ ...dataWithAddress });
   }, [data]);
-  console.log(formData, 'AFTER UPDATE');
 
   return (
     <>

@@ -58,8 +58,8 @@ const Shipment = () => {
         <Button onClick={() => navigate('/shipment/new')}>New Shipment +</Button>
       </Stack>
       <div className="shipment__folders_container ">
-        {data?.map(({ shipment_name,  }: { shipment_name: string; _id: string }) => {
-          return <div>{shipment_name}</div>;
+        {data?.map(({ shipment_name, _id }: { shipment_name: string; _id: string }) => {
+          return <div onClick={() => navigate(`/shipment/${_id}`)}>{shipment_name}</div>;
         })}
       </div>
     </>

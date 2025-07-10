@@ -36,5 +36,9 @@ export const browserRouterRoutes = createBrowserRouter([
   {
     path: `${APP_ROUTES.SHIPMENT}/:id`,
     element: <ProtectedRoute children={<ShipmentFolderPage />} />,
-  }
+  },
+  {
+    path: `${APP_ROUTES.HBL}`,
+    element: <ProtectedRoute children={<ShipmentFolderPage />} />,
+  },
 ]);

@@ -2,9 +2,9 @@ import { MblHttpService } from '@api/endpoints/mbl.endpoint';
 import { queryClient, useMutation, useQuery } from '@lib/react-query';
 import { toast } from 'react-toastify';
 
-export const useMblApi = () => {
-  const MBL_KEY = 'mbl';
+const MBL_KEY = 'mbl';
 
+export const useSaveMbl = () => {
   const saveMblMutation = useMutation({
     mutationFn: (payload: unknown) => MblHttpService.saveMBL(payload),
     onError: ({ message }) => toast.error(message),
@@ -16,15 +16,14 @@ export const useMblApi = () => {
     },
   });
 
-  const useGetMblByShipmentId = (id: string) =>
-    useQuery({
-      queryKey: [MBL_KEY, id],
-      queryFn: () => MblHttpService.getMblByFolderId(id),
-    });
-
   return {
     saveMbl: saveMblMutation.mutateAsync,
-    useGetMblByShipmentId,
     isSaving: saveMblMutation.isPending,
   };
 };
+
+export const useGetMblByShipmentId = (id: string) =>
+  useQuery({
+    queryKey: [MBL_KEY, id],
+    queryFn: () => MblHttpService.getMblByFolderId(id),
+  });

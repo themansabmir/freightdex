@@ -6,8 +6,6 @@ import { useDropDownData } from './useDropdownData';
 const useMbl = () => {
   const { shipper, shippingLine, portData, agent, consignee, notify } = useDropDownData();
 
-  console.log('PORT DATA', portData);
-
   //payload and form schema
   const mbl_payload: IMbl = {
     movement_type: '',

@@ -22,9 +22,7 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
 
   if (['text', 'email', 'password'].includes(field.type)) {
-    if (field.name === 'booking_number') {
-      console.log('field', value);
-    }
+   
     return (
       <TextField
         {...field}
