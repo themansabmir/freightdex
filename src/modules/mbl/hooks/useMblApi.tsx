@@ -1,6 +1,7 @@
 import { MblHttpService } from '@api/endpoints/mbl.endpoint';
 import { queryClient, useMutation, useQuery } from '@lib/react-query';
 import { toast } from 'react-toastify';
+import { IMbl } from '../index.types';
 
 const MBL_KEY = 'mbl';
 
@@ -25,5 +26,5 @@ export const useSaveMbl = () => {
 export const useGetMblByShipmentId = (id: string) =>
   useQuery({
     queryKey: [MBL_KEY, id],
-    queryFn: () => MblHttpService.getMblByFolderId(id),
+    queryFn: ():Promise<IMbl> => MblHttpService.getMblByFolderId(id),
   });

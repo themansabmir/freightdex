@@ -52,9 +52,10 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   }, [isOpen]);
 
   const filteredAndSortedOptions = useMemo(() => {
+    if (options.length === 0) return [];
     return options
       .filter((option) =>
-        option.label.toLowerCase().includes(inputValue.toLowerCase())
+        option?.label?.toLowerCase().includes(inputValue.toLowerCase())
       )
       .sort((a, b) => {
         const aSel = selectedValues.includes(a.value);

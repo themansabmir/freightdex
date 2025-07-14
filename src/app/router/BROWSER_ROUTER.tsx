@@ -7,6 +7,7 @@ import Vendor from '@modules/vendor';
 import { createBrowserRouter } from 'react-router-dom';
 import { APP_ROUTES } from './APP_ROUTES';
 import ProtectedRoute from './ProtectedRoute';
+import HblForm from '@modules/hbl/HblForm';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -39,6 +40,6 @@ export const browserRouterRoutes = createBrowserRouter([
   },
   {
     path: `${APP_ROUTES.HBL}`,
-    element: <ProtectedRoute children={<ShipmentFolderPage />} />,
+    element: <ProtectedRoute children={<HblForm />} />,
   },
 ]);

@@ -22,7 +22,6 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value);
 
   if (['text', 'email', 'password'].includes(field.type)) {
-   
     return (
       <TextField
         {...field}
@@ -86,7 +85,8 @@ function RenderField({ field, value, onChange, error }: RenderFieldProps) {
   }
 
   if (field.type === 'multiselect') {
-    const selected: string[] = value || [];
+    const selected: string[] = value || field?.selectedOptions || [];
+
     const toggle = (val: string) => {
       const updated = selected.includes(val) ? selected.filter((v) => v !== val) : [...selected, val];
       onChange(updated);

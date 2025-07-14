@@ -1,134 +1,96 @@
 import HBLCreationForm from '@generator/form';
-import { FieldSchema } from '@generator/form/index.types';
+import { fields } from '@modules/mbl';
 import useMbl from '@modules/mbl/hooks/useMbl';
 import { useGetMblByShipmentId } from '@modules/mbl/hooks/useMblApi';
 import { Button } from '@shared/components';
-import { cloneDeep } from 'lodash';
-import { useMemo, useState } from 'react';
+import { Stack } from '@shared/components/Stack';
+import { joinCompositeFields } from '@shared/utils';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGetHblsByShipmentId } from './hooks/useHblApi';
+import { getVisibleSchema } from './utils';
+import { IHbl } from './index.types';
 
 const HBL = ({ id }: { id: string }) => {
+  const navigate = useNavigate();
+  const { mbl_form_schema, conditionalFieldsMap } = useMbl();
 
-  const navigate   = useNavigate()
-  const [promptData, setPromptData] = useState({});
-  const [formData, setFormData] = useState({});
-  const [mergeDescription, setMergeDescription] = useState(false);
-  const { mbl_form_schema, mbl_payload, conditionalFieldsMap } = useMbl();
-
-  const [hblList, setHblList] = useState([]);
-  const { data, isLoading } = useGetMblByShipmentId(id);
-  const containers = data?.containers ?? [];
-
-  const hblPromptSchema: FieldSchema[] = [
-    {
-      type: 'multiselect',
-      required: true,
-      label: 'Select Containers for HBL',
-      name: 'selected_containers',
-      placeholder: 'Select Containers',
-      options: containers.map((container) => ({ label: container.container_number, value: container.container_number })),
-    },
-  ];
+  const [hblList, setHblList] = useState<IHbl[] | undefined>([]);
+  const { data: mblData, isLoading } = useGetMblByShipmentId(id);
+  const { data: hblDataList, isLoading: hblLoading } = useGetHblsByShipmentId(id);
 
   const visibleSchema = useMemo(() => {
-    const schema = cloneDeep(mbl_form_schema);
-
-    if (mergeDescription) {
-      schema.push({
-        type: 'textarea',
-        name: 'description_of_goods',
-        label: 'Description',
-        colSpan: 3,
-      });
-      schema.filter((f) => {
-        if (f.type === 'array' && f.name === 'containers') {
-          f.item.fields = f.item.fields.filter((f) => f.name !== 'description');
-        }
-      });
-    }
-
-    if (formData?.trade_type?.toUpperCase() === 'IMPORT') {
-      if (formData.movement_type?.toUpperCase() === 'RAIL') {
-        const { IMPORT_RAIL: import_rail_fields, IMPORT_RAIL_CONTAINER } = conditionalFieldsMap;
-        schema.push(...import_rail_fields);
-        const container = schema.find((f) => f.name === 'containers');
-        if (container?.type === 'array' && container?.item?.fields) {
-          container.item.fields.push(...IMPORT_RAIL_CONTAINER);
-        }
+    if (!Array.isArray(hblDataList) || hblDataList?.length === 0) return [];
+    return hblDataList?.map((formData) => {
+      let mergeDescription = false;
+      const { description } = formData;
+      if (description) {
+        mergeDescription = true;
       }
-      return schema;
-    } else if (formData?.trade_type?.toUpperCase() === 'EXPORT') {
-      if (formData.movement_type?.toUpperCase() === 'RAIL') {
-        const { EXPORT_RAIL, EXPORT_RAIL_CONTAINER } = conditionalFieldsMap;
-        schema.push(...EXPORT_RAIL);
-        const container = schema.find((f) => f.name === 'containers');
-        if (container?.type === 'array' && container?.item?.fields) {
-          container.item.fields.push(...EXPORT_RAIL_CONTAINER);
-        }
-      } else if (formData.movement_type?.toUpperCase() === 'ROAD') {
-        const { EXPORT_ROAD, EXPORT_ROAD_CONTAINER } = conditionalFieldsMap;
-        schema.push(...EXPORT_ROAD);
-        const container = schema.find((f) => f.name === 'containers');
-        if (container?.type === 'array' && container?.item?.fields) {
-          container.item.fields.push(...EXPORT_ROAD_CONTAINER);
-        }
-      }
-      return schema;
-    } else {
-      return schema;
-    }
-  }, [formData, conditionalFieldsMap, mbl_form_schema, mergeDescription]);
 
-  const handleSubmit = () => {
-    const newHblForm = cloneDeep(formData);
-    setHblList((prev) => [...prev, newHblForm]);
+      return getVisibleSchema({
+        formData: formData,
+        conditionalFieldsMap,
+        mbl_form_schema,
+        mergeDescription,
+      });
+    });
+  }, [conditionalFieldsMap, mbl_form_schema, hblDataList]);
+
+  useEffect(() => {
+    if (!Array.isArray(hblDataList) || hblDataList?.length === 0) return;
+    const updatedHbl = hblDataList.map((item) => {
+      return joinCompositeFields(item, fields);
+    });
+    setHblList(updatedHbl);
+  }, [hblDataList]);
+
+  const handleChangeOfFormData = (updatedFormData: object, index: number) => {
+    setHblList((prev) => prev?.map((form, i) => (i === index ? { ...form, ...updatedFormData } : form)));
   };
 
+  const handleNewHbl = () => {
+    navigate('hbl/new');
+  };
   if (isLoading) return 'Loading ...';
 
-  if (!data) return 'Please create MBL first to proceed with creating HBL';
-  if (!data?.containers?.length) return 'Please add atleast one container in MBL to proceed with creating HBL';
-  if (!data?.shipping_bill?.length && !data?.bill_of_entry?.length)
+  if (!mblData) return 'Please create MBL first to proceed with creating HBL';
+  if (!mblData?.containers?.length) return 'Please add atleast one container in MBL to proceed with creating HBL';
+  if (!mblData?.shipping_bill?.length && !mblData?.bill_of_entry?.length)
     return 'Cannot create HBL without having Bill of entry number/ Shipping Bill number';
 
   if (id !== 'new')
     return (
       <div>
-        <HBLCreationForm
-          schema={hblPromptSchema}
-          data={promptData}
-          setData={setPromptData}
-          errors={{}}
-          isViewMode={false}
-          onChange={(e, val) => {
-            console.log(e, val);
-          }}
-        />
-
-        <Button onClick={handleSubmit}> Submit</Button>
-        {hblList.map((hblForm, i) => {
-          return (
-            <div>
-              <h1>HBL FORM {i + 1} </h1> <Button onClick={() => navigate(`hbl/${'edit'}`)}>Edit</Button>
-              <HBLCreationForm
-                schema={visibleSchema.filter(
-                  (f) =>
-                    !['shipment_mode', 'movement_type', 'trade_type', 'booking_number', 'shipping_line', 'shipment_type', 'mbl_type'].includes(f.name)
+        <Stack direction="horizontal" justify="end" className="mb-5">
+          <Button onClick={handleNewHbl}>+ New HBL</Button>
+        </Stack>
+        {!hblLoading &&
+          hblDataList &&
+          hblDataList?.length > 0 &&
+          hblList?.map((hblForm, i) => {
+            return (
+              <div className="py-10">
+                <Stack direction="horizontal" justify="between">
+                  <h1>HBL FORM {hblForm?.hbl_number ?? i + 1} </h1> <Button onClick={() => navigate(`hbl/${hblForm?._id}`)}>Edit</Button>
+                </Stack>
+                {hblDataList.length > 0 && (
+                  <HBLCreationForm
+                    schema={visibleSchema[i]}
+                    data={hblForm || {}}
+                    setData={(updated) => handleChangeOfFormData(updated, i)}
+                    errors={{}}
+                    isViewMode={true}
+                    onChange={(e, val) => {
+                      console.log(e, val);
+                    }}
+                  />
                 )}
-                data={formData}
-                setData={setFormData}
-                errors={{}}
-                isViewMode={false}
-                onChange={(e, val) => {
-                  console.log(e, val);
-                }}
-              />
-            </div>
-          );
-        })}
+              </div>
+            );
+          })}
       </div>
     );
 };
 
 export default HBL;
-

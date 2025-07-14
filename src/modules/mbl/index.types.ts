@@ -1,3 +1,4 @@
+import { IBillOfEntry, IShippingBill } from '@modules/hbl/index.types';
 import { z } from 'zod';
 
 export enum TradeType {
@@ -72,6 +73,8 @@ export interface IMbl {
   trade_type: TradeType | string;
   booking_number: string;
   mbl_type: MBL_Type | string;
+  shipping_bill: IShippingBill[];
+  bill_of_entry: IBillOfEntry[];
 
   shipper: string;
   shipper_address: string;
@@ -97,7 +100,6 @@ export interface IMbl {
   eta_pod: string;
   shipping_bill_number: string;
   shipping_bill_date: string;
-  bill_of_entry: string;
   bill_of_entry_date: string;
 
   free_time_pol: string;

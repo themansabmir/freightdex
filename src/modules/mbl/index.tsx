@@ -13,7 +13,7 @@ import useMbl from './hooks/useMbl';
 import { useGetMblByShipmentId, useSaveMbl } from './hooks/useMblApi';
 import { IMbl, MblSchema } from './index.types';
 
-const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination'] as const;
+export const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination'] as const;
 
 const MBLFormPage = ({ id }: { id: string }) => {
   const [isView, setIsView] = useState(false);
@@ -21,7 +21,7 @@ const MBLFormPage = ({ id }: { id: string }) => {
 
   const { mbl_payload, mbl_form_schema, conditionalFieldsMap } = useMbl();
   const [formData, setFormData] = useState<IMbl>({ ...mbl_payload });
-  const { handleChange, errors } = useFormValidation(MblSchema, formData);
+  const { handleChange, errors } = useFormValidation(MblSchema, formData as any);
 
   const { isSaving, saveMbl } = useSaveMbl();
   const { data, isLoading } = useGetMblByShipmentId(id);
@@ -46,7 +46,6 @@ const MBLFormPage = ({ id }: { id: string }) => {
       if (!submitPayload.shipping_bill) {
         submitPayload.shipping_bill = [];
       }
-      console.log(submitPayload)
       await saveMbl(submitPayload).then(() => setIsView(true));
     }
   };

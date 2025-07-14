@@ -32,6 +32,7 @@ type CheckboxField = CommonFieldProps & {
 type MultiSelectField = CommonFieldProps & {
   type: 'multiselect';
   options: { label: string; value: string }[];
+  selectedOptions?: string[];
 };
 
 type Dropdown = CommonFieldProps & {

@@ -15,6 +15,8 @@ const useMbl = () => {
     trade_type: '', // TradeType
     booking_number: '',
     mbl_type: '', // MBL_Type
+    shipping_bill: [], // IShippingBill[]
+    bill_of_entry: [], // IBillOfEntry[]
 
     shipper: '',
     shipper_address: '',
@@ -40,7 +42,6 @@ const useMbl = () => {
     eta_pod: '',
     shipping_bill_number: '',
     shipping_bill_date: '',
-    bill_of_entry: '',
     bill_of_entry_date: '',
 
     free_time_pol: '',
