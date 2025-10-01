@@ -55,7 +55,7 @@ export const useTeamApi = () => {
     onError: ({ message }) => toast.error(message),
     onSettled: (data) => {
       if (data) {
-       queryClient.invalidateQueries({ queryKey: [TEAM_KEY] });
+        queryClient.invalidateQueries({ queryKey: [TEAM_KEY] });
         toast.success(`Team member deleted successfully`);
       }
     },

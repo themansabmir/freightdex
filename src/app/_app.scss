@@ -62,7 +62,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
-    overflow: hidden;
+    // overflow: hidden;
     width: 100%;
 }
 
@@ -70,7 +70,7 @@
     height: 40px;
     margin-bottom: 1em;
     flex-shrink: 0;
-    z-index: 1000;
+    z-index: -1;
     background-color: white;
     width: 100%;
     border-bottom: 1px solid $neutral-30;

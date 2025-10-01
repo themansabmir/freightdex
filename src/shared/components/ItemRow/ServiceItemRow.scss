@@ -1,0 +1,60 @@
+.service-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    background-color: #f7f9fc;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .item-details {
+        display: flex;
+        gap: 2rem;
+        flex-grow: 1;
+        font-size: 1rem;
+        color: #444;
+    }
+
+    .item-name {
+        font-weight: 600;
+    }
+
+    .item-price {
+        font-weight: 400;
+        color: #666;
+    }
+
+    .item-actions {
+        display: flex;
+        gap: 1rem;
+
+        .action-icon {
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+
+            &.edit-icon {
+                color: #667eea; // A nice purple/blue
+
+                &:hover {
+                    color: #5563d7;
+                }
+            }
+
+            &.delete-icon {
+                color: #ef4444; // A soft red
+
+                &:hover {
+                    color: #dc2626;
+                }
+            }
+        }
+    }
+}

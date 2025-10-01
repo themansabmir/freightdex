@@ -1,38 +1,64 @@
-import { SidebarItem } from "./sidebar.types";
+import { Container, CreditCard, Handshake, LayoutDashboard, ScrollText, ShieldPlus, TextQuote, Wallet } from "lucide-react";
 import { APP_ROUTES } from "../../router/APP_ROUTES";
-import { LayoutDashboard, TextQuote, ShieldPlus, Container } from "lucide-react";
-
+import { SidebarItem } from "./sidebar.types";
 
 const internalSidebarRoutes: SidebarItem[] = [
   {
     label: 'Dashboard',
     to: APP_ROUTES.DASHBORD,
-    icon: <LayoutDashboard fill="none" />,
+    icon: <LayoutDashboard strokeWidth={1.25} fill="none" />,
   },
   {
     label: 'Shipment',
     to: APP_ROUTES.SHIPMENT,
-    icon: <Container fill="none" />,
+    icon: <Container strokeWidth={1.25} fill="none" />,
+  },
+  {
+    label: 'Finance',
+    to:'',
+    icon: <Wallet strokeWidth={1.25} fill="none" />,
+    children:[
+      {
+        label: 'Proforma',
+        to: APP_ROUTES.PROFORMA,
+        icon: <Handshake strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
+        label: 'Sales',
+        to: APP_ROUTES.SALES,
+        icon: <CreditCard strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
+        label: 'Credit Note',
+        to: APP_ROUTES.CREDIT_NOTE,
+        icon: <ScrollText strokeWidth={1.25} fill="none" size={18} />,
+      },
+    ]
   },
   {
     label: 'Master Data',
     to: '',
-    icon: <ShieldPlus fill="none" />,
+    icon: <ShieldPlus strokeWidth={1.25} fill="none" />,
     children: [
       {
         label: 'Vendor',
         to: APP_ROUTES.VENDOR,
-        icon: <TextQuote fill="none" size={18} />,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
+        label: 'Invoice Item',
+        to: APP_ROUTES.INVOICE_ITEM,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
       {
         label: 'Port',
         to: APP_ROUTES.Port,
-        icon: <TextQuote fill="none" size={18} />,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
       {
         label: 'Airport',
         to: APP_ROUTES.AIRPORT,
-        icon: <TextQuote fill="none" size={18} />,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
     ],
   },
