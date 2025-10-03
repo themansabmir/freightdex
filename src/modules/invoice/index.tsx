@@ -1,123 +1,51 @@
-import { useState } from "react";
-import InvoiceRow from "./InvoiceRow";
-import { calculateTotal, initialRow } from "./utils";
-
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { InvoicePDF } from "./InvoicePdf";
-const invoiceData = {
-    id: "INV-1001",
-    date: "2025-07-21",
-    terms: "Net 30 Days",
-
-    billTo: {
-        name: "Acme Logistics Pvt Ltd",
-        address: "123 Industrial Road, Mumbai, Maharashtra, 400001"
-    },
-
-    shipTo: {
-        name: "Blue Ocean Exports",
-        address: "42 Marine Drive, Kochi, Kerala, 682001"
-    },
-
-    items: [
-        {
-            description: "Ocean Freight",
-            qty: 7.01105,
-            unitPrice: 1947,
-            tax: 5,
-            total: 14333.04
-        },
-        {
-            description: "Inland Haulage",
-            qty: 7.01105,
-            unitPrice: 2655,
-            tax: 18,
-            total: 21964.92
-        },
-        {
-            description: "Terminal Handling Charges",
-            qty: 7.01105,
-            unitPrice: 624,
-            tax: 18,
-            total: 5162.38
-        },
-        {
-            description: "DO Fee",
-            qty: 1,
-            unitPrice: 3000,
-            tax: 18,
-            total: 3540
-        }
-    ],
-
-    taxTotal: 5360.59,
-    grandTotal: 45000.33
+import { useVendorApi } from '@modules/vendor/hooks/useVendorApi';
+import { useCallback, useMemo, useEffect, useState } from 'react';
+import SingleDropdown from '@shared/components/SingleDropdown';
+import { formatVendorLabel } from '@modules/vendor/helper';
+import { useGetAllInvoiceItems } from '@modules/invoiceItem/hooks/useInvoiceItemApi';
+import { updateRowAtIndex , blankRow} from './utils';
+import {getColumns, InvoiceTable} from './index.components';
+const query = {
+  skip: '0',
+  limit: '10',
+  search: '',
+  sortBy: 'name',
+  sortOrder: 'asc',
 };
-export default function InvoiceTable() {
-    const [rows, setRows] = useState([initialRow()]);
+const FinanceDocumentList = () => {
+  // LOCAL STATES
+  const [invoiceRows, setInvoiceRows] = useState<any[]>([]);
+  const [vendor, setVendor] = useState<string | null>(null);
 
-    const handleChange = (index, field, value) => {
-        const updatedRows = [...rows];
-        updatedRows[index] = { ...updatedRows[index], [field]: value };
-        setRows(updatedRows);
-    };
+  const { data: masterInvoiceItems } = useGetAllInvoiceItems();
+  const { data: vendors, isLoading: vendorsLoading } = useVendorApi().useGetVendors(query);
+  const options = formatVendorLabel(vendors?.response ?? []);
 
-    const handleAddRow = () => setRows([...rows, initialRow()]);
-    const handleDeleteRow = (index) => setRows(rows.filter((_, i) => i !== index));
+  // HANDLER FUNCTIONS
 
-    const totals = calculateTotal(rows);
+  const removeRow = useCallback((idx: number) => {
+    setInvoiceRows((rs) => rs.filter((_, i) => i !== idx));
+  }, []);
 
-    return (
-        <div className="overflow-auto">
-            <table className="w-full table-auto border border-gray-300">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th>#</th>
-                        <th>Item</th>
-                        <th>Amount</th>
-                        <th>Currency / Unit</th>
-                        <th>Exchange Rate</th>
-                        <th>Qty</th>
-                        <th>Price/Unit</th>
-                        <th>Discount</th>
-                        <th>Tax</th>
-                        <th>Tax Amt</th>
-                        <th>Amount</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map((row, index) => (
-                        <InvoiceRow
-                            key={index}
-                            index={index}
-                            row={row}
-                            onChange={handleChange}
-                            onDelete={handleDeleteRow}
-                        />
-                    ))}
-                    <tr className="bg-gray-100 font-semibold">
-                        <td colSpan={8}>TOTAL</td>
-                        <td></td>
-                        <td>{totals.taxTotal}</td>
-                        <td>{totals.grandTotal}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <button
-                onClick={handleAddRow}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-            >
-                Add Row
-            </button>
+  const updateRow = useCallback((idx: number, patch: Partial<any>) => {
+    setInvoiceRows((rs) => updateRowAtIndex(rs, idx, patch));
+  }, []);
 
-            <PDFDownloadLink
-                document={<InvoicePDF invoiceData={invoiceData} />}
-                fileName="invoice.pdf"
-            >
-                {({ loading }) => (loading ? "Loading..." : "Download Invoice PDF")}
-            </PDFDownloadLink>
+  const columns = useMemo(() => getColumns(masterInvoiceItems ?? [], updateRow, removeRow), [masterInvoiceItems, updateRow, removeRow]);
 
-        </div>
-    );
-}
+    useEffect(() => {
+      if (invoiceRows.length < 2) {
+        setInvoiceRows((prev) => [...prev, blankRow()]);
+      }
+    }, [invoiceRows, blankRow]);
+  
+  return (
+    <div>
+      <label htmlFor="vendor">Select Billing Party</label>
+      <SingleDropdown options={options} value={vendor} onChange={setVendor} placeholder="Select Vendor" />
+      <InvoiceTable rows={invoiceRows} updateRow={updateRow} removeRow={removeRow} items={masterInvoiceItems ?? []} columns={columns} />
+    </div>
+  );
+};
+
+export default FinanceDocumentList;

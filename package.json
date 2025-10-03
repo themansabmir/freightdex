@@ -20,10 +20,12 @@
     "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
     "lucide-react": "^0.483.0",
+    "nuqs": "^2.7.0",
     "path": "^0.12.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.4.0",
+    "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "zod": "^3.25.28"
   },

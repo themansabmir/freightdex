@@ -15,19 +15,22 @@ export const formatShippingLines = (data: IVendor[]) => {
     });
 };
 
-export const formatVendors = (data: IVendor[], vendor_type: VendorType) => {
-  const filtered = filterVendors(data, vendor_type);
-  if (filtered.length === 0) {
-    return [];
-  }
-  const result = filtered.flatMap((item) => {
+export const formatVendorLabel =(data:IVendor[]) =>{
+  return  data.flatMap((item) => {
     return item.locations.map((it) => {
       return {
         label: `${item.vendor_name} - ${it.address}, ${it.city}, ${it.pin_code}`,
         value: `${item._id}|${it._id}`,
       };
     });
-  });
+  }); 
+}
 
-  return result;
-};
+export const formatVendors = (data: IVendor[], vendor_type: VendorType) => {
+  const filtered = filterVendors(data, vendor_type);
+  if (filtered.length === 0) {
+    return [];
+  }
+  const result = formatVendorLabel(filtered)
+  return result
+}

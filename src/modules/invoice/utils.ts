@@ -1,3 +1,4 @@
+
 export const initialRow = () => ({
   item: "",
   amount: "",
@@ -23,5 +24,71 @@ export const calculateTotal = (rows: any[]) => {
   return {
     taxTotal: taxTotal.toFixed(2),
     grandTotal: grandTotal.toFixed(2),
+  };
+};
+
+export const calculateRowValues = (row: any) => {
+  const rate = row.rate || 0;
+  const exchangeRate = row.exchangeRate || 1;
+  const quantity = row.quantity || 0;
+  const discount = row.discount || 0;
+  const gstPercent = row.gstPercent || 0;
+
+  // Calculate Price/Unit = rate * exchange_rate
+  const pricePerUnit = rate * exchangeRate;
+
+  // Calculate Total Price = rate * exchange_rate * quantity
+  const totalPrice = rate * exchangeRate * quantity;
+
+  // Calculate Taxable Amount = Total Price - discount
+  const taxableAmount = totalPrice - discount;
+
+  // Calculate GST Amount = taxable * (gst% / 100)
+  const gstAmount = taxableAmount * (gstPercent / 100);
+
+  // Calculate Total with GST = taxable + gst amount
+  const totalWithGst = taxableAmount + gstAmount;
+
+  return {
+    ...row,
+    pricePerUnit,
+    taxableAmount,
+    gstAmount,
+    totalWithGst,
+  };
+};
+
+export const updateRowAtIndex = (rows: any[], idx: number, patch: Partial<any>) => {
+  const copy = [...rows];
+  const updatedRow = { ...copy[idx], ...patch };
+  
+  // Calculate all values using the utility function
+  const calculatedRow = calculateRowValues(updatedRow);
+  
+  copy[idx] = calculatedRow;
+
+  // Add new row if this is the last row
+  if (idx === copy.length - 1) {
+    copy.push(blankRow());
+  }
+  return copy;
+};
+
+export const blankRow = () => {
+  return {
+    id: Date.now() + Math.random(),
+    serviceItem: '',
+    hsn: '',
+    rate: 0,
+    currency: 'INR',
+    unit: '',
+    exchangeRate: 1,
+    quantity: 1,
+    pricePerUnit: 0,
+    discount: 0,
+    taxableAmount: 0,
+    gstPercent: 0,
+    gstAmount: 0,
+    totalWithGst: 0,
   };
 };
