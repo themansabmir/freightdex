@@ -1,0 +1,71 @@
+.totals-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.totals-wrapper {
+  max-width: 24rem;
+  margin-left: auto;
+}
+
+.totals-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding: 0.125rem;
+}
+
+.totals-column {
+  text-align: center;
+  
+  &--grand-total {
+    border-left: 1px solid #d1d5db;
+    padding-left: 1rem;
+  }
+}
+
+.totals-label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.800rem;
+  
+  &--grand-total {
+    font-weight: 700;
+    color: #1f2937;
+  }
+}
+
+.totals-value {
+  font-weight: 500;
+  font-size: 0.800rem;
+  color: #111827;
+  
+  &--grand-total {
+    font-weight: 700;
+    font-size: 0.800rem;
+    color: #059669;
+  }
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-container {
+  padding: 1rem;
+}
+
+.table-container {
+  margin: 1rem 0;
+}

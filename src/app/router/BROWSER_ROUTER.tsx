@@ -8,9 +8,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import { APP_ROUTES } from './APP_ROUTES';
 import ProtectedRoute from './ProtectedRoute';
 import HblForm from '@modules/hbl/HblForm';
-import InvoiceTable from '@modules/invoice/test';
+import InvoiceTable from '@modules/invoice';
 import InvoiceItem from '@modules/invoiceItem';
-import InvoiceForm from '@modules/invoice/index'
+import InvoiceForm from '@modules/invoice/index.form'
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -46,15 +46,11 @@ export const browserRouterRoutes = createBrowserRouter([
     element: <ProtectedRoute children={<HblForm />} />,
   },
   {
-    path: APP_ROUTES.PROFORMA,
-    element: <ProtectedRoute children={<InvoiceTable />} />,
-  },
-  {
-    path: APP_ROUTES.SALES,
+    path: `${APP_ROUTES.FINANCE_FORM}`,
     element: <ProtectedRoute children={<InvoiceForm />} />,
   },
   {
-    path: APP_ROUTES.CREDIT_NOTE,
+    path: `${APP_ROUTES.FINANCE}`,
     element: <ProtectedRoute children={<InvoiceTable />} />,
   },
   {

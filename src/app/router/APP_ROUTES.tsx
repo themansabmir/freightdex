@@ -10,6 +10,8 @@ export const APP_ROUTES = {
   INVOICE: '/invoice',
   INVOICE_ITEM: '/invoice-item',
   PROFORMA: '/proforma',
+  FINANCE: '/finance',
+  FINANCE_FORM: '/finance_form',
   CREDIT_NOTE: '/credit-note',
   SALES: '/sales',
 } as const;

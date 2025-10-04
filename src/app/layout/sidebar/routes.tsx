@@ -20,17 +20,17 @@ const internalSidebarRoutes: SidebarItem[] = [
     children:[
       {
         label: 'Proforma',
-        to: APP_ROUTES.PROFORMA,
+        to: `${APP_ROUTES.FINANCE}?type=proforma`,
         icon: <Handshake strokeWidth={1.25} fill="none" size={18} />,
       },
       {
         label: 'Sales',
-        to: APP_ROUTES.SALES,
+        to: `${APP_ROUTES.FINANCE}?type=invoice`,
         icon: <CreditCard strokeWidth={1.25} fill="none" size={18} />,
       },
       {
         label: 'Credit Note',
-        to: APP_ROUTES.CREDIT_NOTE,
+        to: `${APP_ROUTES.FINANCE}?type=credit_note`,
         icon: <ScrollText strokeWidth={1.25} fill="none" size={18} />,
       },
     ]

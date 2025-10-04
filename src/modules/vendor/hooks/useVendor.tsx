@@ -49,6 +49,12 @@ export const useVendorPage = () => {
       ],
     },
     {
+      name:"credit_days", 
+      label:"Credit Days (only number)", 
+      type: 'text', 
+      placeholder:"ex: 15"
+    },
+    {
       name: 'locations',
       label: 'Locations',
       type: 'array',
