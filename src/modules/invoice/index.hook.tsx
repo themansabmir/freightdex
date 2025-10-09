@@ -2,6 +2,9 @@ import { FinanceHttpService, IFinanceDocument } from '@api/endpoints/finance.end
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient, useQuery } from '@lib/react-query';
+import { VendorHttpService } from '@api/endpoints/vendor.endpoint';
+import { formatVendorLabel } from '@modules/vendor/helper';
+import { ShipmentHttpService } from '@api/endpoints/shipment.endpoint';
 
 const FINANCE_KEY = 'finance';
 
@@ -47,3 +50,33 @@ export const useGetAllFinanceDocuments = () => {
       }).then((res) => ({ response: res.response, total: res.total })),
   });
 };
+
+export const searchShipment = async (inputValue: string): Promise<{ label: string; value: string }[]> => {
+  try {
+    const searchQuery = {
+      skip: '0',
+      limit: '30',
+      search: inputValue,
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
+    };
+    const response = await ShipmentHttpService.getShipmentFolder(searchQuery);
+    const formatResponse = response?.map((i: any) => ({ label: i.shipment_name, value: i?._id }));
+    return formatResponse ?? [];
+  } catch (error) {
+    console.error('Error loading vendors:', error);
+    return [];
+  }
+}
+
+
+export const fetchDocumentsByShipmentId = async (shipmentId: string) => {
+    try {
+      const response = await ShipmentHttpService.getAllDocumentsByShipmentId(shipmentId);
+      console.log("RESPONSE", response)
+      return response;
+    } catch (error) {
+      console.error('Error loading vendors:', error);
+      return [];
+    }
+  }

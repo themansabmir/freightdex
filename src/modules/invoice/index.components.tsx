@@ -219,4 +219,45 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
   
 }
 
-export { EditableCell, QuantityCell, DiscountCell, CurrencyCell, InvoiceTable , getColumns};
+export const selectedBillingPartyDetails = (selectedDocument: any) => {
+  const { vendor_name, locations } = selectedDocument?.billing_party;
+  const location = locations.filter((i: any) => i._id === selectedDocument?.billing_party_address)[0];
+  const { address, city, state, pin_code, gst_number, mobile_number, pan_number, country } = location;
+  return {
+    city,
+    address,
+    state,
+    country,
+    pin_code,
+    mobile_number,
+    gst_number,
+    pan_number,
+    vendor_name,
+  };
+};
+
+  const renderSelectedDocument = (selectedDocument: any) => {
+    const { city, address, state, country, pin_code, mobile_number, gst_number, pan_number, vendor_name } =
+      selectedBillingPartyDetails(selectedDocument);
+    return (
+      <>
+        <div className="billing-info mt-6">
+          <h3>Bill To:</h3>
+          <div className="customer-details">
+            <strong>{vendor_name || 'Customer Name'}</strong>
+            <p>Mobile: {mobile_number}</p>
+            <p>
+              Address: {address}, {city}, {state} - {pin_code}
+              <br />
+              {state} - {pin_code}
+              <br />
+              <strong>PAN: {pan_number}</strong>
+              <strong>GST: {gst_number}</strong>
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+export { EditableCell, QuantityCell, DiscountCell, CurrencyCell, InvoiceTable , getColumns, renderSelectedDocument};

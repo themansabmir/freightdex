@@ -1,4 +1,4 @@
-import  { Component, ReactNode, ErrorInfo } from "react";
+import { Component, ReactNode, ErrorInfo } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     } else {
-      console.error("ErrorBoundary caught an error", error, errorInfo);
+      console.error('ErrorBoundary caught an error', error, errorInfo);
     }
   }
 
@@ -37,12 +37,10 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className="p-2" style={{ padding: "2rem", textAlign: "center" }}>
+          <div className="p-2" style={{ padding: '2rem', textAlign: 'center' }}>
             <h1>Something went wrong.</h1>
-            {this.state.error?.message && (
-              <p style={{ color: "gray" }}>{this.state.error.message}</p>
-            )}
-            <button onClick={this.handleRetry} style={{ marginTop: "1rem" }}>
+            {this.state.error?.message && <p style={{ color: 'gray' }}>{this.state.error.message}</p>}
+            <button onClick={this.handleRetry} style={{ marginTop: '1rem' }}>
               Try Again
             </button>
           </div>

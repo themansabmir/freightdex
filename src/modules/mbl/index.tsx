@@ -13,7 +13,7 @@ import useMbl from './hooks/useMbl';
 import { useGetMblByShipmentId, useSaveMbl } from './hooks/useMblApi';
 import { IMbl, MblSchema } from './index.types';
 
-export const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination'] as const;
+export const fields = ['shipper', 'agent', 'notify', 'consignee', 'second_notify', 'agent_origin', 'agent_destination', 'billing_party',] as const;
 
 const MBLFormPage = ({ id }: { id: string }) => {
   const [isView, setIsView] = useState(false);

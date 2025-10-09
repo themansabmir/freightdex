@@ -3,8 +3,8 @@ import { queryClient, useMutation, useQuery } from '@lib/react-query';
 import { VendorGetAllParams } from '@modules/vendor/index.types';
 import { toast } from 'react-toastify';
 
+const SHIPMENT_KEY = 'shipment';
 export const useShipmentApi = () => {
-  const SHIPMENT_KEY = 'shipment';
 
   const createShipmentMutation = useMutation({
     mutationFn: (payload: { shipment_type: string }) => ShipmentHttpService.createShipmentFolder(payload),
@@ -33,3 +33,10 @@ export const useShipmentApi = () => {
     useGetShipmentById,
   };
 };
+
+
+export   const useGetShipments = (queryString: VendorGetAllParams) =>
+  useQuery({
+    queryKey: [SHIPMENT_KEY, queryString],
+    queryFn: () => ShipmentHttpService.getShipmentFolder(queryString),
+  });

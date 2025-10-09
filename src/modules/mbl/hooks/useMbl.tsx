@@ -62,6 +62,12 @@ const useMbl = () => {
     };
   });
 
+  const unique = Array.from(
+    new Map([...(shipper ?? []), ...(consignee ?? []), ...(notify ?? []), ...(agent ?? [])].map(obj => [obj.value, obj])).values()
+  )
+
+  console.log(unique)
+
   //  common fields  : shipper, consignee, notify, second_notify,agent, shipping_line
   const mbl_form_schema: FieldSchema[] = [
     {
@@ -131,6 +137,15 @@ const useMbl = () => {
       options: [...(shippingLine ?? [])],
       placeholder: 'Shipping Line',
       required: false,
+    },
+    {type:'dropdown', 
+      label:"Billing Party", 
+      name:'billing_party',
+      options:[
+        ...unique
+      ],
+      placeholder:'Billing Party',
+      required:false,
     },
     {
       type: 'dropdown',
