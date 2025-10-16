@@ -76,9 +76,9 @@ export const updateRowAtIndex = (rows: any[], idx: number, patch: Partial<any>) 
 
 export const blankRow = () => {
   return {
-    id: Date.now() + Math.random(),
+    _id:'',
     serviceItem: '',
-    hsn: '',
+    hsn_code: '',
     rate: 0,
     currency: 'INR',
     unit: '',

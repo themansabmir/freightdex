@@ -95,24 +95,13 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
         accessorKey: 'serviceItem',
         cell: ({ row }) => {
           const r = row.original;
-          const options = useMemo(
-            () =>
-              items.map((it: FormValues) => ({
-                value: it._id,
-                label: it.fieldName,
-                hsn: it.hsn_code,
-                unit: it.unit,
-                gstPercent: it.gst,
-              })),
-            [items]
-          );
-
-          const selected = useMemo(() => options.find((opt) => opt.value === r.itemId) || null, [r.itemId, options]);
-
+          const selected = useMemo(() => items.find((opt) => opt._id === r.itemId) || null, [r.itemId, items]);
           return (
             <Select
               value={selected}
-              options={options}
+              options={items}
+              getOptionLabel={(option) => option.fieldName}
+              getOptionValue={(option) => option.itemId}
               styles={{
                 control: (base) => ({
                   ...base,
@@ -136,11 +125,11 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
               onChange={(opt: any) => {
                 if (!opt) return;
                 updateRow(row.index, {
-                  itemId: opt.value,
-                  serviceItem: opt.label,
-                  hsn: opt.hsn,
+                  itemId: opt.itemId,
+                  serviceItem: opt.fieldName,
+                  hsn_code: opt.hsn_code,
                   unit: opt.unit,
-                  gstPercent: opt.gstPercent,
+                  gstPercent: opt.gst,
                 });
               }}
               placeholder=""
@@ -151,10 +140,11 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
       },
       {
         header: 'HSN',
-        accessorKey: 'hsn',
+        accessorKey: 'hsn_code',
         minSize: 300,
 
-        cell: ({ row }) => <span>{row.original.hsn}</span>,
+        cell: ({ row }) => {
+          return<span style={{color:'black'}}>{row.original.hsn_code}</span>}
       },
       {
         header: 'Rate',
@@ -198,7 +188,7 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
       },
       {
         header: 'GST Amount',
-        accessorKey: 'gstAmount',
+        accessorKey: 'gstPercent',
         cell: ({ row }) => (
           <span>
             {(row.original.gstAmount || 0).toFixed(2)} ({row.original.gstPercent}%)
@@ -220,8 +210,9 @@ const getColumns  =(items:any[], updateRow:any, removeRow:any) :ColumnDef<any>[]
 }
 
 export const selectedBillingPartyDetails = (selectedDocument: any) => {
+  console.log("DOC",selectedDocument)
   const { vendor_name, locations } = selectedDocument?.billing_party;
-  const location = locations.filter((i: any) => i._id === selectedDocument?.billing_party_address)[0];
+  const location = locations?.filter((i: any) => i._id === selectedDocument?.billing_party_address)[0];
   const { address, city, state, pin_code, gst_number, mobile_number, pan_number, country } = location;
   return {
     city,
@@ -236,9 +227,7 @@ export const selectedBillingPartyDetails = (selectedDocument: any) => {
   };
 };
 
-  const renderSelectedDocument = (selectedDocument: any) => {
-    const { city, address, state, country, pin_code, mobile_number, gst_number, pan_number, vendor_name } =
-      selectedBillingPartyDetails(selectedDocument);
+  const renderSelectedDocument = ({vendor_name, mobile_number, address, city, state, country, pin_code, gst_number, pan_number}: any) => {
     return (
       <>
         <div className="billing-info mt-6">

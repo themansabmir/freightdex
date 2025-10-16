@@ -10,7 +10,10 @@ export class InvoiceItemHttpService {
 
     public static async getAllInvoiceItems() {
         const { data } = await api.get(INVOICEITEM_ENDPOINT);
-        return data.response;
+        return data.response?.map((i: any) => ({
+            ...i,
+            itemId: i?._id
+        })) ;
     }
 
     public static async saveInvoiceItem(invoiceItemBody: unknown) {

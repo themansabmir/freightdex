@@ -9,7 +9,6 @@ import { EditableCell, QuantityCell, DiscountCell, CurrencyCell } from './index.
 export default function App() {
   const [rows, setRows] = useState<any[]>([]);
 
-  console.log(rows);
   const [items, setItems] = useState<any[]>([
     // dummy master items
     { _id: '1', name: 'Clothes with clothes clothes Clothes with clothes clothes ', hsn: '1001', unit: 'container', gstPercent: 18 },

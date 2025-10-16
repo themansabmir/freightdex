@@ -1,12 +1,14 @@
 import React from 'react';
 import { IFinanceDocument, ILineItem } from '@api/endpoints/finance.endpoint';
 import './invoice-layout.scss';
-
+import { Button } from '@shared/components';
+import { useNavigate } from 'react-router-dom';
 interface InvoiceLayoutProps {
   invoice: IFinanceDocument;
 }
 
 const InvoiceLayout: React.FC<InvoiceLayoutProps> = ({ invoice }) => {
+  const navigate = useNavigate();
   if (!invoice) {
     return <div className="invoice-loading">Loading invoice...</div>;
   }
@@ -27,7 +29,11 @@ const InvoiceLayout: React.FC<InvoiceLayoutProps> = ({ invoice }) => {
     }).format(amount);
   };
 
+  
+
   return (
+    <>
+    <Button variant="primary" onClick={() => navigate(`/finance_form?id=${invoice?._id}&type=${invoice?.type}`)}>Edit</Button>
     <div className="invoice-container">
       {/* Header */}
       <div className="invoice-header">
@@ -171,6 +177,7 @@ const InvoiceLayout: React.FC<InvoiceLayoutProps> = ({ invoice }) => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

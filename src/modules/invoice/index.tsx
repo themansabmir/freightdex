@@ -19,7 +19,7 @@ const FinanceListPage = () => {
   const { pagination, setPagination, rows, setRows } = usePageState();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
-  const { data:financeDocs, isLoading } = useGetAllFinanceDocuments();
+  const { data:financeDocs, isLoading } = useGetAllFinanceDocuments(type??'');
   const financeDocsMap = financeMap(financeDocs?.response ?? []);
 
   const columns: ColumnDef<any>[] = [

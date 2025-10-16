@@ -2,8 +2,6 @@ import { FinanceHttpService, IFinanceDocument } from '@api/endpoints/finance.end
 import { toast } from 'react-toastify';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient, useQuery } from '@lib/react-query';
-import { VendorHttpService } from '@api/endpoints/vendor.endpoint';
-import { formatVendorLabel } from '@modules/vendor/helper';
 import { ShipmentHttpService } from '@api/endpoints/shipment.endpoint';
 
 const FINANCE_KEY = 'finance';
@@ -37,9 +35,27 @@ export const useSaveFinanceDocument = () => {
   };
 };
 
-export const useGetAllFinanceDocuments = () => {
+export const useUpdateFinanceDocument = () => {
+  const updateFinanceMutation = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<any> }) => FinanceHttpService.update(id, payload),
+    onError: ({ message }) => toast.error(message),
+    onSettled: (data) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey: [FINANCE_KEY] });
+        toast.success(`Finance document updated successfully`);
+      }
+    },
+  });
+
+  return {
+    updateFinanceDocument: updateFinanceMutation.mutateAsync,
+    isUpdating: updateFinanceMutation.isPending,
+  };
+};
+
+export const useGetAllFinanceDocuments = (type?: string) => {
   return useQuery({
-    queryKey: [FINANCE_KEY],
+    queryKey: [FINANCE_KEY, type],
     queryFn: (): Promise<{ response: IFinanceDocument[]; total: number }> =>
       FinanceHttpService.getAll({
         skip: '0',
@@ -47,6 +63,7 @@ export const useGetAllFinanceDocuments = () => {
         search: '',
         sortBy: 'createdAt',
         sortOrder: 'desc',
+        type,
       }).then((res) => ({ response: res.response, total: res.total })),
   });
 };
@@ -70,13 +87,30 @@ export const searchShipment = async (inputValue: string): Promise<{ label: strin
 }
 
 
+export const useGetDocumentsByShipmentId = (shipmentId: string) => {
+    return useQuery({
+        queryKey: ["documents", "shipment", shipmentId],
+        queryFn: (): Promise<IFinanceDocument[]> =>
+          fetchDocumentsByShipmentId(shipmentId)
+        .then((res) => res),
+      });
+}
 export const fetchDocumentsByShipmentId = async (shipmentId: string) => {
     try {
+      if(!shipmentId) return [];
       const response = await ShipmentHttpService.getAllDocumentsByShipmentId(shipmentId);
-      console.log("RESPONSE", response)
       return response;
     } catch (error) {
       console.error('Error loading vendors:', error);
       return [];
+    }
+  }
+
+
+  export const fetchFinanceDocumentById = async  (id : string) =>{
+    try {
+     return await FinanceHttpService.getById(id)
+    } catch (error) {
+      toast.error("Document doesnt exist with this id")
     }
   }

@@ -27,8 +27,10 @@ export interface ILineItem {
 
 export interface IFinanceDocument {
   _id?: string;
-  shipmentId: {shipment_name: string};
-  customerId: {vendor_name: string};
+  shipmentId: { _id: string; shipment_name: string };
+  customerId: { _id: string; vendor_name: string };
+  locationId?: string;
+  billingPartySnapshot?: any;
   type: 'proforma' | 'invoice' | 'credit_note';
   status: 'draft' | 'sent' | 'acknowledged' | 'paid' | 'issued' | 'cancelled';
   parentDocumentId?: string;
@@ -62,10 +64,12 @@ export class FinanceHttpService {
   }
 
   static async getAll(queryParams: GetAllParams): Promise<GetAllFinanceResponse> {
-    const { limit, search, skip, sortBy, sortOrder } = queryParams;
+    const { limit, search, skip, sortBy, sortOrder , type} = queryParams;
     const baseUrl = FINANCE_ENDPOINT;
     const params = new URLSearchParams({});
-    
+    if(type){
+      params.append('type', type as string );
+    }
     if (limit) {
       params.append('limit', limit);
       params.append('skip', skip);
