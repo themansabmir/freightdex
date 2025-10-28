@@ -6,7 +6,7 @@ import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { Button, Typography } from '@shared/components';
 import { z } from 'zod';
 import { Modal } from '@shared/components/Modal';
-import { useModal } from '@shared/hooks/useModa';
+import { useModal } from '@shared/hooks/useModal';
 import { Stack } from '@shared/components/Stack';
 import ServiceItemRow from '@shared/components/ItemRow';
 import { useGetAllInvoiceItems, useSaveInvoiceItem } from './hooks/useInvoiceItemApi';

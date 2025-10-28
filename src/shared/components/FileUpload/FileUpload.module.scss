@@ -1,0 +1,208 @@
+// FileUpload Component Styles
+
+.dropZone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  min-height: 200px;
+  width:90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 1rem;
+  
+  &:hover {
+    border-color: #3b82f6;
+    background-color: #f8faff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+  
+  &.dragActive {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+    border-style: solid;
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.2);
+    
+    .fileHint {
+      color: #059669;
+      font-weight: 600;
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.fileInput {
+  position: absolute;
+  height: 90%;
+  opacity: 0;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.fileHint {
+  color: #6b7280;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  padding: 2rem;
+  font-weight: 500;
+  line-height: 1.6;
+  
+  &::before {
+    content: "📁";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+}
+
+.fileSelected {
+  color: #059669;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+  padding: 2rem;
+  background-color: #ecfdf5;
+  border-radius: 8px;
+  border: 1px solid #a7f3d0;
+  
+  &::before {
+    content: "✅";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  strong {
+    font-weight: 600;
+    color: #047857;
+  }
+}
+
+// Header styling improvements
+.fileUploadHeader {
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+  }
+  
+  p {
+    color: #6b7280;
+    margin: 0.5rem 0 0 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+}
+
+// Animation for file upload states
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.fileSelected {
+  animation: fadeInUp 0.3s ease;
+}
+
+.dragActive {
+  .fileHint::before {
+    animation: pulse 1s infinite;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .dropZone {
+    min-height: 150px;
+    margin: 0.5rem 0;
+  }
+  
+  .fileHint {
+    padding: 1.5rem;
+    font-size: 0.875rem;
+    
+    &::before {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+  
+  .fileSelected {
+    padding: 1.5rem;
+    font-size: 0.875rem;
+    
+    &::before {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+}
+
+// Error state (for future use)
+.dropZone.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+  
+  &:hover {
+    border-color: #dc2626;
+    background-color: #fef2f2;
+  }
+  
+  .fileHint {
+    color: #dc2626;
+  }
+}
+
+// Loading state (for future use)
+.dropZone.loading {
+  pointer-events: none;
+  opacity: 0.7;
+  
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #3b82f6;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

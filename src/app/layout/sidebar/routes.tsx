@@ -46,6 +46,11 @@ const internalSidebarRoutes: SidebarItem[] = [
         icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
       {
+        label: 'Rate Master',
+        to: APP_ROUTES.RATE_MASTER,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
         label: 'Invoice Item',
         to: APP_ROUTES.INVOICE_ITEM,
         icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,

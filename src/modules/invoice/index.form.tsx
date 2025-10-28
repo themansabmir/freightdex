@@ -3,12 +3,12 @@ import AsyncSelect from 'react-select/async';
 import Select from 'react-select';
 import { useGetAllInvoiceItems } from '@modules/invoiceItem/hooks/useInvoiceItemApi';
 import { updateRowAtIndex, blankRow } from './utils';
-import { getColumns, InvoiceTable, renderSelectedDocument, selectedBillingPartyDetails } from './index.components';
+import { getColumns, InvoiceTable, selectedBillingPartyDetails } from './index.components';
 import { fetchFinanceDocumentById, useGetDocumentsByShipmentId, useSaveFinanceDocument, useUpdateFinanceDocument } from './index.hook';
 import { Button } from '@shared/components';
 import './totals.scss';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { searchShipment, fetchDocumentsByShipmentId } from './index.hook';
+import { searchShipment } from './index.hook';
 import { Stack } from '@shared/components/Stack';
 import { toast } from 'react-toastify';
 

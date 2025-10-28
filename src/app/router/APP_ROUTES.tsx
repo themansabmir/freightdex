@@ -14,6 +14,7 @@ export const APP_ROUTES = {
   FINANCE_FORM: '/finance_form',
   CREDIT_NOTE: '/credit-note',
   SALES: '/sales',
+  RATE_MASTER: '/rate_master',
 } as const;
 
 export type APP_ROUTE = (typeof APP_ROUTES)[keyof typeof APP_ROUTES];

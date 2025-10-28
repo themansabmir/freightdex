@@ -10,7 +10,7 @@ import PageLoader from '@shared/components/Loader/PageLoader';
 import { Stack } from '@shared/components/Stack';
 import { useDebounce } from '@shared/hooks/useDebounce';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
-import { useModal } from '@shared/hooks/useModa';
+import { useModal } from '@shared/hooks/useModal';
 import usePageState from '@shared/hooks/usePageState';
 import { returnSelectedRecord } from '@shared/utils';
 import { useMemo, useState } from 'react';

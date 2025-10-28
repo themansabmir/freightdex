@@ -5,7 +5,7 @@ import ActionButtonContainer from '@shared/components/ActionDialouge';
 import { Modal } from '@shared/components/Modal';
 import { useDebounce } from '@shared/hooks/useDebounce';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
-import { useModal } from '@shared/hooks/useModa';
+import { useModal } from '@shared/hooks/useModal';
 import usePageState from '@shared/hooks/usePageState';
 import { CircleAlert, SearchIcon } from 'lucide-react';
 import { useMemo, useState } from 'react';

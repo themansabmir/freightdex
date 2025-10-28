@@ -11,6 +11,7 @@ import HblForm from '@modules/hbl/HblForm';
 import InvoiceTable from '@modules/invoice';
 import InvoiceItem from '@modules/invoiceItem';
 import InvoiceForm from '@modules/invoice/index.form'
+import RateSheetMaster from '@modules/rate_master';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -52,6 +53,10 @@ export const browserRouterRoutes = createBrowserRouter([
   {
     path: `${APP_ROUTES.FINANCE}`,
     element: <ProtectedRoute children={<InvoiceTable />} />,
+  },
+  {
+    path: `${APP_ROUTES.RATE_MASTER}`,
+    element: <ProtectedRoute children={<RateSheetMaster />} />,
   },
   {
     path: `/invoice-item`,

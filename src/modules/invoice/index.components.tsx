@@ -4,7 +4,6 @@ import './invoicestyle.scss';
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
 import { InvoiceTableProps } from './index.types';
 import Select from 'react-select';
-import { FormValues } from '@modules/invoiceItem/index.types';
 
 
 const EditableCell = React.memo(({ row, columnId, updateRow }: EditableCellProps) => {
@@ -227,7 +226,7 @@ export const selectedBillingPartyDetails = (selectedDocument: any) => {
   };
 };
 
-  const renderSelectedDocument = ({vendor_name, mobile_number, address, city, state, country, pin_code, gst_number, pan_number}: any) => {
+  const renderSelectedDocument = ({vendor_name, mobile_number, address, city, state, pin_code, gst_number, pan_number}: any) => {
     return (
       <>
         <div className="billing-info mt-6">
