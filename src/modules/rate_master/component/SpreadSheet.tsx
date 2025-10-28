@@ -1,8 +1,13 @@
-import { useReactTable, getCoreRowModel, flexRender } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, flexRender, ColumnDef } from '@tanstack/react-table';
 import styles from './Spreadsheet.module.scss';
 
+interface SpreadSheetProps<T = any> {
+  data: T[];
+  columns: ColumnDef<T>[];
+  className?: string;
+}
 
-export default function SpreadSheet({ data = [], columns = [], className = '' }) {
+export default function SpreadSheet<T = any>({ data = [], columns = [], className = '' }: SpreadSheetProps<T>) {
 
   const table = useReactTable({
     data: data,

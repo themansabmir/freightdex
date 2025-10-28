@@ -1,5 +1,5 @@
 import { api } from '@api/config';
-import { GetRateSheetsFilters, IExcelRow } from '@modules/rate_master/index.types';
+import { GetRateSheetsFilters, IExcelRow, ISheetRow, IDistinctShippingLine, IDistinctPort } from '@modules/rate_master/index.types';
 
 const RATE_MASTER_ENDPOINT = '/rate-sheet';
 
@@ -34,13 +34,11 @@ export class RateMasterHttpService {
     }
   }
 
-  static async getActiveRateSheets(filters: GetRateSheetsFilters): Promise<IExcelRow[]> {
+  static async getActiveRateSheets(filters: GetRateSheetsFilters): Promise<ISheetRow[]> {
     const params = new URLSearchParams();
 
-    // Required parameter
-    params.append('shippingLineId', filters.shippingLineId);
-
-    // Optional parameters
+    // Optional parameters - shippingLineId is now optional
+    if (filters.shippingLineId) params.append('shippingLineId', filters.shippingLineId);
     if (filters.containerType) params.append('containerType', filters.containerType);
     if (filters.containerSize) params.append('containerSize', filters.containerSize);
     if (filters.startPortId) params.append('startPortId', filters.startPortId);
@@ -49,6 +47,7 @@ export class RateMasterHttpService {
       const dateStr = filters.effectiveFrom instanceof Date
         ? filters.effectiveFrom.toISOString()
         : filters.effectiveFrom;
+        console.log("Datestr" , dateStr)
       params.append('effectiveFrom', dateStr);
     }
     if (filters.effectiveTo) {
@@ -65,7 +64,11 @@ export class RateMasterHttpService {
 
 
   static async bulkInsertRateSheet(file: FormData): Promise<IExcelRow[]> {
-    const { data } = await api.post(`${RATE_MASTER_ENDPOINT}/bulk-insert`, file);
+    const { data } = await api.post(`excel/bulk-insert/rate-master`, file, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return data.response;
   }
 
@@ -77,6 +80,16 @@ export class RateMasterHttpService {
     tradeTypes: Array<{ label: string; value: string }>;
   }> {
     const { data } = await api.get(`${RATE_MASTER_ENDPOINT}/filters/${shippingLineId}`);
+    return data.response;
+  }
+
+  static async getDistinctShippingLines(): Promise<IDistinctShippingLine[]> {
+    const { data } = await api.get(`${RATE_MASTER_ENDPOINT}/shippingLines`);
+    return data.response;
+  }
+
+  static async getDistinctPorts(shippingLineId?: string): Promise<IDistinctPort[]> {
+    const { data } = await api.get(`${RATE_MASTER_ENDPOINT}/distinctPorts?shippingLineId=${shippingLineId}`);
     return data.response;
   }
 }

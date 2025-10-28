@@ -1,4 +1,3 @@
-import PageLoader from '@shared/components/Loader/PageLoader';
 import PageHeader from '@blocks/page-header';
 import FileUploadSection from '@shared/components/FileUpload';
 import { useModal } from '@shared/hooks/useModal';
@@ -8,37 +7,63 @@ import { RateMasterHttpService } from '@api/endpoints/ratemaster.endpoint';
 import { toast } from 'react-toastify';
 import { useEffect, useMemo } from 'react';
 import { useState } from 'react';
-import { IExcelRow } from './index.types';
+import { GetRateSheetsFilters, IDisplayRow } from './index.types';
 import SpreadSheet from './component/SpreadSheet';
 import Dropdown from '@shared/components/SingleDropdown';
-import { containerSize, containerType , tradeType} from './contants';
+import { containerSize, containerType, tradeType, columnsArr } from './contants';
+import { filterRateSheetMaster, useGetDistinctShippingLines, useGetDistinctPorts, useBulkInsertRateSheet } from './hooks/useRateMasterApi';
+import { UploadIcon } from 'lucide-react';
+import { FieldLabel } from '@generator/form';
+import dayjs from 'dayjs';
 
 const RateSheetMaster = () => {
   const { isOpen, closeModal, openModal } = useModal();
-  const [data, setData] = useState<IExcelRow[]>([]);
+  const [data, setData] = useState<IDisplayRow[]>([]);
+  const [filters, setFilters] = useState<GetRateSheetsFilters>({
+    shippingLineId: '',
+    containerType: '',
+    containerSize: '',
+    startPortId: '',
+    endPortId: '',
+    effectiveFrom: undefined,
+    effectiveTo: undefined,
+    tradeType: '',
+  });
 
-  const columns = useMemo(
-    () => [
-      { accessorKey: 'SHIPPING_LINE', header: 'Shipping Line', size: 150 },
-      { accessorKey: 'CONTAINER_TYPE', header: 'Type', size: 100 },
-      { accessorKey: 'CONTAINER_SIZE', header: 'Size', size: 100 },
-      { accessorKey: 'START_PORT', header: 'Start Port', size: 120 },
-      { accessorKey: 'END_PORT', header: 'End Port', size: 120 },
-      { accessorKey: 'CHARGE_NAME', header: 'Charge Name', size: 180 },
-      { accessorKey: 'HSN_CODE', header: 'HSN Code', size: 140 },
-      { accessorKey: 'PRICE', header: 'Price', size: 100, isNumeric: true },
-      { accessorKey: 'EFFECTIVE_FROM', header: 'Effective From', size: 150 },
-      { accessorKey: 'EFFECTIVE_TO', header: 'Effective To', size: 150 },
-      { accessorKey: 'TRADE_TYPE', header: 'Trade Type', size: 100 },
-    ],
-    []
-  );
+  console.log('Filters', filters);
+  const { data: shippingLines } = useGetDistinctShippingLines();
+  const { data: ports } = useGetDistinctPorts(filters.shippingLineId);
+  const { bulkInsert, isUploading } = useBulkInsertRateSheet();
+
+  const shippingLineOptions = useMemo(() => {
+    return (
+      shippingLines?.map((line) => ({
+        label: line.vendor_name,
+        value: line._id,
+      })) || []
+    );
+  }, [shippingLines]);
+
+  const portOptions = useMemo(() => {
+    return (
+      ports?.map((port) => ({
+        label: port.port_name,
+        value: port._id,
+      })) || []
+    );
+  }, [ports]);
+
+  const columns = useMemo(() => columnsArr, []);
 
   const handleCancel = () => {
     closeModal();
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await bulkInsert(formData);
+    console.log(file);
     closeModal();
   };
 
@@ -53,18 +78,20 @@ const RateSheetMaster = () => {
   };
 
   useEffect(() => {
-    RateMasterHttpService.getActiveRateSheets({ shippingLineId: '68fd3c0f3bf05f23ff152261' }).then((res) => {
-      const rateSheets = res.map((rateSheet) => ({
-        ...rateSheet,
-        SHIPPING_LINE: rateSheet?.SHIPPING_LINE?.vendor_name,
-        START_PORT: rateSheet?.START_PORT?.port_name,
-        END_PORT: rateSheet?.END_PORT?.port_name,
-        EFFECTIVE_FROM: new Date(rateSheet.EFFECTIVE_FROM).toLocaleDateString(),
-        EFFECTIVE_TO: rateSheet?.EFFECTIVE_TO ? new Date(rateSheet?.EFFECTIVE_TO).toLocaleDateString() : null,
+    // Fetch data when filters change - can work with or without shippingLineId
+    filterRateSheetMaster(filters).then(setData);
+  }, [filters]);
+
+  // Clear port selections when shipping line changes
+  useEffect(() => {
+    if (filters.shippingLineId) {
+      setFilters((prev) => ({
+        ...prev,
+        startPortId: '',
+        endPortId: '',
       }));
-      setData(rateSheets);
-    });
-  }, []);
+    }
+  }, [filters.shippingLineId]);
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Rate Sheet Master', href: '' },
@@ -81,20 +108,78 @@ const RateSheetMaster = () => {
         breadcrumnArray={breadcrumbArray}
       />
 
-      <Stack direction="horizontal" justify="end">
-        <Button onClick={openModal}>Upload Rate Sheet +</Button>
+      <Stack direction="horizontal" justify="end" className="mb-3">
+        <Button onClick={openModal}>
+          {' '}
+          Upload Rate Sheet <UploadIcon size={16} className="ml-1" />{' '}
+        </Button>
       </Stack>
 
       <div className="flex mb-2 gap-2">
-        <Dropdown value={null} options={[{ label: 'ShippingLine', value: '1' }]} placeholder="Shipping Line" onChange={() => {}} />
-        <Dropdown value={null} options={containerType} placeholder="Container Type" onChange={() => {}} />
-        <Dropdown value={null} options={containerSize} placeholder="Container Size" onChange={() => {}} />
+        <Dropdown
+          value={filters.shippingLineId || null}
+          options={shippingLineOptions}
+          placeholder="Shipping Line"
+          onChange={(value) => setFilters({ ...filters, shippingLineId: value || '' })}
+        />
+        <Dropdown
+          value={filters.containerType || null}
+          options={containerType}
+          placeholder="Container Type"
+          onChange={(value) => setFilters({ ...filters, containerType: value || '' })}
+        />
+        <Dropdown
+          value={filters.containerSize || null}
+          options={containerSize}
+          placeholder="Container Size"
+          onChange={(value) => setFilters({ ...filters, containerSize: value || '' })}
+        />
       </div>
       <div className="flex gap-2">
-        <Dropdown value={null} options={[]} placeholder="Start Port" onChange={() => {}} />
-        <Dropdown value={null} options={[]} placeholder="End Port" onChange={() => {}} />
-        <Dropdown value={null} options={tradeType} placeholder="Trade Type" onChange={() => {}} />
+        <Dropdown
+          value={filters.startPortId || null}
+          options={portOptions}
+          placeholder="Start Port"
+          onChange={(value) => setFilters({ ...filters, startPortId: value || '' })}
+        />
+        <Dropdown
+          value={filters.endPortId || null}
+          options={portOptions}
+          placeholder="End Port"
+          onChange={(value) => setFilters({ ...filters, endPortId: value || '' })}
+        />
+        <Dropdown
+          value={filters.tradeType || null}
+          options={tradeType}
+          placeholder="Trade Type"
+          onChange={(value) => setFilters({ ...filters, tradeType: value || '' })}
+        />
       </div>
+        <div>
+          <br />
+          <FieldLabel label={'Effective From '} />
+          <br />
+          <input
+            className="custom-date-input"
+            value={filters.effectiveFrom ? dayjs.utc(filters.effectiveFrom).tz('Asia/Kolkata').format('YYYY-MM-DD') : filters.effectiveFrom}
+            style={{ backgroundColor: 'white' }}
+            onChange={(e) => setFilters((prev) => ({ ...prev, effectiveFrom: e.target.value }))}
+            type="date"
+          />
+        </div>
+        <div>
+          <br />
+          <FieldLabel label={'Effective To '} />
+          <br />
+          <input
+            className="custom-date-input"
+            value={filters.effectiveTo ? dayjs.utc(filters.effectiveTo).tz('Asia/Kolkata').format('YYYY-MM-DD') : filters.effectiveTo}
+            style={{ backgroundColor: 'white' }}
+            onChange={(e) => setFilters((prev) => ({ ...prev, effectiveTo: e.target.value }))}
+            type="date"
+          />
+        </div>
+      <div></div>
 
       <SpreadSheet data={data} columns={columns} />
 
