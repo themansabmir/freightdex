@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addUserToStorage = (data: IUser) => {
+    console.log("data",data)
     localStorage.setItem('admin', JSON.stringify(data));
     localStorage.setItem(constants.TOKEN, data.access_token);
     setUser(data);

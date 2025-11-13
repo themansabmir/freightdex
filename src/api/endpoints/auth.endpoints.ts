@@ -8,9 +8,7 @@ export type ApiResponse<T> = {
 
 export class AuthHttpService {
   static async login(loginPayload: { email: string; password: string }) {
-    const {
-      data: { response, message },
-    } = await api.post<ApiResponse<IUser>>('/login', loginPayload);
-    return { response, message };
+    const { data} = await api.post<ApiResponse<IUser>>('/login', loginPayload);
+    return data;
   }
 }

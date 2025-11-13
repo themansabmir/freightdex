@@ -1,4 +1,5 @@
 import { RouterProvider } from 'react-router-dom';
+import { NuqsAdapter } from 'nuqs/adapters/react-router';
 import './_app.scss';
 import { browserRouterRoutes } from './router/BROWSER_ROUTER';
 import { useOnline } from '@shared/hooks/useOnline';
@@ -24,7 +25,9 @@ export function App() {
       />
       {!isOnline && <div className="check_online font-sm">Please check your internet connection and try again.</div>}
 
-      <RouterProvider router={browserRouterRoutes} />
+      <NuqsAdapter>
+        <RouterProvider router={browserRouterRoutes} />
+      </NuqsAdapter>
     </>
   );
 }

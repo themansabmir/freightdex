@@ -75,7 +75,7 @@ export const useBulkInsertRateSheet = () => {
     const bulkInsertMutation = useMutation({
         mutationFn: (file: FormData) => RateMasterHttpService.bulkInsertRateSheet(file),
         onError: ({ message }) => toast.error(message || 'Failed to upload rate sheet'),
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [RATE_MASTER_KEY] });
             toast.success(`Successfully uploaded rate sheet entries`);
         },

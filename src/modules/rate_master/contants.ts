@@ -28,3 +28,20 @@ export const columnsArr = [
       { accessorKey: 'EFFECTIVE_TO', header: 'Effective To', size: 150 },
       { accessorKey: 'TRADE_TYPE', header: 'Trade Type', size: 100 },
 ]
+
+
+export const rateSheetFilters= {
+    shippingLineId: '',
+    containerType: '',
+    containerSize: '',
+    startPortId: '',
+    endPortId: '',
+    effectiveFrom: undefined,
+    effectiveTo: undefined,
+    tradeType: '',
+  }
+
+  export   const breadcrumbArray = [
+    { label: 'Dashboard', href: '/' },
+    { label: 'Rate Sheet Master', href: '' },
+  ];
