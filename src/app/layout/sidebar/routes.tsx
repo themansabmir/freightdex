@@ -14,10 +14,22 @@ const internalSidebarRoutes: SidebarItem[] = [
     icon: <Container strokeWidth={1.25} fill="none" />,
   },
   {
+    label: 'Quotation',
+    to: '',
+    icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+    children: [
+      {
+        label: 'Quotation List',
+        to: APP_ROUTES.QUOTATION,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+      },
+    ],
+  },
+  {
     label: 'Finance',
-    to:'',
+    to: '',
     icon: <Wallet strokeWidth={1.25} fill="none" />,
-    children:[
+    children: [
       {
         label: 'Proforma',
         to: `${APP_ROUTES.FINANCE}?type=proforma`,
@@ -48,6 +60,11 @@ const internalSidebarRoutes: SidebarItem[] = [
       {
         label: 'Rate Master',
         to: APP_ROUTES.RATE_MASTER,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
+        label: 'Quotation',
+        to: APP_ROUTES.QUOTATION,
         icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
       {
