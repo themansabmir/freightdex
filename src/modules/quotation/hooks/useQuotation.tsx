@@ -1,10 +1,15 @@
 // hooks/useQuotationPage.ts
-import { ColumnDef } from '@tanstack/react-table';
-import Column from '@shared/components/Column';
 import { Checkbox, Typography } from '@shared/components';
+import Column from '@shared/components/Column';
+import { ColumnDef } from '@tanstack/react-table';
+import { Eye } from 'lucide-react';
 import { IQuotation } from '../index.types';
 
-export const useQuotationPage = () => {
+interface UseQuotationPageProps {
+  onViewDetails?: (quotation: IQuotation) => void;
+}
+
+export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) => {
   const columns: ColumnDef<IQuotation>[] = [
     {
       id: '_id',
@@ -52,6 +57,20 @@ export const useQuotationPage = () => {
         const d = row.original.validTo ? new Date(row.original.validTo) : null;
         return <span>{d ? d.toISOString().slice(0, 10) : ''}</span>;
       },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <button
+          className="action-button action-button--view"
+          onClick={() => onViewDetails?.(row.original)}
+          title="View Details"
+        >
+          <Eye size={18} />
+          <span>View</span>
+        </button>
+      ),
     },
   ];
 
