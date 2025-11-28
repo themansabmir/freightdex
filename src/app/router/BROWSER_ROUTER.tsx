@@ -12,7 +12,7 @@ import InvoiceTable from '@modules/invoice';
 import InvoiceItem from '@modules/invoiceItem';
 import InvoiceForm from '@modules/invoice/index.form';
 import RateSheetMaster from '@modules/rate_master';
-import Quotation from '@modules/quotation/index.tsx';
+import Quotation from '@modules/quotation';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -64,7 +64,7 @@ export const browserRouterRoutes = createBrowserRouter([
     element: <ProtectedRoute children={<InvoiceItem />} />,
   },
   {
-    path: APP_ROUTES.QUOTATION,           
+    path: APP_ROUTES.QUOTATION,
     element: <ProtectedRoute children={<Quotation />} />,
   },
 ]);

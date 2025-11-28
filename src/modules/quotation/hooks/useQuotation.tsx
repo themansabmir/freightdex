@@ -2,25 +2,15 @@
 import { ColumnDef } from '@tanstack/react-table';
 import Column from '@shared/components/Column';
 import { Checkbox, Typography } from '@shared/components';
-import { IQuotation} from '../index.types';
+import { IQuotation } from '../index.types';
 
 export const useQuotationPage = () => {
   const columns: ColumnDef<IQuotation>[] = [
     {
       id: '_id',
       size: 4,
-      header: ({ table }) => (
-        <Checkbox
-          checked={table.getIsAllRowsSelected()}
-          onChange={table.getToggleAllRowsSelectedHandler()}
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onChange={() => row.toggleSelected()}
-        />
-      ),
+      header: ({ table }) => <Checkbox checked={table.getIsAllRowsSelected()} onChange={table.getToggleAllRowsSelectedHandler()} />,
+      cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onChange={() => row.toggleSelected()} />,
     },
     {
       accessorKey: 'quotationNumber',

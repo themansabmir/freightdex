@@ -1,10 +1,6 @@
 // src/api/endpoints/quotation.endpoints.ts
 import { api } from '@api/config';
-import {
-  GetAllQuotationResponse,
-  IQuotation,
-  QuotationGetAllParams,
-} from '@modules/quotation/index.types';
+import { GetAllQuotationResponse, IQuotation, QuotationGetAllParams } from '@modules/quotation/index.types';
 
 export class QuotationHttpService {
   static async create(payload: Partial<IQuotation>): Promise<IQuotation> {
@@ -12,9 +8,7 @@ export class QuotationHttpService {
     return data.response ?? data;
   }
 
-  static async getAll(
-    queryParams: QuotationGetAllParams,
-  ): Promise<GetAllQuotationResponse> {
+  static async getAll(queryParams: QuotationGetAllParams): Promise<GetAllQuotationResponse> {
     const { limit, search, skip, sortBy, sortOrder } = queryParams;
 
     const baseUrl = '/quotation';
@@ -22,7 +16,7 @@ export class QuotationHttpService {
 
     if (limit) {
       const page = Number(skip ?? '0') + 1;
-      params.append('page', String(page));  
+      params.append('page', String(page));
       params.append('limit', limit);
     }
     if (sortBy && sortOrder) {
@@ -38,14 +32,11 @@ export class QuotationHttpService {
     const response = (data.response ?? data.quotations ?? data) as IQuotation[];
     return {
       response,
-      total: data.total ?? data.count ??response.length,
+      total: data.total ?? data.count ?? response.length,
     };
   }
 
-  static async update(
-    id?: string,
-    payload?: Partial<IQuotation>,
-  ): Promise<IQuotation> {
+  static async update(id?: string, payload?: Partial<IQuotation>): Promise<IQuotation> {
     const { data } = await api.put(`/quotation/${id}`, payload);
     return data.response ?? data;
   }

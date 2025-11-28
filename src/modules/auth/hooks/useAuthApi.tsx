@@ -10,6 +10,7 @@ export function useAuthApi() {
   const loginMutation = useMutation({
     mutationFn: (payload: LoginPayload) => AuthHttpService.login(payload),
     onSuccess(data) {
+      console.log("Data API" , data)
       addUserToStorage(data.response);
     },
     onError: (e) => {

@@ -1,6 +1,6 @@
-import { Container, CreditCard, Handshake, LayoutDashboard, ScrollText, ShieldPlus, TextQuote, Wallet } from "lucide-react";
-import { APP_ROUTES } from "../../router/APP_ROUTES";
-import { SidebarItem } from "./sidebar.types";
+import { Container, CreditCard, Handshake, LayoutDashboard, ScrollText, ShieldPlus, TextQuote, Wallet } from 'lucide-react';
+import { APP_ROUTES } from '../../router/APP_ROUTES';
+import { SidebarItem } from './sidebar.types';
 
 const internalSidebarRoutes: SidebarItem[] = [
   {
@@ -45,7 +45,7 @@ const internalSidebarRoutes: SidebarItem[] = [
         to: `${APP_ROUTES.FINANCE}?type=credit_note`,
         icon: <ScrollText strokeWidth={1.25} fill="none" size={18} />,
       },
-    ]
+    ],
   },
   {
     label: 'Master Data',
