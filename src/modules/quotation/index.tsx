@@ -9,23 +9,13 @@ import { useMemo } from 'react';
 
 import useQuotationPage from './hooks/useQuotation';
 import usePageState from '@shared/hooks/usePageState';
-import { useQuotationApi } from './hooks/useQuotationApi';
+import { useGetQuotations } from './hooks/useQuotationApi';
 import { QuotationGetAllParams, IQuotation } from './index.types';
 
 const Quotation = () => {
   const { columns } = useQuotationPage();
-  const { useGetQuotations } = useQuotationApi();
 
-  const {
-    rows,
-    sorting,
-    pagination,
-    query,
-    setQuery,
-    setRows,
-    setPagination,
-    setSorting,
-  } = usePageState();
+  const { rows, sorting, pagination, query, setQuery, setRows, setPagination, setSorting } = usePageState();
 
   const getRowId = (row: IQuotation) => row._id;
 
@@ -41,10 +31,7 @@ const Quotation = () => {
 
   const { isLoading, data } = useGetQuotations(queryBuilder);
 
-  const breadcrumbArray = [
-    { label: 'Home', href: '/' },
-    { label: 'Quotation' }
-  ];
+  const breadcrumbArray = [{ label: 'Home', href: '/' }, { label: 'Quotation' }];
 
   return (
     <>
