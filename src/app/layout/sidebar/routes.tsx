@@ -15,13 +15,13 @@ const internalSidebarRoutes: SidebarItem[] = [
   },
   {
     label: 'Quotation',
-    to: APP_ROUTES.QUOTATION,
-    icon: <Wallet strokeWidth={1.25} fill="none" />,
+    to: '',
+    icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
     children: [
       {
-        label: 'Quotation',
+        label: 'Quotation List',
         to: APP_ROUTES.QUOTATION,
-        icon: <Wallet strokeWidth={1.25} fill="none" />,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
     ],
   },
@@ -60,6 +60,11 @@ const internalSidebarRoutes: SidebarItem[] = [
       {
         label: 'Rate Master',
         to: APP_ROUTES.RATE_MASTER,
+        icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
+      },
+      {
+        label: 'Quotation',
+        to: APP_ROUTES.QUOTATION,
         icon: <TextQuote strokeWidth={1.25} fill="none" size={18} />,
       },
       {

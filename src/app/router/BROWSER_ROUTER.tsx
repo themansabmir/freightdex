@@ -10,7 +10,7 @@ import ProtectedRoute from './ProtectedRoute';
 import HblForm from '@modules/hbl/HblForm';
 import InvoiceTable from '@modules/invoice';
 import InvoiceItem from '@modules/invoiceItem';
-import InvoiceForm from '@modules/invoice/index.form'
+import InvoiceForm from '@modules/invoice/index.form';
 import RateSheetMaster from '@modules/rate_master';
 import Quotation from '@modules/quotation';
 export const browserRouterRoutes = createBrowserRouter([
@@ -64,7 +64,7 @@ export const browserRouterRoutes = createBrowserRouter([
     element: <ProtectedRoute children={<InvoiceItem />} />,
   },
   {
-    path:'/quotation',
+    path: APP_ROUTES.QUOTATION,
     element: <ProtectedRoute children={<Quotation />} />,
-  }
+  },
 ]);
