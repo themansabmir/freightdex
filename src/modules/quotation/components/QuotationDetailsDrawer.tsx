@@ -1,9 +1,11 @@
 import Drawer from '@shared/components/Drawer';
 import { Stack } from '@shared/components/Stack';
 import Typography from '@shared/components/Typography';
-import { Calendar, ChevronDown, ChevronUp, FileText, MapPin, Package, Ship, User } from 'lucide-react';
+import { Button } from '@shared/components';
+import { Calendar, ChevronDown, ChevronUp, Download, FileText, Mail, MapPin, Package, Ship, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { EQuotationStatus, IQuotation } from '../index.types';
+import { useUpdateQuotationStatus, useDownloadQuotationPDF, useSendQuotationToVendor } from '../hooks/useQuotationApi';
 
 interface QuotationDetailsDrawerProps {
   open: boolean;
@@ -18,34 +20,23 @@ interface ExpandableSectionProps {
   defaultExpanded?: boolean;
 }
 
-const ExpandableSection: React.FC<ExpandableSectionProps> = ({
-  title,
-  icon,
-  children,
-  defaultExpanded = false
-}) => {
+const ExpandableSection: React.FC<ExpandableSectionProps> = ({ title, icon, children, defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
     <div className="expandable-section">
-      <button
-        className="expandable-section__header"
-        onClick={() => setIsExpanded(!isExpanded)}
-        aria-expanded={isExpanded}
-      >
+      <button className="expandable-section__header" onClick={() => setIsExpanded(!isExpanded)} aria-expanded={isExpanded}>
         <div className="expandable-section__header-left">
           <span className="expandable-section__icon">{icon}</span>
-          <Typography variant="md" weight="semibold">{title}</Typography>
+          <Typography variant="md" weight="semibold">
+            {title}
+          </Typography>
         </div>
-        <span className="expandable-section__toggle">
-          {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-        </span>
+        <span className="expandable-section__toggle">{isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}</span>
       </button>
 
       <div className={`expandable-section__content ${isExpanded ? 'expanded' : ''}`}>
-        <div className="expandable-section__content-inner">
-          {children}
-        </div>
+        <div className="expandable-section__content-inner">{children}</div>
       </div>
     </div>
   );
@@ -80,18 +71,18 @@ const StatusBadge: React.FC<{ status: EQuotationStatus }> = ({ status }) => {
     }
   };
 
-  return (
-    <span className={`status-badge ${getStatusColor(status)}`}>
-      {status}
-    </span>
-  );
+  return <span className={`status-badge ${getStatusColor(status)}`}>{status}</span>;
 };
 
-const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
-  open,
-  onClose,
-  quotation
-}) => {
+const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({ open, onClose, quotation }) => {
+  const [selectedStatus, setSelectedStatus] = useState<EQuotationStatus | ''>('');
+  const [vendorEmail, setVendorEmail] = useState('');
+  const [showVendorInput, setShowVendorInput] = useState(false);
+
+  const updateStatusMutation = useUpdateQuotationStatus();
+  const downloadPDFMutation = useDownloadQuotationPDF();
+  const sendToVendorMutation = useSendQuotationToVendor();
+
   if (!quotation) return null;
 
   const formatDate = (dateString: string) => {
@@ -99,13 +90,35 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
   const calculateTotalAmount = () => {
     if (!quotation.lineItems || quotation.lineItems.length === 0) return 0;
     return quotation.lineItems.reduce((sum, item) => sum + item.totalAmount, 0);
+  };
+
+  const handleStatusChange = (newStatus: EQuotationStatus) => {
+    if (newStatus && quotation._id) {
+      updateStatusMutation.mutate({ id: quotation._id, status: newStatus });
+      setSelectedStatus('');
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    if (quotation._id) {
+      downloadPDFMutation.mutate(quotation._id);
+    }
+  };
+
+  const handleSendToVendor = () => {
+    if (quotation._id && vendorEmail) {
+      // Using vendorEmail as vendorId for now - you may need to modify this based on your actual vendor structure
+      sendToVendorMutation.mutate({ id: quotation._id, vendorId: vendorEmail });
+      setVendorEmail('');
+      setShowVendorInput(false);
+    }
   };
 
   return (
@@ -119,14 +132,90 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
             </Typography>
             <StatusBadge status={quotation.status} />
           </Stack>
+
+          {/* Action Buttons */}
+          <div className="quotation-details__actions" style={{ marginTop: '16px' }}>
+            <Stack direction="vertical" gap="12px">
+              {/* Status Update */}
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Update Status</label>
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => handleStatusChange(e.target.value as EQuotationStatus)}
+                  disabled={updateStatusMutation.isPending}
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                  }}
+                >
+                  <option value="">Select new status...</option>
+                  {Object.values(EQuotationStatus).map((status) => (
+                    <option key={status} value={status} disabled={status === quotation.status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Download PDF Button */}
+              <Button onClick={handleDownloadPDF} disabled={downloadPDFMutation.isPending} variant="neutral" fullwidth>
+                <Download size={18} style={{ marginRight: '8px' }} />
+                {downloadPDFMutation.isPending ? 'Downloading...' : 'Download PDF'}
+              </Button>
+
+              {/* Send to Vendor */}
+              {!showVendorInput ? (
+                <Button onClick={() => setShowVendorInput(true)} variant="primary" fullwidth>
+                  <Mail size={18} style={{ marginRight: '8px' }} />
+                  Send to Vendor
+                </Button>
+              ) : (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Enter Vendor ID/Email"
+                    value={vendorEmail}
+                    onChange={(e) => setVendorEmail(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      border: '1px solid #ddd',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      marginBottom: '8px',
+                    }}
+                  />
+                  <Stack direction="horizontal" gap="8px">
+                    <Button
+                      onClick={handleSendToVendor}
+                      disabled={!vendorEmail || sendToVendorMutation.isPending}
+                      variant="primary"
+                      addClass="flex-1"
+                    >
+                      {sendToVendorMutation.isPending ? 'Sending...' : 'Send'}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setShowVendorInput(false);
+                        setVendorEmail('');
+                      }}
+                      variant="neutral"
+                      addClass="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </Stack>
+                </div>
+              )}
+            </Stack>
+          </div>
         </div>
 
         {/* Customer Information */}
-        <ExpandableSection
-          title="Customer Information"
-          icon={<User size={20} />}
-          defaultExpanded={true}
-        >
+        <ExpandableSection title="Customer Information" icon={<User size={20} />} defaultExpanded={true}>
           <Stack direction="vertical" gap="12px">
             <DetailRow label="Customer Name" value={quotation.customerName} />
             <DetailRow label="Customer Email" value={quotation.customerEmail} />
@@ -135,11 +224,7 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
         </ExpandableSection>
 
         {/* Shipment Details */}
-        <ExpandableSection
-          title="Shipment Details"
-          icon={<Ship size={20} />}
-          defaultExpanded={true}
-        >
+        <ExpandableSection title="Shipment Details" icon={<Ship size={20} />} defaultExpanded={true}>
           <Stack direction="vertical" gap="12px">
             <DetailRow label="Trade Type" value={quotation.tradeType} />
             <DetailRow label="Container Type" value={quotation.containerType} />
@@ -149,11 +234,7 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
         </ExpandableSection>
 
         {/* Route Information */}
-        <ExpandableSection
-          title="Route Information"
-          icon={<MapPin size={20} />}
-          defaultExpanded={false}
-        >
+        <ExpandableSection title="Route Information" icon={<MapPin size={20} />} defaultExpanded={false}>
           <Stack direction="vertical" gap="12px">
             <DetailRow label="Start Port ID" value={quotation.startPortId} />
             <DetailRow label="End Port ID" value={quotation.endPortId} />
@@ -161,11 +242,7 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
         </ExpandableSection>
 
         {/* Validity Period */}
-        <ExpandableSection
-          title="Validity Period"
-          icon={<Calendar size={20} />}
-          defaultExpanded={false}
-        >
+        <ExpandableSection title="Validity Period" icon={<Calendar size={20} />} defaultExpanded={false}>
           <Stack direction="vertical" gap="12px">
             <DetailRow label="Valid From" value={formatDate(quotation.validFrom)} />
             <DetailRow label="Valid To" value={formatDate(quotation.validTo)} />
@@ -175,11 +252,7 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
         </ExpandableSection>
 
         {/* Line Items */}
-        <ExpandableSection
-          title="Line Items"
-          icon={<Package size={20} />}
-          defaultExpanded={true}
-        >
+        <ExpandableSection title="Line Items" icon={<Package size={20} />} defaultExpanded={true}>
           {quotation.lineItems && quotation.lineItems.length > 0 ? (
             <div className="line-items">
               {quotation.lineItems.map((item, index) => (
@@ -217,18 +290,11 @@ const QuotationDetailsDrawer: React.FC<QuotationDetailsDrawerProps> = ({
         </ExpandableSection>
 
         {/* Summary */}
-        <ExpandableSection
-          title="Quotation Summary"
-          icon={<FileText size={20} />}
-          defaultExpanded={false}
-        >
+        <ExpandableSection title="Quotation Summary" icon={<FileText size={20} />} defaultExpanded={false}>
           <Stack direction="vertical" gap="12px">
             <DetailRow label="Quotation ID" value={quotation._id} />
             <DetailRow label="Number of Line Items" value={String(quotation.lineItems?.length || 0)} />
-            <DetailRow
-              label="Total Value"
-              value={`${quotation.lineItems?.[0]?.currency || 'USD'} ${calculateTotalAmount().toFixed(2)}`}
-            />
+            <DetailRow label="Total Value" value={`${quotation.lineItems?.[0]?.currency || 'USD'} ${calculateTotalAmount().toFixed(2)}`} />
           </Stack>
         </ExpandableSection>
       </div>
