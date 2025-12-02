@@ -1,11 +1,10 @@
 import { ShipmentHttpService } from '@api/endpoints/shipment.endpoint';
 import { queryClient, useMutation, useQuery } from '@lib/react-query';
-import { VendorGetAllParams } from '@modules/vendor/index.types';
+import { GetAllShipmentResponse, ShipmentGetAllParams } from '../index.types';
 import { toast } from 'react-toastify';
 
 const SHIPMENT_KEY = 'shipment';
 export const useShipmentApi = () => {
-
   const createShipmentMutation = useMutation({
     mutationFn: (payload: { shipment_type: string }) => ShipmentHttpService.createShipmentFolder(payload),
     onError: ({ message }) => toast.error(message),
@@ -18,13 +17,17 @@ export const useShipmentApi = () => {
     },
   });
 
-  const useGetShipments = (queryString: VendorGetAllParams) =>
-    useQuery({
+  const useGetShipments = (queryString: ShipmentGetAllParams) =>
+    useQuery<GetAllShipmentResponse>({
       queryKey: [SHIPMENT_KEY, queryString],
       queryFn: () => ShipmentHttpService.getShipmentFolder(queryString),
     });
 
-  const useGetShipmentById = (id: string) => useQuery({ queryKey: [SHIPMENT_KEY, id], queryFn: () => ShipmentHttpService.getFolderById(id) });
+  const useGetShipmentById = (id: string) =>
+    useQuery({
+      queryKey: [SHIPMENT_KEY, id],
+      queryFn: () => ShipmentHttpService.getFolderById(id),
+    });
 
   return {
     useGetShipments,
@@ -33,10 +36,3 @@ export const useShipmentApi = () => {
     useGetShipmentById,
   };
 };
-
-
-export   const useGetShipments = (queryString: VendorGetAllParams) =>
-  useQuery({
-    queryKey: [SHIPMENT_KEY, queryString],
-    queryFn: () => ShipmentHttpService.getShipmentFolder(queryString),
-  });

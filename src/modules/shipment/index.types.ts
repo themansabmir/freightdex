@@ -56,8 +56,6 @@ export interface IContainer {
   volume: string;
 }
 
-
-
 export interface IMbl {
   [key: string]: unknown;
 
@@ -238,11 +236,45 @@ export const MblSchema = z
   })
   .partial(); // ⇢ every key inside the MBL schema is now optional
 
-
-
 export interface IFolderCard {
   folder_name: string;
   folder_id: string;
   created_by: string;
   created_at: string;
+}
+
+// Shipment List Types for Table
+export interface IShipment {
+  _id: string;
+  shipment_name: string;
+  shipment_type: string;
+  shipment_mode?: ShipmentMode | string;
+  trade_type?: TradeType | string;
+  mbl_number?: string;
+  booking_number?: string;
+  shipping_line?: string;
+  port_of_loading?: string;
+  port_of_discharge?: string;
+  eta_pod?: string;
+  created_by?: {
+    first_name: string;
+    last_name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetAllShipmentResponse {
+  response: IShipment[];
+  total: number;
+}
+
+export interface ShipmentGetAllParams {
+  skip: string;
+  limit: string;
+  search: string;
+  sortBy: string;
+  sortOrder: string;
+  shipment_type?: string;
+  [key: string]: unknown;
 }
