@@ -44,4 +44,31 @@ export class QuotationHttpService {
   static async delete(id: string): Promise<void> {
     await api.delete(`/quotation/${id}`);
   }
+
+  static async updateStatus(id: string, status: string): Promise<IQuotation> {
+    const { data } = await api.patch(`/quotation/${id}/status`, { status });
+    return data.response ?? data;
+  }
+
+  static async downloadPDF(id: string): Promise<void> {
+    const response = await api.get(`/quotation/${id}/pdf`, {
+      responseType: 'blob',
+    });
+
+    // Create a blob URL and trigger download
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `quotation-${id}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }
+
+  static async sendToVendor(id: string, vendorId: string): Promise<{ message: string }> {
+    const { data } = await api.post(`/quotation/${id}/send-to-vendor`, { vendorId });
+    return data;
+  }
 }
