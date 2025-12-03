@@ -1,19 +1,34 @@
 // src/modules/quotation/index.tsx
 import QuotationTable from '@generator/table';
 import { TextField } from '@shared/components';
-import { SearchIcon } from 'lucide-react';
-import PageHeader from '../../blocks/page-header';
 import PageLoader from '@shared/components/Loader/PageLoader';
 import { Stack } from '@shared/components/Stack';
-import { useMemo } from 'react';
+import { SearchIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import PageHeader from '../../blocks/page-header';
 
-import useQuotationPage from './hooks/useQuotation';
 import usePageState from '@shared/hooks/usePageState';
+import QuotationDetailsDrawer from './components/QuotationDetailsDrawer';
+import useQuotationPage from './hooks/useQuotation';
 import { useGetQuotations } from './hooks/useQuotationApi';
-import { QuotationGetAllParams, IQuotation } from './index.types';
+import { IQuotation, QuotationGetAllParams } from './index.types';
 
 const Quotation = () => {
-  const { columns } = useQuotationPage();
+  const [selectedQuotation, setSelectedQuotation] = useState<IQuotation | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleViewDetails = (quotation: IQuotation) => {
+    setSelectedQuotation(quotation);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    // Delay clearing the selected quotation to allow drawer close animation
+    setTimeout(() => setSelectedQuotation(null), 300);
+  };
+
+  const { columns } = useQuotationPage({ onViewDetails: handleViewDetails });
 
   const { rows, sorting, pagination, query, setQuery, setRows, setPagination, setSorting } = usePageState();
 
@@ -70,8 +85,15 @@ const Quotation = () => {
         rowCount={data?.total ?? 0}
         isLoading={isLoading}
       />
+
+      <QuotationDetailsDrawer
+        open={isDrawerOpen}
+        onClose={handleCloseDrawer}
+        quotation={selectedQuotation}
+      />
     </>
   );
 };
 
 export default Quotation;
+
