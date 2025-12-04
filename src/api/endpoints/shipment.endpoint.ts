@@ -32,15 +32,17 @@ export class ShipmentHttpService {
       params.append('search', search);
     }
 
-
-    
-
     const fullUrl = `${SHIPMENT_BASE_URL}?${params.toString()}`;
     const { data } = await api.get(fullUrl);
-    return data.response;
+
+    //successResponse in backend returns { response, total, message }
+    return {
+      response: data.response ?? [],
+      total: data.total ?? 0,
+    };
   }
 
-  static async getAllDocumentsByShipmentId(id: string){
+  static async getAllDocumentsByShipmentId(id: string) {
     const { data } = await api.get(`${SHIPMENT_BASE_URL}/documents/${id}`);
     return data.response;
   }
