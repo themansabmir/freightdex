@@ -10,10 +10,12 @@ const TableBody = <TData,>({ table }: ColumnsProps<TData>) => {
             <>
               <tr
                 key={row.id}
+                data-row-id={row.id}
                 role="row"
                 aria-selected={row.getIsSelected()}
                 className={row.getIsSelected() ? 'table__row--selected' : ''}
                 onClick={row.getToggleSelectedHandler()}
+                style={{ cursor: 'pointer' }}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} role="cell">

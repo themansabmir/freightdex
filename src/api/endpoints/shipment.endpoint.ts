@@ -33,7 +33,12 @@ export class ShipmentHttpService {
     }
     const fullUrl = `${SHIPMENT_BASE_URL}?${params.toString()}`;
     const { data } = await api.get(fullUrl);
-    return data.response;
+
+    //successResponse in backend returns { response, total, message }
+    return {
+      response: data.response ?? [],
+      total: data.total ?? 0,
+    };
   }
 
   static async getAllDocumentsByShipmentId(id: string) {
