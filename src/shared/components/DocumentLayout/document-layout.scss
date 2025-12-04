@@ -1,0 +1,503 @@
+.document-layout {
+  width: 100%;
+  background: #f8fafc;
+}
+
+// Action Buttons
+.document-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+
+  @media print {
+    display: none;
+  }
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &--edit {
+    background-color: #3b82f6;
+    color: white;
+
+    &:hover {
+      background-color: #2563eb;
+    }
+  }
+
+  &--download {
+    background-color: #6b7280;
+    color: white;
+
+    &:hover {
+      background-color: #4b5563;
+    }
+  }
+
+  &--print {
+    background-color: #059669;
+    color: white;
+
+    &:hover {
+      background-color: #047857;
+    }
+  }
+}
+
+// Document Container
+.document-container {
+  max-width: 210mm; // A4 width
+  margin: 0 auto;
+  padding: 20mm;
+  background: white;
+  font-family: 'Arial', sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #333;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  @media print {
+    margin: 0;
+    padding: 15mm;
+    box-shadow: none;
+    font-size: 11px;
+  }
+}
+
+// Header Section
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.company-info {
+  flex: 1;
+
+  .company-logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 0.5rem;
+  }
+
+  .company-logo-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #0f172a;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 0.5rem;
+  }
+
+  .company-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .company-address {
+    color: #6b7280;
+
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.document-title {
+  text-align: right;
+
+  .document-type {
+    font-size: 28px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.5px;
+  }
+
+  .document-number {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.status-draft {
+    background-color: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+  }
+
+  &.status-sent {
+    background-color: #eff6ff;
+    color: #3b82f6;
+    border: 1px solid #93c5fd;
+  }
+
+  &.status-accepted,
+  &.status-paid {
+    background-color: #f0fdf4;
+    color: #22c55e;
+    border: 1px solid #86efac;
+  }
+
+  &.status-rejected,
+  &.status-cancelled {
+    background-color: #fef2f2;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+  }
+
+  &.status-expired {
+    background-color: #fffbeb;
+    color: #f59e0b;
+    border: 1px solid #fcd34d;
+  }
+
+  &.status-acknowledged,
+  &.status-issued {
+    background-color: #e0e7ff;
+    color: #6366f1;
+    border: 1px solid #a5b4fc;
+  }
+}
+
+// Document Details Section
+.document-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  gap: 2rem;
+}
+
+.billing-info {
+  flex: 1;
+
+  h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .customer-details {
+    strong {
+      display: block;
+      font-size: 16px;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #6b7280;
+      margin: 0.25rem 0;
+      line-height: 1.5;
+    }
+
+    .customer-id {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+.document-meta {
+  flex: 1;
+  max-width: 300px;
+}
+
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+
+  .meta-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 12px;
+  }
+
+  .meta-value {
+    color: #6b7280;
+    font-size: 12px;
+  }
+}
+
+// Shipment Info
+.shipment-info {
+  background-color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+
+  h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.75rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.shipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.shipment-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  .shipment-label {
+    font-size: 11px;
+    color: #6b7280;
+  }
+
+  .shipment-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+}
+
+// Table Section
+.document-table {
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 1rem 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+
+    th,
+    td {
+      padding: 0.75rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background-color: #f9fafb;
+      font-weight: 600;
+      color: #374151;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    td {
+      color: #6b7280;
+
+      &.item-description {
+        font-weight: 500;
+        color: #374151;
+        max-width: 200px;
+      }
+
+      &.amount,
+      &.quantity {
+        text-align: right;
+        font-family: 'Courier New', monospace;
+      }
+
+      &.tax-rate {
+        text-align: center;
+      }
+
+      &.total-cell {
+        font-weight: 600;
+        color: #374151;
+      }
+    }
+
+    tbody tr:hover {
+      background-color: #f9fafb;
+    }
+  }
+}
+
+// Totals Section
+.document-totals {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2rem;
+}
+
+.totals-grid {
+  min-width: 300px;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.grand-total {
+    background-color: #f9fafb;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1f2937;
+
+    .total-value {
+      color: #059669;
+    }
+  }
+
+  .total-label {
+    color: #374151;
+    font-weight: 500;
+  }
+
+  .total-value {
+    font-family: 'Courier New', monospace;
+    color: #6b7280;
+  }
+}
+
+// Footer Section
+.document-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.terms,
+.notes {
+  margin-bottom: 2rem;
+
+  h4 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #6b7280;
+    font-size: 11px;
+
+    li {
+      margin-bottom: 0.25rem;
+    }
+  }
+
+  p {
+    color: #6b7280;
+    font-size: 11px;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+.signature-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.signature {
+  text-align: right;
+
+  p {
+    margin: 0 0 2rem 0;
+    color: #374151;
+    font-weight: 500;
+    font-size: 12px;
+  }
+
+  .signature-line {
+    width: 200px;
+    height: 1px;
+    background-color: #374151;
+    margin-left: auto;
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .document-container {
+    padding: 1rem;
+    font-size: 11px;
+  }
+
+  .document-header {
+    flex-direction: column;
+    gap: 1rem;
+
+    .document-title {
+      text-align: left;
+    }
+  }
+
+  .document-details {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .shipment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .document-table table {
+    font-size: 10px;
+
+    th,
+    td {
+      padding: 0.5rem 0.25rem;
+    }
+  }
+}

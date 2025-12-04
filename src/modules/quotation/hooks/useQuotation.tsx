@@ -61,16 +61,7 @@ export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) 
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }) => (
-        <button
-          className="action-button action-button--view"
-          onClick={() => onViewDetails?.(row.original)}
-          title="View Details"
-        >
-          <Eye size={18} />
-          <span>View</span>
-        </button>
-      ),
+      cell: ({ row }) => <Eye onClick={() => onViewDetails?.(row.original)} size={18} />,
     },
   ];
 
