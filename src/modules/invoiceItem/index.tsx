@@ -33,9 +33,8 @@ const InvoiceItem = () => {
   };
   const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
-    if(isEdit){
-      console.log("UPDATE")
-      
+    if (isEdit) {
+      console.log('UPDATE');
     }
     saveInvoiceItem(formData);
     handleCloseModal();
@@ -80,12 +79,12 @@ const InvoiceItem = () => {
           key={index}
           item={item}
           onEdit={(row: any) => {
-            console.log("row", row)
+            console.log('row', row);
             setFormData(row);
             setIsEdit(true);
             openModal();
           }}
-          onDelete={(id: string | number) => {
+          onDelete={() => {
             openModal();
           }}
           className="service-item-row"

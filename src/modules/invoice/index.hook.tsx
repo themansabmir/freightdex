@@ -6,16 +6,15 @@ import { ShipmentHttpService } from '@api/endpoints/shipment.endpoint';
 
 const FINANCE_KEY = 'finance';
 
-
-export const financeMap =(doc: IFinanceDocument[]) =>{
+export const financeMap = (doc: IFinanceDocument[]) => {
   return doc.map((doc) => {
     return {
       ...doc,
       shipment_name: doc.shipmentId?.shipment_name,
       vendor_name: doc.customerId?.vendor_name,
-    }
-  })  
-}
+    };
+  });
+};
 
 export const useSaveFinanceDocument = () => {
   const saveFinanceMutation = useMutation({
@@ -78,39 +77,37 @@ export const searchShipment = async (inputValue: string): Promise<{ label: strin
       sortOrder: 'desc',
     };
     const response = await ShipmentHttpService.getShipmentFolder(searchQuery);
-    const formatResponse = response?.map((i: any) => ({ label: i.shipment_name, value: i?._id }));
+    const formatResponse = response?.response?.map((i: any) => ({ label: i.shipment_name, value: i?._id }));
     return formatResponse ?? [];
   } catch (error) {
     console.error('Error loading vendors:', error);
-    return [];
+    throw error;
   }
-}
-
+};
 
 export const useGetDocumentsByShipmentId = (shipmentId: string) => {
-    return useQuery({
-        queryKey: ["documents", "shipment", shipmentId],
-        queryFn: (): Promise<IFinanceDocument[]> =>
-          fetchDocumentsByShipmentId(shipmentId)
-        .then((res) => res),
-      });
-}
+  return useQuery({
+    queryKey: ['documents', 'shipment', shipmentId],
+    queryFn: (): Promise<IFinanceDocument[]> =>
+      fetchDocumentsByShipmentId(shipmentId)
+        .then((res) => res)
+        .catch((error) => {
+          console.error('Error loading vendors:', error);
+          throw error;
+        }),
+  });
+};
 export const fetchDocumentsByShipmentId = async (shipmentId: string) => {
-    try {
-      if(!shipmentId) return [];
-      const response = await ShipmentHttpService.getAllDocumentsByShipmentId(shipmentId);
-      return response;
-    } catch (error) {
-      console.error('Error loading vendors:', error);
-      return [];
-    }
-  }
+  if (!shipmentId) throw new Error('Shipment id is required');
+  const response = await ShipmentHttpService.getAllDocumentsByShipmentId(shipmentId);
+  return response;
+};
 
-
-  export const fetchFinanceDocumentById = async  (id : string) =>{
-    try {
-     return await FinanceHttpService.getById(id)
-    } catch (error) {
-      toast.error("Document doesnt exist with this id")
-    }
+export const fetchFinanceDocumentById = async (id: string) => {
+  try {
+    return await FinanceHttpService.getById(id);
+  } catch (error) {
+    toast.error('Document doesnt exist with this id');
+    throw error;
   }
+};

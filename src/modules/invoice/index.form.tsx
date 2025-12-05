@@ -36,7 +36,6 @@ const FinanceDocumentList = () => {
 
   const [billingPartySnapshot, setBillingPartySnapshot] = useState<any>(null);
 
-
   // HANDLER FUNCTIONS
 
   const removeRow = useCallback((idx: number) => {
@@ -148,27 +147,27 @@ const FinanceDocumentList = () => {
   useEffect(() => {
     if (selectedShipment) {
       if (data) {
-        const arr = data.map((i: any) => { 
-          return { value: i._id, label: i.hbl_number, ...i } 
+        const arr = data.map((i: any) => {
+          return { value: i._id, label: i.hbl_number, ...i };
         });
         setDocuments(arr);
       }
     }
-  }, [data]);
+  }, [data, selectedShipment]);
 
   useEffect(() => {
     if (id) {
-      loadFinanceDocumentById(id).then((res) => {
+      loadFinanceDocumentById(id).then((res: any) => {
         if (!res) return;
-      
-        setEditingDoc(res);
-        setDocType(res?.docType);
-        setInvoiceRows([...res?.lineItems, blankRow()] );
-        console.log(res)
 
-        setSelectedDocument({label: res?.document?.hbl_number, value: res?.document?._id, ...res?.document})
-        const billingPartySnapshot =res.status!=='draft' ? res?.billingPartySnapshot : selectedBillingPartyDetails(res?.document)
-        setBillingPartySnapshot(billingPartySnapshot)
+        setEditingDoc(res);
+        setDocType(res?.type);
+        setInvoiceRows([...(res?.lineItems || []), blankRow()]);
+        console.log(res);
+
+        setSelectedDocument({ label: res?.document?.hbl_number, value: res?.document?._id, ...res?.document });
+        const billingPartySnapshot = res.status !== 'draft' ? res?.billingPartySnapshot : selectedBillingPartyDetails(res?.document);
+        setBillingPartySnapshot(billingPartySnapshot);
         setSelectedShipment({ label: res?.shipmentId?.shipment_name ?? '', value: res?.shipmentId?._id ?? '' });
       });
     }
@@ -186,7 +185,7 @@ const FinanceDocumentList = () => {
             value={selectedShipment}
             onChange={(selectedOption) => {
               setSelectedShipment(selectedOption);
-              setBillingPartySnapshot(null)
+              setBillingPartySnapshot(null);
               setSelectedDocument(null);
               setDocuments([]);
             }}
@@ -222,9 +221,9 @@ const FinanceDocumentList = () => {
               options={documents}
               value={selectedDocument}
               onChange={(option) => {
-                setSelectedDocument(option)
-                const billingPartyDetails =id? option.billingPartySnapshot : selectedBillingPartyDetails(option)
-                setBillingPartySnapshot(billingPartyDetails)
+                setSelectedDocument(option);
+                const billingPartyDetails = id ? option.billingPartySnapshot : selectedBillingPartyDetails(option);
+                setBillingPartySnapshot(billingPartyDetails);
               }}
               getOptionLabel={(option) => option.label}
               getOptionValue={(option) => option._id}
@@ -259,8 +258,7 @@ const FinanceDocumentList = () => {
               <strong>{billingPartySnapshot?.vendor_name || 'Customer Name'}</strong>
               <p>Mobile: {billingPartySnapshot?.mobile_number}</p>
               <p>
-                Address: {billingPartySnapshot?.address}, {billingPartySnapshot?.city},{' '}
-                <br />
+                Address: {billingPartySnapshot?.address}, {billingPartySnapshot?.city}, <br />
                 {billingPartySnapshot?.state} - {billingPartySnapshot?.pin_code}
                 <br />
                 <strong>PAN: {billingPartySnapshot?.pan_number}</strong>
