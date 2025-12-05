@@ -9,7 +9,7 @@ import { EditableCell, QuantityCell, DiscountCell, CurrencyCell } from './index.
 export default function App() {
   const [rows, setRows] = useState<any[]>([]);
 
-  const [items, setItems] = useState<any[]>([
+  const [items] = useState<any[]>([
     // dummy master items
     { _id: '1', name: 'Clothes with clothes clothes Clothes with clothes clothes ', hsn: '1001', unit: 'container', gstPercent: 18 },
     { _id: '2', name: 'Food B', hsn: '2002', unit: 'w/m', gstPercent: 12 },
@@ -20,7 +20,7 @@ export default function App() {
     if (rows.length < 2) {
       setRows((prev) => [...prev, blankRow()]);
     }
-  }, [rows, blankRow]);
+  }, [rows]);
 
   const updateRow = useCallback((idx: number, patch: Partial<any>) => {
     setRows((rs) => {
@@ -85,19 +85,15 @@ export default function App() {
         accessorKey: 'serviceItem',
         cell: ({ row }) => {
           const r = row.original;
-          const options = useMemo(
-            () =>
-              items.map((it: any) => ({
-                value: it._id,
-                label: it.name,
-                hsn: it.hsn,
-                unit: it.unit,
-                gstPercent: it.gstPercent,
-              })),
-            [items]
-          );
+          const options = items.map((it: any) => ({
+            value: it._id,
+            label: it.name,
+            hsn: it.hsn,
+            unit: it.unit,
+            gstPercent: it.gstPercent,
+          }));
 
-          const selected = useMemo(() => options.find((opt) => opt.value === r.itemId) || null, [r.itemId, options]);
+          const selected = options.find((opt) => opt.value === r.itemId) || null;
 
           return (
             <Select
