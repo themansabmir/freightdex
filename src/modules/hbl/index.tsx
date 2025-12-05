@@ -16,6 +16,7 @@ const HBL = ({ id }: { id: string }) => {
   const { mbl_form_schema, conditionalFieldsMap } = useMbl();
 
   const [hblList, setHblList] = useState<IHbl[] | undefined>([]);
+  const [expandedAccordions, setExpandedAccordions] = useState<Set<number>>(new Set());
   const { data: mblData, isLoading } = useGetMblByShipmentId(id);
   const { data: hblDataList, isLoading: hblLoading } = useGetHblsByShipmentId(id);
 
@@ -52,6 +53,18 @@ const HBL = ({ id }: { id: string }) => {
   const handleNewHbl = () => {
     navigate('hbl/new');
   };
+
+  const toggleAccordion = (index: number) => {
+    setExpandedAccordions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        newSet.delete(index);
+      } else {
+        newSet.add(index);
+      }
+      return newSet;
+    });
+  };
   if (isLoading) return 'Loading ...';
 
   if (!mblData) return 'Please create MBL first to proceed with creating HBL';
@@ -69,22 +82,40 @@ const HBL = ({ id }: { id: string }) => {
           hblDataList &&
           hblDataList?.length > 0 &&
           hblList?.map((hblForm, i) => {
+            const isExpanded = expandedAccordions.has(i);
             return (
-              <div className="py-10">
-                <Stack direction="horizontal" justify="between">
-                  <h1>HBL FORM {hblForm?.hbl_number ?? i + 1} </h1> <Button onClick={() => navigate(`hbl/${hblForm?._id}`)}>Edit</Button>
-                </Stack>
-                {hblDataList.length > 0 && (
-                  <HBLCreationForm
-                    schema={visibleSchema[i]}
-                    data={hblForm || {}}
-                    setData={(updated) => handleChangeOfFormData(updated, i)}
-                    errors={{}}
-                    isViewMode={true}
-                    onChange={(e, val) => {
-                      console.log(e, val);
-                    }}
-                  />
+              <div key={hblForm?._id || i} className=" border border-gray-200 rounded-lg ">
+                <div
+                  className="mb-2"
+                  onClick={() => toggleAccordion(i)}
+                >
+                  <Stack direction="horizontal" justify="between" className='hbl__title__wrapper'>
+                    <Stack direction="horizontal" gap="2">
+                      <h1 className="text-lg font-semibold">HBL FORM {hblForm?.hbl_number ?? i + 1}</h1>
+                    </Stack>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`hbl/${hblForm?._id}`);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  </Stack>
+                </div>
+                {isExpanded && hblDataList.length > 0 && (
+                  <div className="px-4 pb-4">
+                    <HBLCreationForm
+                      schema={visibleSchema[i]}
+                      data={hblForm || {}}
+                      setData={(updated) => handleChangeOfFormData(updated, i)}
+                      errors={{}}
+                      isViewMode={true}
+                      onChange={(e, val) => {
+                        console.log(e, val);
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             );

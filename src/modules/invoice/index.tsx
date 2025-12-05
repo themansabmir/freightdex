@@ -1,5 +1,5 @@
 import Table from '@generator/table';
-import { useGetAllFinanceDocuments , financeMap} from './index.hook';
+import { useGetAllFinanceDocuments, financeMap } from './index.hook';
 import usePageState from '@shared/hooks/usePageState';
 import { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
@@ -15,11 +15,11 @@ const FinanceListPage = () => {
   const type = searchParams.get('type');
 
   const navigate = useNavigate();
-  
-  const { pagination, setPagination, rows, setRows } = usePageState();
+
+  const { pagination, setPagination, rows } = usePageState();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any>(null);
-  const { data:financeDocs, isLoading } = useGetAllFinanceDocuments(type??'');
+  const { data: financeDocs, isLoading } = useGetAllFinanceDocuments(type ?? '');
   const financeDocsMap = financeMap(financeDocs?.response ?? []);
 
   const columns: ColumnDef<any>[] = [
@@ -58,7 +58,14 @@ const FinanceListPage = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div>
-          <button onClick={() => {setIsExpanded(!isExpanded); setSelectedRow(row.original)}}>View</button>
+          <button
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+              setSelectedRow(row.original);
+            }}
+          >
+            View
+          </button>
         </div>
       ),
     },
@@ -107,11 +114,7 @@ const FinanceListPage = () => {
       />
 
       <Drawer open={isExpanded} onClose={() => setIsExpanded(false)}>
-        {selectedRow ? (
-          <InvoiceLayout invoice={selectedRow} />
-        ) : (
-          <div>No invoice selected</div>
-        )}
+        {selectedRow ? <InvoiceLayout invoice={selectedRow} /> : <div>No invoice selected</div>}
       </Drawer>
     </div>
   );

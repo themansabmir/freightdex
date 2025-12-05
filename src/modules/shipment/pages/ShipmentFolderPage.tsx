@@ -1,12 +1,13 @@
 import PageHeader from '@blocks/page-header';
+import HBL from '@modules/hbl';
+import MBLFormPage from '@modules/mbl';
 import { Tabs } from '@shared/components';
+import useTabTitle from '@shared/hooks/useTabTitle';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ShipmentDocumentUpload from '../components/ShipmentDocumentUpload';
 import { useShipmentApi } from '../hooks/useShipmentApi';
-import useTabTitle from '@shared/hooks/useTabTitle';
 import { IFolderCard } from '../index.types';
-import MBLFormPage from '@modules/mbl';
-import HBL from '@modules/hbl';
 
 const FolderDetailCard = ({ folder_name, folder_id, created_by, created_at }: IFolderCard) => {
   const obj: Record<string, string> = {
@@ -45,8 +46,14 @@ const ShipmentFolderPage = () => {
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Shipment', href: '/shipment' },
-    { label: id === 'new' ? 'New Shipment' : data?.shipment_name ?? '', href: '' },
+    { label: id === 'new' ? 'New Shipment' : (data?.shipment_name ?? ''), href: '' },
   ];
+
+  const handleUploadComplete = (files: File[]) => {
+    console.log('Files uploaded:', files);
+    // This will be connected to the backend API once ready
+  };
+
   return (
     <div>
       <div className="flex justify-between">
@@ -80,6 +87,7 @@ const ShipmentFolderPage = () => {
 
       {activeTab.toUpperCase() === 'MBL' && <MBLFormPage id={id} />}
       {activeTab.toUpperCase() === 'HBL' && <HBL id={id} />}
+      {activeTab.toUpperCase() === 'ATTACHMENTS' && <ShipmentDocumentUpload shipmentId={id} onUploadComplete={handleUploadComplete} />}
     </div>
   );
 };

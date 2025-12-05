@@ -1,74 +1,66 @@
-import PageLoader from '@shared/components/Loader/PageLoader';
 import PageHeader from '@blocks/page-header';
 import FileUploadSection from '@shared/components/FileUpload';
 import { useModal } from '@shared/hooks/useModal';
 import { Stack } from '@shared/components/Stack';
 import { Button } from '@shared/components/Button';
-import { RateMasterHttpService } from '@api/endpoints/ratemaster.endpoint';
-import { toast } from 'react-toastify';
-import { useEffect, useMemo } from 'react';
-import { useState } from 'react';
-import { IExcelRow } from './index.types';
+import { useEffect, useState } from 'react';
+import { IDisplayRow } from './index.types';
 import SpreadSheet from './component/SpreadSheet';
-import Dropdown from '@shared/components/SingleDropdown';
-import { containerSize, containerType , tradeType} from './contants';
+import { containerSize, containerType, tradeType, breadcrumbArray } from './contants';
+import { filterRateSheetMaster, useBulkInsertRateSheet } from './hooks/useRateMasterApi';
+import { useRateMasterOptions, handleDownloadTemplate } from './hooks/useRateMasterOptions';
+import { useRateFiltersUrl } from './hooks/useRateFiltersUrl';
+import { UploadIcon } from 'lucide-react';
+import RateFilters from './component/RateFilters';
 
 const RateSheetMaster = () => {
   const { isOpen, closeModal, openModal } = useModal();
-  const [data, setData] = useState<IExcelRow[]>([]);
+  const [data, setData] = useState<IDisplayRow[]>([]);
+  
+  // Use URL-based filters for persistence across page refreshes
+  const { filters, setFilters, clearFilters: clearUrlFilters } = useRateFiltersUrl();
 
-  const columns = useMemo(
-    () => [
-      { accessorKey: 'SHIPPING_LINE', header: 'Shipping Line', size: 150 },
-      { accessorKey: 'CONTAINER_TYPE', header: 'Type', size: 100 },
-      { accessorKey: 'CONTAINER_SIZE', header: 'Size', size: 100 },
-      { accessorKey: 'START_PORT', header: 'Start Port', size: 120 },
-      { accessorKey: 'END_PORT', header: 'End Port', size: 120 },
-      { accessorKey: 'CHARGE_NAME', header: 'Charge Name', size: 180 },
-      { accessorKey: 'HSN_CODE', header: 'HSN Code', size: 140 },
-      { accessorKey: 'PRICE', header: 'Price', size: 100, isNumeric: true },
-      { accessorKey: 'EFFECTIVE_FROM', header: 'Effective From', size: 150 },
-      { accessorKey: 'EFFECTIVE_TO', header: 'Effective To', size: 150 },
-      { accessorKey: 'TRADE_TYPE', header: 'Trade Type', size: 100 },
-    ],
-    []
-  );
+  const { bulkInsert } = useBulkInsertRateSheet();
+  const { shippingLineOptions, portOptions, columns } = useRateMasterOptions({
+    shippingLineId: filters.shippingLineId
+  });
 
   const handleCancel = () => {
     closeModal();
+  };  
+  const handleClearFilters = () => {
+    clearUrlFilters();
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    await bulkInsert(formData);
+    console.log(file);
     closeModal();
   };
 
-  const handleDownloadTemplate = async () => {
-    try {
-      await RateMasterHttpService.downloadTemplate('rate-master');
-      toast.success('Template Downloaded');
-    } catch (error) {
-      console.log(error);
-      toast.error('Failed to download template');
-    }
-  };
+
+
 
   useEffect(() => {
-    RateMasterHttpService.getActiveRateSheets({ shippingLineId: '68fd3c0f3bf05f23ff152261' }).then((res) => {
-      const rateSheets = res.map((rateSheet) => ({
-        ...rateSheet,
-        SHIPPING_LINE: rateSheet?.SHIPPING_LINE?.vendor_name,
-        START_PORT: rateSheet?.START_PORT?.port_name,
-        END_PORT: rateSheet?.END_PORT?.port_name,
-        EFFECTIVE_FROM: new Date(rateSheet.EFFECTIVE_FROM).toLocaleDateString(),
-        EFFECTIVE_TO: rateSheet?.EFFECTIVE_TO ? new Date(rateSheet?.EFFECTIVE_TO).toLocaleDateString() : null,
-      }));
-      setData(rateSheets);
-    });
-  }, []);
-  const breadcrumbArray = [
-    { label: 'Dashboard', href: '/' },
-    { label: 'Rate Sheet Master', href: '' },
-  ];
+    // Fetch data when filters change - can work with or without shippingLineId
+    console.log("Filters", filters)
+    filterRateSheetMaster(filters).then(setData);
+
+  }, [filters.containerSize, filters.containerType, filters.tradeType, filters.shippingLineId, filters.startPortId, filters.endPortId, filters.effectiveFrom, filters.effectiveTo]);
+
+  // Clear port selections when shipping line changes
+  // useEffect(() => {
+  //   if (filters.shippingLineId) {
+  //     setFilters((prev) => ({
+  //       ...prev,
+  //       startPortId: '',
+  //       endPortId: '',
+  //     }));
+  //   }
+  // }, [filters.shippingLineId]);
+
   return (
     <div>
       {/* <PageLoader isLoading={isLoading} /> */}
@@ -81,20 +73,23 @@ const RateSheetMaster = () => {
         breadcrumnArray={breadcrumbArray}
       />
 
-      <Stack direction="horizontal" justify="end">
-        <Button onClick={openModal}>Upload Rate Sheet +</Button>
+      <Stack direction="horizontal" justify="end" className="mb-3">
+        <Button onClick={openModal}>
+          {' '}
+          Upload Rate Sheet <UploadIcon size={16} className="ml-1" />{' '}
+        </Button>
       </Stack>
 
-      <div className="flex mb-2 gap-2">
-        <Dropdown value={null} options={[{ label: 'ShippingLine', value: '1' }]} placeholder="Shipping Line" onChange={() => {}} />
-        <Dropdown value={null} options={containerType} placeholder="Container Type" onChange={() => {}} />
-        <Dropdown value={null} options={containerSize} placeholder="Container Size" onChange={() => {}} />
-      </div>
-      <div className="flex gap-2">
-        <Dropdown value={null} options={[]} placeholder="Start Port" onChange={() => {}} />
-        <Dropdown value={null} options={[]} placeholder="End Port" onChange={() => {}} />
-        <Dropdown value={null} options={tradeType} placeholder="Trade Type" onChange={() => {}} />
-      </div>
+      <RateFilters
+        filters={filters}
+        setFilters={setFilters}
+        shippingLineOptions={shippingLineOptions}
+        containerType={containerType}
+        containerSize={containerSize}
+        portOptions={portOptions}
+        tradeType={tradeType}
+        clearFilters={handleClearFilters}
+      />
 
       <SpreadSheet data={data} columns={columns} />
 

@@ -7,7 +7,7 @@ import Dropdown from '@shared/components/SingleDropdown';
 import { get } from 'lodash';
 import { dayjs } from '@lib/dayjs';
 
-const FieldLabel = ({ label, required }: { label: string; required?: boolean }) => {
+export const FieldLabel = ({ label, required }: { label: string; required?: boolean }) => {
   return (
     <label className="dropdown__trigger__label">
       {label} {required && <span className="label__required">*</span>}
