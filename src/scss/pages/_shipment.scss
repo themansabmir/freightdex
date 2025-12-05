@@ -51,3 +51,22 @@
     font-weight: 500;
     font-size: 12px;
 }
+
+
+
+.hbl__title__wrapper {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid $neutral-30;
+    border-radius: 8px;
+    padding: 4px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &:hover{
+        background-color: $primary-10;
+        border: 1px solid $primary-30;
+    }
+
+
+}
