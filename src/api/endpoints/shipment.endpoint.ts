@@ -36,7 +36,7 @@ export class ShipmentHttpService {
 
     //successResponse in backend returns { response, total, message }
     return {
-      response: data.response ?? [],
+      response: data.response.data ?? [],
       total: data.total ?? 0,
     };
   }
