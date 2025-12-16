@@ -4,8 +4,8 @@ export enum EQuotationStatus {
   SENT = 'SENT',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  EXPIRED = 'EXPIRED',
-  DELETED = 'DELETED',
+  // EXPIRED = 'EXPIRED',
+  // DELETED = 'DELETED',
 }
 
 export interface IQuotationLineItem {
