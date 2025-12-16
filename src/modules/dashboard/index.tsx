@@ -1,11 +1,5 @@
-import QuotationDocument from '@modules/quotation/components/QuotationDoc';
-
 const DashboardPage = () => {
-  return (
-    <div>
-      <QuotationDocument data={''} />
-    </div>
-  );
+  return <div></div>;
 };
 
 export default DashboardPage;
