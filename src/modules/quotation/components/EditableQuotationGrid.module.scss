@@ -1,0 +1,277 @@
+.spreadsheetContainer {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.recordCount {
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.hint {
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.dataGrid {
+  border: none !important;
+  overflow: hidden;
+  min-height: 400px;
+  background-color: white;
+  height: auto;
+
+  // Header styling
+  :global(.rdg-header-row) {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 13px;
+    color: #212529;
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  // Cell styling
+  :global(.rdg-cell) {
+    border-right: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #495057;
+    line-height: 1.5;
+
+    &:hover {
+      background: #f8f9fa;
+    }
+
+    // Editable cells
+    &:global(.rdg-cell-editable) {
+      cursor: text;
+
+      &:hover {
+        background: #e7f1ff;
+      }
+    }
+
+    // Selected cell
+    &:global(.rdg-cell-selected) {
+      box-shadow: inset 0 0 0 2px #0d6efd;
+      background: #ffffff;
+    }
+
+    // Editing cell
+    &:global(.rdg-cell-editing) {
+      padding: 0;
+
+      input,
+      select {
+        width: 100%;
+        height: 100%;
+        padding: 8px 12px;
+        border: none;
+        outline: none;
+        font-size: 13px;
+        background: #ffffff;
+
+        &:focus {
+          box-shadow: inset 0 0 0 2px #0d6efd;
+        }
+      }
+    }
+  }
+
+  // Row styling
+  :global(.rdg-row) {
+    &:hover {
+      background: #f8f9fa;
+    }
+
+    &:nth-child(even) {
+      background: #ffffff;
+    }
+
+    &:nth-child(odd) {
+      background: #fafbfc;
+    }
+  }
+
+  // Selected row
+  :global(.rdg-row-selected) {
+    background: #e7f1ff !important;
+
+    :global(.rdg-cell) {
+      background: transparent;
+    }
+  }
+
+  // Checkbox column
+  :global(.rdg-checkbox-label) {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    input {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.cellEditor {
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  border: none;
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  color: #212529;
+
+  &:focus {
+    box-shadow: inset 0 0 0 2px #0d6efd;
+  }
+}
+
+.cellInput {
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  border: none;
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  color: #212529;
+  font-family: inherit;
+
+  &:focus {
+    box-shadow: inset 0 0 0 2px #0d6efd;
+  }
+
+  &::placeholder {
+    color: #6c757d;
+  }
+}
+
+.cellSelect {
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  border: none;
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  color: #212529;
+  cursor: pointer;
+
+  &:focus {
+    box-shadow: inset 0 0 0 2px #0d6efd;
+  }
+
+  option {
+    color: #212529;
+    background: #ffffff;
+  }
+}
+
+.priceCell {
+  font-weight: 600;
+  color: #198754;
+  text-align: right;
+}
+
+.totalCell {
+  font-weight: 700;
+  color: #0d6efd;
+  text-align: right;
+  font-size: 14px;
+}
+
+// Scrollbar styling
+.dataGrid {
+  :global(.rdg-viewport) {
+    &::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 6px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+}
+
+// Loading state
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 16px;
+  color: #6c757d;
+}
+
+// Empty state
+.empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  color: #6c757d;
+
+  svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// Button overrides for toolbar
+.actions {
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}

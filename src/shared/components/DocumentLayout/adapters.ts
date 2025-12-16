@@ -6,6 +6,7 @@ import { IDocumentData, IDocumentLineItem } from './DocumentLayout';
  * Transforms a Quotation object into the generic DocumentData format
  */
 export const quotationToDocumentData = (quotation: IQuotation): IDocumentData => {
+  console.log('Quotation', quotation);
   // Transform line items
   const lineItems: IDocumentLineItem[] = (quotation.lineItems || []).map((item) => ({
     id: item._id,

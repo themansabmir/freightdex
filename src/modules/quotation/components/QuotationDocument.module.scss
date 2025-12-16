@@ -1,0 +1,215 @@
+/* Color Variables */
+$primary-text: #111827;
+$muted-text: #6b7280;
+$border-color: #e5e7eb;
+$light-bg: #f9fafb;
+$dark-bg: #111827;
+$white: #ffffff;
+
+/* Status Colors */
+$pending-bg: #fff7ed;
+$pending-text: #c2410c;
+$export-bg: #eff6ff;
+$export-text: #1d4ed8;
+
+.page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: $primary-text;
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+// --- Header Styles ---
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+.companyName {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.muted {
+  color: $muted-text;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.headerRight {
+  text-align: right;
+}
+
+.quotationNumber {
+  font-weight: 600;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.statusPending {
+  background: $pending-bg;
+  color: $pending-text;
+}
+/* You can add more status styles here (e.g., .statusApproved, .statusRejected) */
+
+.tradeBadge {
+  background: $export-bg;
+  color: $export-text;
+  margin-top: 8px;
+  margin-left: auto; // Override margin-left from .badge for positioning
+}
+
+// --- Meta Section Styles (Replacing DocumentMetaSection) ---
+.metaSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 28px;
+  background: $white;
+}
+
+.metaCard {
+  padding: 14px;
+  // Common styles for borders (handled by specific classes below)
+}
+
+.metaCardBillTo {
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+}
+
+.metaCardDates {
+  border-bottom: 1px solid $border-color; // Only a bottom border when using grid-column: 1
+}
+
+.metaCardShipment {
+  grid-column: 2; // Force right column
+  grid-row: 1 / span 2; // Spans both rows
+  padding: 14px; // Already has padding
+  border-left: 1px solid $border-color; // Separator for the right column
+}
+
+.metaLabelUpper {
+  font-size: 12px;
+  color: $muted-text;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metaLabelUpperBold {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metaValueBold {
+  font-weight: 600;
+}
+
+.metaText {
+  font-size: 13px;
+  color: #374151;
+  margin-top: 2px;
+}
+
+.dateRow {
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+.shipmentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.metaLabel {
+  font-size: 12px;
+  color: $muted-text;
+  margin-bottom: 2px;
+}
+
+// --- Table Styles ---
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.th {
+  text-align: left;
+  padding: 12px 8px;
+  font-size: 13px;
+  border-bottom: 1px solid $border-color;
+  color: #374151;
+}
+
+.td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+
+// --- Summary Box ---
+.summaryBox {
+  max-width: 300px;
+  margin-left: auto;
+  margin-top: 24px;
+  background: $dark-bg;
+  color: $white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.grandTotal {
+  font-size: 18px;
+  font-weight: 700;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 12px;
+  margin-top: 12px;
+  margin-bottom: 0; // Remove extra margin
+}
+
+// --- Footer/Terms ---
+.footer {
+  margin-top: 32px;
+  font-size: 13px;
+  color: #374151;
+  border-top: 1px dashed $border-color;
+  padding-top: 16px;
+
+  p {
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+}

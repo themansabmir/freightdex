@@ -1,19 +1,34 @@
 // hooks/useQuotationPage.ts
-import { Checkbox, Typography } from '@shared/components';
+import { Badge, Checkbox } from '@shared/components';
 import Column from '@shared/components/Column';
 import { ColumnDef } from '@tanstack/react-table';
 import { Eye } from 'lucide-react';
-import { IQuotation } from '../index.types';
+import { EQuotationStatus, IQuotation } from '../index.types';
 
 interface UseQuotationPageProps {
   onViewDetails?: (quotation: IQuotation) => void;
+}
+
+function getQuotationVariant(status: EQuotationStatus) {
+  switch (status) {
+    case EQuotationStatus.REJECTED:
+      return 'destructive';
+    case EQuotationStatus.ACCEPTED:
+      return 'success';
+    case EQuotationStatus.SENT:
+      return 'primary';
+    case EQuotationStatus.DRAFT:
+      return 'warning';
+    default:
+      return 'neutral';
+  }
 }
 
 export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) => {
   const columns: ColumnDef<IQuotation>[] = [
     {
       id: '_id',
-      size: 4,
+      size: 1,
       header: ({ table }) => <Checkbox checked={table.getIsAllRowsSelected()} onChange={table.getToggleAllRowsSelectedHandler()} />,
       cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onChange={() => row.toggleSelected()} />,
     },
@@ -40,14 +55,23 @@ export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) 
     {
       accessorKey: 'status',
       header: ({ header }) => <Column header={header} title="Status" />,
-      cell: ({ row }) => <Typography variant="sm">{row.original.status}</Typography>,
+      cell: ({ row }) => (
+        <Badge
+          id={row.original._id}
+          shape="ellipse"
+          size="small"
+          label={row.original.status}
+          tagType="chip"
+          variant={getQuotationVariant(row.original.status)}
+        />
+      ),
     },
     {
       accessorKey: 'validFrom',
       header: ({ header }) => <Column header={header} title="Valid From" />,
       cell: ({ row }) => {
         const d = row.original.validFrom ? new Date(row.original.validFrom) : null;
-        return <span>{d ? d.toISOString().slice(0, 10) : ''}</span>;
+        return <span>{d ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</span>;
       },
     },
     {
@@ -55,13 +79,21 @@ export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) 
       header: ({ header }) => <Column header={header} title="Valid To" />,
       cell: ({ row }) => {
         const d = row.original.validTo ? new Date(row.original.validTo) : null;
-        return <span>{d ? d.toISOString().slice(0, 10) : ''}</span>;
+        return <span>{d ? d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</span>;
       },
     },
     {
       id: 'actions',
       header: 'Actions',
-      cell: ({ row }) => <Eye onClick={() => onViewDetails?.(row.original)} size={18} />,
+      cell: ({ row }) => (
+        <Eye
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewDetails?.(row.original);
+          }}
+          size={18}
+        />
+      ),
     },
   ];
 

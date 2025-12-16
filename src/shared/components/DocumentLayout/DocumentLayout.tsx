@@ -161,7 +161,7 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ document, onEdit, onDow
                   ))}
                 </div>
               )}
-              {document.billToId && <p className="customer-id">ID: {document.billToId}</p>}
+              {/* {document.billToId && <p className="customer-id">ID: {document.billToId}</p>} */}
             </div>
           </div>
 
@@ -189,12 +189,12 @@ const DocumentLayout: React.FC<DocumentLayoutProps> = ({ document, onEdit, onDow
                 <span className="meta-value">{formatDate(document.validTo)}</span>
               </div>
             )}
-            {document.metadata?.map((item, idx) => (
+            {/* {document.metadata?.map((item, idx) => (
               <div className="meta-row" key={idx}>
                 <span className="meta-label">{item.label}:</span>
                 <span className="meta-value">{item.value}</span>
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
 

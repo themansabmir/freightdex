@@ -13,6 +13,7 @@ import InvoiceItem from '@modules/invoiceItem';
 import InvoiceForm from '@modules/invoice/index.form';
 import RateSheetMaster from '@modules/rate_master';
 import Quotation from '@modules/quotation';
+import QuotationForm from '@modules/quotation/form';
 export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.DASHBORD,
@@ -66,5 +67,9 @@ export const browserRouterRoutes = createBrowserRouter([
   {
     path: APP_ROUTES.QUOTATION,
     element: <ProtectedRoute children={<Quotation />} />,
+  },
+  {
+    path: `${APP_ROUTES.QUOTATION}/add`,
+    element: <ProtectedRoute children={<QuotationForm />} />,
   },
 ]);
