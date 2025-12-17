@@ -41,7 +41,7 @@ export const useDownloadQuotationPDF = () => {
 
 export const useSendQuotationToVendor = () => {
   return useMutation({
-    mutationFn: ({ id, vendorId }: { id: string; vendorId: string }) => QuotationHttpService.sendToVendor(id, vendorId),
+    mutationFn: ({ id }: { id: string }) => QuotationHttpService.sendToVendor(id),
     onSuccess: () => {
       toast.success('Quotation sent to vendor successfully');
     },
