@@ -2,14 +2,32 @@
 import { api } from '@api/config';
 import { GetAllQuotationResponse, IQuotation, QuotationGetAllParams } from '@modules/quotation/index.types';
 
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
+export interface QuotationFilterOptions {
+  statuses: FilterOption[];
+  customers: FilterOption[];
+  shippingLines: FilterOption[];
+  startPorts: FilterOption[];
+  endPorts: FilterOption[];
+}
+
 export class QuotationHttpService {
   static async create(payload: Partial<IQuotation>): Promise<IQuotation> {
     const { data } = await api.post('/quotation', payload);
     return data.response ?? data;
   }
 
+  static async getFilterOptions(): Promise<QuotationFilterOptions> {
+    const { data } = await api.get('/quotation/filter-options');
+    return data;
+  }
+
   static async getAll(queryParams: QuotationGetAllParams): Promise<GetAllQuotationResponse> {
-    const { limit, search, skip, sortBy, sortOrder } = queryParams;
+    const { limit, search, skip, sortBy, sortOrder, status, customerId, shippingLineId, startPortId, endPortId } = queryParams;
 
     const baseUrl = '/quotation';
     const params = new URLSearchParams({});
@@ -25,6 +43,21 @@ export class QuotationHttpService {
     }
     if (search.trim()) {
       params.append('search', search);
+    }
+    if (status) {
+      params.append('status', status);
+    }
+    if (customerId) {
+      params.append('customerId', customerId);
+    }
+    if (shippingLineId) {
+      params.append('shippingLineId', shippingLineId);
+    }
+    if (startPortId) {
+      params.append('startPortId', startPortId);
+    }
+    if (endPortId) {
+      params.append('endPortId', endPortId);
     }
 
     const fullUrl = `${baseUrl}?${params.toString()}`;
@@ -67,8 +100,8 @@ export class QuotationHttpService {
     window.URL.revokeObjectURL(url);
   }
 
-  static async sendToVendor(id: string, vendorId: string): Promise<{ message: string }> {
-    const { data } = await api.post(`/quotation/${id}/send-to-vendor`, { vendorId });
+  static async sendToVendor(id: string): Promise<{ message: string }> {
+    const { data } = await api.post(`/quotation/${id}/send-to-vendor`);
     return data;
   }
 }

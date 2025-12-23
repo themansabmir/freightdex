@@ -1,10 +1,14 @@
 import { z } from 'zod';
 
-export type VendorType = 'shipper' | 'consignee' | 'shipping_line' | 'freight_forwarder' | 'agent' | 'cha' |'notify' | 'second_notify';
+export type VendorType = 'shipper' | 'consignee' | 'shipping_line' | 'freight_forwarder' | 'agent' | 'cha' | 'notify' | 'second_notify';
 export interface IVendor {
   _id: string;
   vendor_name: string;
   vendor_type: VendorType[];
+  pan_number: string;
+  primary_email: string;
+  primary_mobile_number: string;
+  credit_days: string;
   locations: Array<{
     _id: string;
     city: string;
@@ -15,7 +19,6 @@ export interface IVendor {
     telephone: string;
     mobile_number: string;
     gst_number: string;
-    pan_number: string;
     fax: string;
   }>;
   [key: string]: unknown;
@@ -42,6 +45,9 @@ export enum EVendor {
   gst_number = 'gst_number',
   pan_number = 'pan_number',
   fax = 'fax',
+  credit_days = 'credit_days',
+  primary_email = 'primary_email',
+  primary_mobile_number = 'primary_mobile_number',
 }
 
 export type CreateVendorRequest = Partial<IVendor>;
@@ -62,7 +68,6 @@ export const vendorLocationSchema = z.object({
   city: z.string().min(1, 'City is required'),
   country: z.string().min(1, 'Country is required'),
   state: z.string().min(1, 'State is required'),
-  pan_number: z.string().min(1, 'PAN number is required'),
   address: z.string().min(1, 'Address is required'),
   gst_number: z.string().min(1, 'GST number is required'),
   fax: z.string(),
@@ -75,6 +80,10 @@ export const vendorLocationSchema = z.object({
 export const vendorSchema = z.object({
   vendor_name: z.string().min(1, 'Vendor name is required'),
   vendor_type: z.array(VendorType).min(1, 'At least one vendor type must be selected'),
+  pan_number: z.string().min(1, 'PAN number is required'),
+  primary_email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  primary_mobile_number: z.string().min(1, 'Mobile number is required'),
+  credit_days: z.string().min(1, 'Credit days is required'),
   id: z.string().optional(),
   locations: z.array(vendorLocationSchema).min(1, 'At least one location is required'),
 });

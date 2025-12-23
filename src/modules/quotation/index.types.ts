@@ -52,5 +52,9 @@ export interface QuotationGetAllParams {
   sortBy: string;
   sortOrder: string;
   status?: string;
+  customerId?: string;
+  shippingLineId?: string;
+  startPortId?: string;
+  endPortId?: string;
   [key: string]: unknown;
 }

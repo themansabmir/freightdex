@@ -15,7 +15,6 @@ export const useVendorPage = () => {
         city: '',
         country: '',
         state: '',
-        pan_number: '',
         address: '',
         gst_number: '',
         fax: '',
@@ -24,6 +23,10 @@ export const useVendorPage = () => {
         telephone: '',
       },
     ],
+    pan_number: '',
+    primary_email: '',
+    primary_mobile_number: '',
+    credit_days: '',
   };
 
   const formSchema: FieldSchema[] = [
@@ -31,6 +34,31 @@ export const useVendorPage = () => {
       name: EVendor.vendor_name,
       label: 'Vendor Name',
       type: 'text',
+      required: true,
+    },
+    {
+      name: EVendor.pan_number,
+      label: 'PAN Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: EVendor.primary_email,
+      label: 'Primary Email',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: EVendor.primary_mobile_number,
+      label: 'Primary Mobile Number',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: EVendor.credit_days,
+      label: 'Credit Days (only number)',
+      type: 'text',
+      placeholder: 'ex: 15',
       required: true,
     },
     {
@@ -48,12 +76,7 @@ export const useVendorPage = () => {
         { label: 'Second Notify', value: 'second_notify' },
       ],
     },
-    {
-      name:"credit_days", 
-      label:"Credit Days (only number)", 
-      type: 'text', 
-      placeholder:"ex: 15"
-    },
+
     {
       name: 'locations',
       label: 'Locations',
@@ -113,12 +136,6 @@ export const useVendorPage = () => {
           {
             name: EVendor.gst_number,
             label: 'GST Number',
-            type: 'text',
-            required: true,
-          },
-          {
-            name: EVendor.pan_number,
-            label: 'Pan Number',
             type: 'text',
             required: true,
           },
@@ -205,7 +222,7 @@ export const useVendorPage = () => {
     {
       accessorKey: EVendor.pan_number,
       header: () => <button>PAN</button>,
-      cell: ({ row }) => <div>{row.original.locations[0].pan_number}</div>,
+      cell: ({ row }) => <div>{row.original.pan_number}</div>,
       enableSorting: false,
     },
   ];
