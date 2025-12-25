@@ -7,8 +7,8 @@ import { useDebounce } from '@shared/hooks/useDebounce';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { useModal } from '@shared/hooks/useModal';
 import usePageState from '@shared/hooks/usePageState';
-import { CircleAlert, SearchIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { CircleAlert, Download, FileUp, SearchIcon } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
 import FormActions from '../../blocks/form-actions';
 import PageHeader from '../../blocks/page-header';
 import usePortPage from './hooks/usePort';
@@ -19,10 +19,23 @@ import { IPort, PortGetAllParams, portSchema } from './index.types';
 import { returnSelectedRecord } from '@shared/utils';
 
 const Port = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { columns: portColumns, formSchema: portFormSchema, payload } = usePortPage();
   const [formData, setFormData] = useState<IPort>(payload);
 
-  const { updatePort, createPort, deletePort, isDeleting, isCreating, isUpdating, useGetPort } = usePortApi();
+  const {
+    updatePort,
+    createPort,
+    deletePort,
+    bulkInsert,
+    downloadTemplate,
+    isDeleting,
+    isCreating,
+    isUpdating,
+    isUploading,
+    isDownloading,
+    useGetPort,
+  } = usePortApi();
   const { isOpen: isDeleteModal, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
   const { validate, handleChange, errors } = useFormValidation(portSchema, formData);
 
@@ -48,6 +61,17 @@ const Port = () => {
   const debounceSearch = useDebounce(query.trim(), 1000);
   const getRowId = (row: IPort) => row._id;
   const selectedPortIds = Object.keys(rows).map((id) => id);
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+      await bulkInsert(formData);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const handleView = () => {
     setViewMode(true);
@@ -121,7 +145,7 @@ const Port = () => {
 
   return (
     <>
-      <PageLoader isLoading={isCreating || isDeleting || isUpdating} />
+      <PageLoader isLoading={isCreating || isDeleting || isUpdating || isUploading || isDownloading} />
       <PageHeader
         pageName="Port"
         pageDescription="Here you can manage your Ports."
@@ -142,7 +166,22 @@ const Port = () => {
               name="search"
               placeholder="Search Port"
             />
-            <Button onClick={() => handleAddNew()}>+Add New</Button>
+            <div className="flex gap-2">
+              <input type="file" ref={fileInputRef} style={{ visibility: 'hidden' }} accept=".xlsx,.xls" onChange={handleBulkUpload} />
+              <Button onClick={() => downloadTemplate()} variant="neutral" type="outline">
+                <div className="flex gap-2 items-center">
+                  <Download size={16} />
+                  Template
+                </div>
+              </Button>
+              <Button onClick={() => fileInputRef.current?.click()} variant="neutral" type="outline">
+                <div className="flex gap-2 items-center">
+                  <FileUp size={16} />
+                  Import
+                </div>
+              </Button>
+              <Button onClick={() => handleAddNew()}>+Add New</Button>
+            </div>
           </Stack>
 
           <PortTable
