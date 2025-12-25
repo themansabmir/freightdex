@@ -177,13 +177,13 @@ export const useVendorPage = () => {
       cell: ({ row }) => <div>{row.original.locations[0]?.city}</div>,
     },
 
-    {
-      accessorKey: EVendor.pin_code,
-      header: () => <button>Pin Code</button>,
-      enableSorting: false,
+    // {
+    //   accessorKey: EVendor.pin_code,
+    //   header: () => <button>Pin Code</button>,
+    //   enableSorting: false,
 
-      cell: ({ row }) => <div>{row.original.locations[0]?.pin_code}</div>,
-    },
+    //   cell: ({ row }) => <div>{row.original.locations[0]?.pin_code}</div>,
+    // },
     {
       accessorKey: EVendor.country,
       header: () => <button>Country</button>,
@@ -191,13 +191,13 @@ export const useVendorPage = () => {
 
       cell: ({ row }) => <div>{row.original.locations[0]?.country}</div>,
     },
-    {
-      accessorKey: EVendor.telephone,
-      header: () => <button>Telephone</button>,
-      enableSorting: false,
+    // {
+    //   accessorKey: EVendor.telephone,
+    //   header: () => <button>Telephone</button>,
+    //   enableSorting: false,
 
-      cell: ({ row }) => <div>{row.original.locations[0]?.telephone}</div>,
-    },
+    //   cell: ({ row }) => <div>{row.original.locations[0]?.telephone}</div>,
+    // },
     {
       accessorKey: EVendor.mobile_number,
       header: () => <button>Mobile</button>,
@@ -205,13 +205,13 @@ export const useVendorPage = () => {
 
       cell: ({ row }) => <div>{row.original.locations[0].mobile_number}</div>,
     },
-    {
-      accessorKey: EVendor.fax,
-      header: () => <button>Fax</button>,
-      enableSorting: false,
+    // {
+    //   accessorKey: EVendor.fax,
+    //   header: () => <button>Fax</button>,
+    //   enableSorting: false,
 
-      cell: ({ row }) => <div>{row.original.locations[0].fax}</div>,
-    },
+    //   cell: ({ row }) => <div>{row.original.locations[0].fax}</div>,
+    // },
     {
       accessorKey: EVendor.gst_number,
       header: () => <button>GST</button>,
