@@ -50,15 +50,36 @@ export const usePortApi = () => {
     },
   });
 
+  const bulkInsertMutation = useMutation({
+    mutationFn: (file: FormData) => PortHttpService.bulkInsert(file),
+    onError: ({ message }) => toast.error(message || 'Failed to upload ports'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PORT_KEY] });
+      toast.success(`Successfully uploaded ports`);
+    },
+  });
+
+  const downloadTemplateMutation = useMutation({
+    mutationFn: () => PortHttpService.downloadTemplate(),
+    onError: ({ message }) => toast.error(message || 'Failed to download template'),
+    onSuccess: () => {
+      toast.success('Template downloaded successfully');
+    },
+  });
+
   return {
     // // Queries
     createPort: createPortMutation.mutateAsync,
     deletePort: deletePortMutation.mutateAsync,
     updatePort: updatePortMutation.mutateAsync,
+    bulkInsert: bulkInsertMutation.mutateAsync,
+    downloadTemplate: downloadTemplateMutation.mutateAsync,
     useGetPort,
     // Statuses (optional)
     isCreating: createPortMutation.isPending,
     isDeleting: deletePortMutation.isPending,
     isUpdating: updatePortMutation.isPending,
+    isUploading: bulkInsertMutation.isPending,
+    isDownloading: downloadTemplateMutation.isPending,
   };
 };
