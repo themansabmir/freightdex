@@ -7,8 +7,8 @@ import { useDebounce } from '@shared/hooks/useDebounce';
 import { useFormValidation } from '@shared/hooks/useFormValidation';
 import { useModal } from '@shared/hooks/useModal';
 import usePageState from '@shared/hooks/usePageState';
-import { CircleAlert, SearchIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { CircleAlert, Download, FileUp, SearchIcon } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
 import FormActions from '../../blocks/form-actions';
 import PageHeader from '../../blocks/page-header';
 import useVendorPage from './hooks/useVendor';
@@ -24,10 +24,23 @@ const Vendor = () => {
       CUSTOM HOOKS
     ###################
   */
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { columns: vendorColumns, formSchema: vendorFormSchema, payload } = useVendorPage();
   const [formData, setFormData] = useState<IVendor>(payload);
 
-  const { updateVendor, createVendor, deleteVendor, isDeleting, isCreating, isUpdating, useGetVendors } = useVendorApi();
+  const {
+    updateVendor,
+    createVendor,
+    deleteVendor,
+    bulkInsert,
+    downloadTemplate,
+    isDeleting,
+    isCreating,
+    isUpdating,
+    isUploading,
+    isDownloading,
+    useGetVendors,
+  } = useVendorApi();
   const { isOpen: isDeleteModal, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
   const { validate, handleChange, errors } = useFormValidation(vendorSchema, formData);
 
@@ -68,6 +81,17 @@ const Vendor = () => {
       HANDLER FUNCTIONS
     ###################
   */
+
+  const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const formData = new FormData();
+      formData.append('file', e.target.files[0]);
+      await bulkInsert(formData);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
 
   const handleView = () => {
     setViewMode(true);
@@ -145,7 +169,7 @@ const Vendor = () => {
 
   return (
     <>
-      <PageLoader isLoading={isCreating || isDeleting || isUpdating} />
+      <PageLoader isLoading={isCreating || isDeleting || isUpdating || isUploading || isDownloading} />
       <PageHeader
         pageName="Vendor"
         pageDescription="Here you can manage your Shipper, Consignee, Shipping Line, Agent, CHA etc database."
@@ -167,7 +191,22 @@ const Vendor = () => {
               placeholder="Search Vendor"
             />
 
-            <Button onClick={() => handleAddNew()}>+Add New</Button>
+            <div className="flex gap-2">
+              <input type="file" ref={fileInputRef} style={{ visibility: 'hidden' }} accept=".xlsx,.xls" onChange={handleBulkUpload} />
+              <Button onClick={() => downloadTemplate()} variant="neutral" type="outline">
+                <div className="flex gap-2 items-center">
+                  <Download size={16} />
+                  Template
+                </div>
+              </Button>
+              <Button onClick={() => fileInputRef.current?.click()} variant="neutral" type="outline">
+                <div className="flex gap-2 items-center">
+                  <FileUp size={16} />
+                  Import
+                </div>
+              </Button>
+              <Button onClick={() => handleAddNew()}>+Add New</Button>
+            </div>
           </Stack>
           <VendorTable
             columns={vendorColumns}

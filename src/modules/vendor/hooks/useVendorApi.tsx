@@ -25,7 +25,7 @@ export const useVendorApi = () => {
       queryKey: [VENDOR_KEY, queryString],
       queryFn: () => VendorHttpService.getAll(queryString),
     });
- // READ ONE
+  // READ ONE
   //   const useGetVendorById = (id: string) =>
   //     useQuery({
   //       queryKey: ["vendor", id],
@@ -52,15 +52,36 @@ export const useVendorApi = () => {
     },
   });
 
+  const bulkInsertMutation = useMutation({
+    mutationFn: (file: FormData) => VendorHttpService.bulkInsert(file),
+    onError: ({ message }) => toast.error(message || 'Failed to upload vendors'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [VENDOR_KEY] });
+      toast.success(`Successfully uploaded vendors`);
+    },
+  });
+
+  const downloadTemplateMutation = useMutation({
+    mutationFn: () => VendorHttpService.downloadTemplate(),
+    onError: ({ message }) => toast.error(message || 'Failed to download template'),
+    onSuccess: () => {
+      toast.success('Template downloaded successfully');
+    },
+  });
+
   return {
     // // Queries
     createVendor: createVendorMutation.mutateAsync,
     deleteVendor: deleteVendorMutation.mutateAsync,
     updateVendor: updateVendorMutation.mutateAsync,
+    bulkInsert: bulkInsertMutation.mutateAsync,
+    downloadTemplate: downloadTemplateMutation.mutateAsync,
     useGetVendors,
     // Statuses (optional)
     isCreating: createVendorMutation.isPending,
     isDeleting: deleteVendorMutation.isPending,
     isUpdating: updateVendorMutation.isPending,
+    isUploading: bulkInsertMutation.isPending,
+    isDownloading: downloadTemplateMutation.isPending,
   };
 };
