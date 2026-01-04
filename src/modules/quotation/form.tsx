@@ -20,6 +20,7 @@ const QuotationForm = () => {
   const [rateData, setRateData] = useState<IDisplayRow[]>([]);
   const [lineItems, setLineItems] = useState<EditableLineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState<number>(1);
 
   // Billing party state
   const [billingPartyId, setBillingPartyId] = useState<string | null>(null);
@@ -171,6 +172,7 @@ const QuotationForm = () => {
     filters.endPortId,
     filters.effectiveFrom,
     filters.effectiveTo,
+    filters,
   ]);
 
   const breadcrumbArray = [
@@ -205,6 +207,7 @@ const QuotationForm = () => {
       <div
         style={{
           background: '#fff',
+          maxWidth: '1150px',
           padding: '20px',
           borderRadius: '8px',
           marginTop: '20px',
@@ -212,7 +215,7 @@ const QuotationForm = () => {
         }}
       >
         <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', fontWeight: 600 }}>Quotation Details</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <div>
             <Dropdown
               label="Billing Party"
@@ -225,7 +228,7 @@ const QuotationForm = () => {
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500 }}>
               Valid From <span style={{ color: 'red' }}>*</span>
             </label>
             <input
@@ -233,7 +236,7 @@ const QuotationForm = () => {
               value={validityDates.validFrom}
               onChange={(e) => setValidityDates({ ...validityDates, validFrom: e.target.value })}
               style={{
-                width: '100%',
+                width: '320px',
                 padding: '8px 12px',
                 border: '1px solid #dee2e6',
                 borderRadius: '4px',
@@ -242,7 +245,7 @@ const QuotationForm = () => {
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500 }}>
               Valid To <span style={{ color: 'red' }}>*</span>
             </label>
             <input
@@ -250,7 +253,7 @@ const QuotationForm = () => {
               value={validityDates.validTo}
               onChange={(e) => setValidityDates({ ...validityDates, validTo: e.target.value })}
               style={{
-                width: '100%',
+                width: '320px',
                 padding: '8px 12px',
                 border: '1px solid #dee2e6',
                 borderRadius: '4px',
@@ -261,7 +264,19 @@ const QuotationForm = () => {
         </div>
       </div>
 
-      <EditableQuotationGrid data={lineItems} onDataChange={handleDataChange} readOnly={false} />
+      <div
+        style={{
+          maxWidth: '1300px',
+        }}
+      >
+        <EditableQuotationGrid
+          data={lineItems}
+          onDataChange={handleDataChange}
+          readOnly={false}
+          exchangeRate={exchangeRate}
+          onExchangeRateChange={setExchangeRate}
+        />
+      </div>
 
       {/* Save Button */}
       <Stack direction="horizontal" justify="end" className="mt-3">
