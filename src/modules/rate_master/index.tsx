@@ -16,18 +16,18 @@ import RateFilters from './component/RateFilters';
 const RateSheetMaster = () => {
   const { isOpen, closeModal, openModal } = useModal();
   const [data, setData] = useState<IDisplayRow[]>([]);
-  
+
   // Use URL-based filters for persistence across page refreshes
   const { filters, setFilters, clearFilters: clearUrlFilters } = useRateFiltersUrl();
 
   const { bulkInsert } = useBulkInsertRateSheet();
   const { shippingLineOptions, portOptions, columns } = useRateMasterOptions({
-    shippingLineId: filters.shippingLineId
+    shippingLineId: filters.shippingLineId,
   });
 
   const handleCancel = () => {
     closeModal();
-  };  
+  };
   const handleClearFilters = () => {
     clearUrlFilters();
   };
@@ -40,15 +40,20 @@ const RateSheetMaster = () => {
     closeModal();
   };
 
-
-
-
   useEffect(() => {
     // Fetch data when filters change - can work with or without shippingLineId
-    console.log("Filters", filters)
     filterRateSheetMaster(filters).then(setData);
-
-  }, [filters.containerSize, filters.containerType, filters.tradeType, filters.shippingLineId, filters.startPortId, filters.endPortId, filters.effectiveFrom, filters.effectiveTo]);
+  }, [
+    filters.containerSize,
+    filters.containerType,
+    filters.tradeType,
+    filters.shippingLineId,
+    filters.startPortId,
+    filters.endPortId,
+    filters.effectiveFrom,
+    filters.effectiveTo,
+    filters,
+  ]);
 
   // Clear port selections when shipping line changes
   // useEffect(() => {

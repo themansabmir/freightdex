@@ -1,7 +1,7 @@
 // hooks/useQuotationApi.ts
 import { QuotationHttpService } from '@api/endpoints/quotation.endpoints';
 import { useMutation, useQuery, useQueryClient } from '@lib/react-query';
-import { GetAllQuotationResponse, QuotationGetAllParams } from '../index.types';
+import { GetAllQuotationResponse, IQuotation, QuotationGetAllParams } from '../index.types';
 import { toast } from 'react-toastify';
 
 const QUOTATION_KEY = 'quotations';
@@ -11,6 +11,28 @@ export const useGetQuotations = (queryString: QuotationGetAllParams) =>
     queryKey: [QUOTATION_KEY, queryString],
     queryFn: () => QuotationHttpService.getAll(queryString),
   });
+
+export const useGetQuotationById = (id: string | null) =>
+  useQuery<IQuotation>({
+    queryKey: [QUOTATION_KEY, id],
+    queryFn: () => QuotationHttpService.getById(id!),
+    enabled: !!id,
+  });
+
+export const useUpdateQuotation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<IQuotation> }) => QuotationHttpService.update(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUOTATION_KEY] });
+      toast.success('Quotation updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || 'Failed to update quotation');
+    },
+  });
+};
 
 export const useUpdateQuotationStatus = () => {
   const queryClient = useQueryClient();
