@@ -2,11 +2,12 @@
 import { Badge, Checkbox } from '@shared/components';
 import Column from '@shared/components/Column';
 import { ColumnDef } from '@tanstack/react-table';
-import { Eye } from 'lucide-react';
+import { Eye, Pencil } from 'lucide-react';
 import { EQuotationStatus, IQuotation } from '../index.types';
 
 interface UseQuotationPageProps {
   onViewDetails?: (quotation: IQuotation) => void;
+  onEdit?: (quotation: IQuotation) => void;
 }
 
 function getQuotationVariant(status: EQuotationStatus) {
@@ -24,7 +25,7 @@ function getQuotationVariant(status: EQuotationStatus) {
   }
 }
 
-export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) => {
+export const useQuotationPage = ({ onViewDetails, onEdit }: UseQuotationPageProps = {}) => {
   const columns: ColumnDef<IQuotation>[] = [
     {
       id: '_id',
@@ -86,13 +87,24 @@ export const useQuotationPage = ({ onViewDetails }: UseQuotationPageProps = {}) 
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => (
-        <Eye
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewDetails?.(row.original);
-          }}
-          size={18}
-        />
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Eye
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails?.(row.original);
+            }}
+            size={18}
+            style={{ cursor: 'pointer' }}
+          />
+          <Pencil
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.(row.original);
+            }}
+            size={18}
+            style={{ cursor: 'pointer', color: '#7a5af8' }}
+          />
+        </div>
       ),
     },
   ];

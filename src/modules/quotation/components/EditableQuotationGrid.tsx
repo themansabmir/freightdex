@@ -107,7 +107,20 @@ export default function EditableQuotationGrid({
   exchangeRate = 1,
   onExchangeRateChange,
 }: EditableQuotationGridProps) {
-  const [rows, setRows] = useState<EditableLineItem[]>(data);
+  const [rows, setRows] = useState<EditableLineItem[]>(() => {
+    // Calculate GST values for initial data
+    return data.map((row) => {
+      const total = (row.price || 0) * (row.quantity || 0);
+      return {
+        ...row,
+        totalAmount: total,
+        cgst: total * 0.09,
+        sgst: total * 0.09,
+        igst: total * 0.18,
+        totalWithGst: total * 1.18,
+      };
+    });
+  });
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<string>>(new Set());
 
   // Check if any row has INR currency
@@ -115,7 +128,18 @@ export default function EditableQuotationGrid({
 
   // Update rows when data prop changes
   useMemo(() => {
-    setRows(data);
+    const rowsWithGst = data.map((row) => {
+      const total = (row.price || 0) * (row.quantity || 0);
+      return {
+        ...row,
+        totalAmount: total,
+        cgst: total * 0.09,
+        sgst: total * 0.09,
+        igst: total * 0.18,
+        totalWithGst: total * 1.18,
+      };
+    });
+    setRows(rowsWithGst);
   }, [data]);
 
   const columns: Column<EditableLineItem>[] = useMemo(

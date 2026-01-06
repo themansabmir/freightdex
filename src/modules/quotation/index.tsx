@@ -101,6 +101,10 @@ const Quotation = () => {
     setTimeout(() => setSelectedQuotation(null), 300);
   };
 
+  const handleEdit = (quotation: IQuotation) => {
+    navigate(`/quotation/add?edit=${quotation._id}`);
+  };
+
   const handleStatusChange = (newStatus: EQuotationStatus) => {
     if (newStatus && selectedQuotation?._id) {
       updateStatusMutation.mutate({ id: selectedQuotation._id, status: newStatus });
@@ -127,7 +131,7 @@ const Quotation = () => {
   const downloadPDFMutation = useDownloadQuotationPDF();
   const sendToVendorMutation = useSendQuotationToVendor();
 
-  const { columns } = useQuotationPage({ onViewDetails: handleViewDetails });
+  const { columns } = useQuotationPage({ onViewDetails: handleViewDetails, onEdit: handleEdit });
 
   const { statusOptions, customerOptions, shippingLineOptions, startPortOptions, endPortOptions } = useQuotationFilters();
 
