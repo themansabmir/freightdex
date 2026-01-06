@@ -4,37 +4,35 @@ import { GetRateSheetsFilters, IExcelRow, ISheetRow, IDistinctShippingLine, IDis
 const RATE_MASTER_ENDPOINT = '/rate-sheet';
 
 export class RateMasterHttpService {
-
-
   static async downloadTemplate(moduleName: string) {
     try {
-      const response = await api.get(
-        `excel/template/${moduleName}`,
-        {
-          responseType: "blob", // 👈 tell Axios this is binary data
-        }
-      );
+      const response = await api.get(`excel/template/${moduleName}`, {
+        responseType: 'blob', // 👈 tell Axios this is binary data
+      });
       const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
 
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = "rate-master.xlsx"; // Suggested filename
+      a.download = 'rate-master.xlsx'; // Suggested filename
       document.body.appendChild(a);
       a.click();
 
       // Cleanup
       a.remove();
       window.URL.revokeObjectURL(url);
-
-    } catch (error) {
-      throw error
+    } catch {
+      throw new Error('Failed to download template');
     }
   }
 
   static async getActiveRateSheets(filters: GetRateSheetsFilters): Promise<ISheetRow[]> {
+    if (Object.values(filters).every((value) => value === null || value === undefined || value === '')) {
+      console.log('All filters are empty - returning empty array');
+      return [];
+    }
     const params = new URLSearchParams();
 
     // Optional parameters - shippingLineId is now optional
@@ -44,16 +42,11 @@ export class RateMasterHttpService {
     if (filters.startPortId) params.append('startPortId', filters.startPortId);
     if (filters.endPortId) params.append('endPortId', filters.endPortId);
     if (filters.effectiveFrom) {
-      const dateStr = filters.effectiveFrom instanceof Date
-        ? filters.effectiveFrom.toISOString()
-        : filters.effectiveFrom;
-        console.log("Datestr" , dateStr)
+      const dateStr = filters.effectiveFrom instanceof Date ? filters.effectiveFrom.toISOString() : filters.effectiveFrom;
       params.append('effectiveFrom', dateStr);
     }
     if (filters.effectiveTo) {
-      const dateStr = filters.effectiveTo instanceof Date
-        ? filters.effectiveTo.toISOString()
-        : filters.effectiveTo;
+      const dateStr = filters.effectiveTo instanceof Date ? filters.effectiveTo.toISOString() : filters.effectiveTo;
       params.append('effectiveTo', dateStr);
     }
     if (filters.tradeType) params.append('tradeType', filters.tradeType);
@@ -61,7 +54,6 @@ export class RateMasterHttpService {
     const { data } = await api.get(`${RATE_MASTER_ENDPOINT}?${params.toString()}`);
     return data.response;
   }
-
 
   static async bulkInsertRateSheet(file: FormData): Promise<IExcelRow[]> {
     const { data } = await api.post(`excel/bulk-insert/rate-master`, file, {
@@ -89,6 +81,7 @@ export class RateMasterHttpService {
   }
 
   static async getDistinctPorts(shippingLineId?: string): Promise<IDistinctPort[]> {
+    if (!shippingLineId) return [];
     const { data } = await api.get(`${RATE_MASTER_ENDPOINT}/distinctPorts?shippingLineId=${shippingLineId}`);
     return data.response;
   }

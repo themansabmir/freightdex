@@ -23,6 +23,7 @@ export interface IQuotation {
   _id: string;
   quotationNumber: string;
   customerId: string;
+  customerAddressId: string;
   customerName: string;
   customerEmail: string;
   shippingLineId: string;

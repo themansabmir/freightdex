@@ -26,6 +26,11 @@ export class QuotationHttpService {
     return data;
   }
 
+  static async getById(id: string): Promise<IQuotation> {
+    const { data } = await api.get(`/quotation/${id}`);
+    return data.response ?? data;
+  }
+
   static async getAll(queryParams: QuotationGetAllParams): Promise<GetAllQuotationResponse> {
     const { limit, search, skip, sortBy, sortOrder, status, customerId, shippingLineId, startPortId, endPortId } = queryParams;
 

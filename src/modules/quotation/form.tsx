@@ -13,13 +13,30 @@ import { Stack } from '@shared/components/Stack';
 import { SaveIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Dropdown from '@shared/components/SingleDropdown';
-import { useDropDownData } from '@modules/mbl/hooks/useDropdownData'; // Import useDropDownData
+import { useDropDownData } from '@modules/mbl/hooks/useDropdownData';
 import { splitCompositeFields } from '@shared/utils';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useGetQuotationById, useUpdateQuotation } from './hooks/useQuotationApi';
+import PageLoader from '@shared/components/Loader/PageLoader';
+
+const generateUniqueOptions = (combinedOptions: { label: string; value: string }[]) => {
+  return Array.from(new Map(combinedOptions.map((obj) => [obj.value, obj])).values());
+};
 
 const QuotationForm = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const editId = searchParams.get('edit');
+  const isEditMode = !!editId;
+
   const [rateData, setRateData] = useState<IDisplayRow[]>([]);
   const [lineItems, setLineItems] = useState<EditableLineItem[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState<number>(1);
+
+  // Fetch quotation data if in edit mode
+  const { data: quotationData, isLoading: isLoadingQuotation } = useGetQuotationById(editId);
+  const updateQuotationMutation = useUpdateQuotation();
 
   // Billing party state
   const [billingPartyId, setBillingPartyId] = useState<string | null>(null);
@@ -42,14 +59,56 @@ const QuotationForm = () => {
   const { shipper, consignee, notify, agent } = useDropDownData();
 
   // Populate billing party options from combined unique list
+
   useEffect(() => {
     const combinedOptions = [...(shipper ?? []), ...(consignee ?? []), ...(notify ?? []), ...(agent ?? [])];
 
     // Create unique list based on value (id)
-    const uniqueOptions = Array.from(new Map(combinedOptions.map((obj) => [obj.value, obj])).values());
+    const uniqueOptions = generateUniqueOptions(combinedOptions);
+
+    console.log('UNIQUE', uniqueOptions);
 
     setBillingPartyOptions(uniqueOptions);
-  }, [shipper, consignee, notify, agent]);
+  }, [shipper, consignee, notify, agent, generateUniqueOptions]);
+
+  // Populate form fields when quotation data is loaded in edit mode
+  useEffect(() => {
+    if (quotationData && isEditMode) {
+      // Set filters
+      setFilters({
+        shippingLineId: quotationData.shippingLineId?.toString() || '',
+        startPortId: quotationData.startPortId?.toString() || '',
+        endPortId: quotationData.endPortId?.toString() || '',
+        containerType: quotationData.containerType || '',
+        containerSize: quotationData.containerSize || '',
+        tradeType: quotationData.tradeType || '',
+      });
+
+      // Set billing party
+
+      setBillingPartyId(`${quotationData.customerId?.toString()}|${quotationData.customerAddressId}`);
+
+      // Set validity dates
+      setValidityDates({
+        validFrom: quotationData.validFrom ? new Date(quotationData.validFrom).toISOString().split('T')[0] : '',
+        validTo: quotationData.validTo ? new Date(quotationData.validTo).toISOString().split('T')[0] : '',
+      });
+
+      // Set line items
+      if (quotationData.lineItems && quotationData.lineItems.length > 0) {
+        const mappedLineItems: EditableLineItem[] = quotationData.lineItems.map((item: any) => ({
+          id: item._id || `item-${Date.now()}-${Math.random()}`,
+          chargeName: item.chargeName || '',
+          hsnCode: item.hsnCode || '',
+          price: item.price || 0,
+          currency: item.currency || 'USD',
+          quantity: item.quantity || 1,
+          totalAmount: item.totalAmount || 0,
+        }));
+        setLineItems(mappedLineItems);
+      }
+    }
+  }, [quotationData, isEditMode, shipper, consignee, notify, agent, generateUniqueOptions]);
 
   const handleClearFilters = () => {
     clearUrlFilters();
@@ -68,10 +127,12 @@ const QuotationForm = () => {
     }));
   }, [rateData]);
 
-  // Update line items when transformed data changes
+  // Update line items when transformed data changes (only in create mode, not edit mode)
   useEffect(() => {
-    setLineItems(transformedLineItems);
-  }, [transformedLineItems]);
+    if (!isEditMode) {
+      setLineItems(transformedLineItems);
+    }
+  }, [transformedLineItems, isEditMode]);
 
   const handleDataChange = (updatedData: EditableLineItem[]) => setLineItems(updatedData);
 
@@ -137,18 +198,25 @@ const QuotationForm = () => {
         })),
       };
 
-      const savedQuotation = await QuotationHttpService.create(quotationPayload as any);
+      if (isEditMode && editId) {
+        // Update existing quotation
+        await updateQuotationMutation.mutateAsync({ id: editId, payload: quotationPayload as any });
+        toast.success('Quotation updated successfully!');
+        navigate('/quotation');
+      } else {
+        // Create new quotation
+        const savedQuotation = await QuotationHttpService.create(quotationPayload as any);
+        toast.success(`Quotation ${savedQuotation.quotationNumber} created successfully!`);
 
-      toast.success(`Quotation ${savedQuotation.quotationNumber} created successfully!`);
-
-      // Reset form
-      setLineItems([]);
-      setBillingPartyId(null);
-      setValidityDates({
-        validFrom: new Date().toISOString().split('T')[0],
-        validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      });
-      clearUrlFilters();
+        // Reset form
+        setLineItems([]);
+        setBillingPartyId(null);
+        setValidityDates({
+          validFrom: new Date().toISOString().split('T')[0],
+          validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        });
+        clearUrlFilters();
+      }
     } catch (error: any) {
       console.error('Error saving quotation:', error);
       toast.error(error?.response?.data?.message || 'Failed to save quotation');
@@ -159,9 +227,12 @@ const QuotationForm = () => {
 
   useEffect(() => {
     // Fetch data when filters change - API already returns transformed data
-    filterRateSheetMaster(filters).then((response) => {
-      setRateData(response || []);
-    });
+    // Skip fetching rate data in edit mode since we use quotation line items
+    if (!isEditMode) {
+      filterRateSheetMaster(filters).then((response) => {
+        setRateData(response || []);
+      });
+    }
   }, [
     filters.containerSize,
     filters.containerType,
@@ -171,20 +242,26 @@ const QuotationForm = () => {
     filters.endPortId,
     filters.effectiveFrom,
     filters.effectiveTo,
+    filters,
+    isEditMode,
   ]);
 
   const breadcrumbArray = [
     { label: 'Dashboard', href: '/' },
     { label: 'Quotation ', href: '/quotation' },
-    { label: 'Quotation Form', href: '' },
+    { label: isEditMode ? 'Edit Quotation' : 'Quotation Form', href: '' },
   ];
+
+  if (isLoadingQuotation) {
+    return <PageLoader isLoading={isLoadingQuotation} />;
+  }
 
   return (
     <div>
       <PageHeader
-        pageName="Quotation"
-        pageDescription="Create a new quotation by selecting rates and editing line items"
-        isEdit={false}
+        pageName={isEditMode ? 'Edit Quotation' : 'Quotation'}
+        pageDescription={isEditMode ? 'Update quotation details and line items' : 'Create a new quotation by selecting rates and editing line items'}
+        isEdit={isEditMode}
         isViewMode={false}
         isForm={false}
         breadcrumnArray={breadcrumbArray}
@@ -205,6 +282,7 @@ const QuotationForm = () => {
       <div
         style={{
           background: '#fff',
+          maxWidth: '1150px',
           padding: '20px',
           borderRadius: '8px',
           marginTop: '20px',
@@ -212,7 +290,7 @@ const QuotationForm = () => {
         }}
       >
         <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', fontWeight: 600 }}>Quotation Details</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
           <div>
             <Dropdown
               label="Billing Party"
@@ -225,7 +303,7 @@ const QuotationForm = () => {
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500 }}>
               Valid From <span style={{ color: 'red' }}>*</span>
             </label>
             <input
@@ -233,7 +311,7 @@ const QuotationForm = () => {
               value={validityDates.validFrom}
               onChange={(e) => setValidityDates({ ...validityDates, validFrom: e.target.value })}
               style={{
-                width: '100%',
+                width: '320px',
                 padding: '8px 12px',
                 border: '1px solid #dee2e6',
                 borderRadius: '4px',
@@ -242,7 +320,7 @@ const QuotationForm = () => {
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500 }}>
               Valid To <span style={{ color: 'red' }}>*</span>
             </label>
             <input
@@ -250,7 +328,7 @@ const QuotationForm = () => {
               value={validityDates.validTo}
               onChange={(e) => setValidityDates({ ...validityDates, validTo: e.target.value })}
               style={{
-                width: '100%',
+                width: '320px',
                 padding: '8px 12px',
                 border: '1px solid #dee2e6',
                 borderRadius: '4px',
@@ -261,7 +339,19 @@ const QuotationForm = () => {
         </div>
       </div>
 
-      <EditableQuotationGrid data={lineItems} onDataChange={handleDataChange} readOnly={false} />
+      <div
+        style={{
+          maxWidth: '1200px',
+        }}
+      >
+        <EditableQuotationGrid
+          data={lineItems}
+          onDataChange={handleDataChange}
+          readOnly={false}
+          exchangeRate={exchangeRate}
+          onExchangeRateChange={setExchangeRate}
+        />
+      </div>
 
       {/* Save Button */}
       <Stack direction="horizontal" justify="end" className="mt-3">
